@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * Convenience methods dealing with Collections in addition to {@link java.util.Collections}.
+ * Convenience methods to deal with Collections in addition to {@link java.util.Collections}.
  */
 public final class Collections {
     private Collections() {
@@ -179,5 +179,18 @@ public final class Collections {
             retainAll(subject, retainAll(new HashSet<>(elements), subject));
         }
         return subject;
+    }
+
+    /**
+     * Indicates if a given {@code subject} contains a specific {@code element}.
+     */
+    public static boolean contains(final Collection<?> subject, final Object element) {
+        try {
+            return subject.contains(element);
+        } catch (final NullPointerException | ClassCastException ignored) {
+            // --> <subject> can not contain <element>
+            // --> <subject> simply does not contain <element> ...
+            return false;
+        }
     }
 }

@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
@@ -17,7 +18,7 @@ public class CollectionsTest {
     private static final String[] SINGLE_STRING_ARRAY = new String[]{"a"};
 
     @Test
-    public void testAdd_Array_Multiple() throws Exception {
+    public void testAdd_Array_Multiple() {
         ArrayList<String> subject = new ArrayList<>(0);
         Assert.assertSame(
                 subject,
@@ -26,7 +27,7 @@ public class CollectionsTest {
     }
 
     @Test
-    public void testAdd_Array_Single() throws Exception {
+    public void testAdd_Array_Single() {
         ArrayList<String> subject = new ArrayList<>(0);
         Assert.assertSame(
                 subject,
@@ -35,7 +36,7 @@ public class CollectionsTest {
     }
 
     @Test
-    public void testAdd_Array_None() throws Exception {
+    public void testAdd_Array_None() {
         ArrayList<String> subject = new ArrayList<>(0);
         Assert.assertSame(
                 subject,
@@ -44,44 +45,44 @@ public class CollectionsTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testRemove_null_direct() throws Exception {
+    public void testRemove_null_direct() {
         final TreeSet<String> subject = new TreeSet<>(THREE_STRINGS);
         subject.remove(null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testRemoveAll_null_direct() throws Exception {
+    public void testRemoveAll_null_direct() {
         final Collection<String> subject = new ArrayList<>(asList("a", null, "c"));
         subject.removeAll(new TreeSet<>(THREE_STRINGS));
     }
 
     @Test(expected = NullPointerException.class)
-    public void testRetainAll_null_direct() throws Exception {
+    public void testRetainAll_null_direct() {
         final Collection<String> subject = new ArrayList<>(asList("a", null, "c"));
         subject.retainAll(new TreeSet<>(THREE_STRINGS));
     }
 
     @SuppressWarnings("SuspiciousMethodCalls")
     @Test(expected = ClassCastException.class)
-    public void testRemove_other_direct() throws Exception {
+    public void testRemove_other_direct() {
         final TreeSet<String> subject = new TreeSet<>(THREE_STRINGS);
         subject.remove(5);
     }
 
     @Test(expected = ClassCastException.class)
-    public void testRemoveAll_other_direct() throws Exception {
+    public void testRemoveAll_other_direct() {
         final Collection<Object> subject = new ArrayList<Object>(asList("a", 5, "c"));
         subject.removeAll(new TreeSet<>(THREE_STRINGS));
     }
 
     @Test(expected = ClassCastException.class)
-    public void testRetainAll_other_direct() throws Exception {
+    public void testRetainAll_other_direct() {
         final Collection<Object> subject = new ArrayList<Object>(asList("a", 5, "c"));
         subject.retainAll(new TreeSet<>(THREE_STRINGS));
     }
 
     @Test
-    public void testRemove_null_indirect() throws Exception {
+    public void testRemove_null_indirect() {
         final TreeSet<String> subject = new TreeSet<>(THREE_STRINGS);
         Assert.assertEquals(
                 new TreeSet<>(THREE_STRINGS),
@@ -90,7 +91,7 @@ public class CollectionsTest {
     }
 
     @Test
-    public void testRemoveAll_null_indirect() throws Exception {
+    public void testRemoveAll_null_indirect() {
         final Collection<String> subject = new ArrayList<>(asList("a", null, "c"));
         //noinspection AssertEqualsBetweenInconvertibleTypes
         Assert.assertEquals(
@@ -100,7 +101,7 @@ public class CollectionsTest {
     }
 
     @Test
-    public void testRemove_other_indirect() throws Exception {
+    public void testRemove_other_indirect() {
         final TreeSet<String> subject = new TreeSet<>(THREE_STRINGS);
         Assert.assertEquals(
                 new TreeSet<>(THREE_STRINGS),
@@ -109,7 +110,7 @@ public class CollectionsTest {
     }
 
     @Test
-    public void testRetainAll_null_indirect() throws Exception {
+    public void testRetainAll_null_indirect() {
         final Collection<String> subject = new ArrayList<>(asList("a", null, "c"));
         //noinspection AssertEqualsBetweenInconvertibleTypes
         Assert.assertEquals(
@@ -119,7 +120,7 @@ public class CollectionsTest {
     }
 
     @Test
-    public void testRemoveAll_other_indirect() throws Exception {
+    public void testRemoveAll_other_indirect() {
         final Collection<Object> subject = new ArrayList<Object>(asList("a", 5, "c"));
         //noinspection AssertEqualsBetweenInconvertibleTypes
         Assert.assertEquals(
@@ -129,7 +130,7 @@ public class CollectionsTest {
     }
 
     @Test
-    public void testRetainAll_other_indirect() throws Exception {
+    public void testRetainAll_other_indirect() {
         final Collection<Object> subject = new ArrayList<Object>(asList("a", 5, "c"));
         //noinspection AssertEqualsBetweenInconvertibleTypes
         Assert.assertEquals(
@@ -139,12 +140,28 @@ public class CollectionsTest {
     }
 
     @Test
-    public void testRetainAll_Array_indirect() throws Exception {
+    public void testRetainAll_Array_indirect() {
         final Collection<Object> subject = new ArrayList<Object>(asList("a", 5, "c"));
         //noinspection AssertEqualsBetweenInconvertibleTypes
         Assert.assertEquals(
                 asList("a", "c"),
                 Collections.retainAll(subject, "c", "b", "a")
+        );
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testContains_null_direct() {
+        final Set<String> subject = new TreeSet<>(THREE_STRINGS);
+        Assert.assertTrue(
+                subject.contains(null)
+        );
+    }
+
+    @Test
+    public void testContains_null_indirect() {
+        final Set<String> subject = new TreeSet<>(THREE_STRINGS);
+        Assert.assertFalse(
+                Collections.contains(subject, null)
         );
     }
 }
