@@ -1,67 +1,54 @@
 package net.team33.basics.collections;
 
-import com.google.common.base.Supplier;
-import net.team33.basics.Builder;
-
 import java.util.Collection;
 
-import static java.util.Objects.requireNonNull;
-
 @SuppressWarnings("ReturnOfThis")
-public class Collector<E, R extends Collection<E>, B extends Collector<E, R, B>> implements Builder<R> {
+public abstract class Collector<E, C extends Collector<E, C>> {
 
-    private final Supplier<R> newResult;
-    private final R backing;
+    /**
+     * Supplies the mutable (!) {@link Collection} this instance is backed by. Of course not {@code null}.
+     */
+    protected abstract Collection<E> getBacking();
 
-    public Collector(final Supplier<R> newResult) {
-        this.newResult = requireNonNull(newResult);
-        backing = newResult.get();
-    }
-
-    public final B add(final E element) {
-        Util.add(backing, element);
-        // <this> must be an instance of <B> ...
+    public final C add(final E element) {
+        Util.add(getBacking(), element);
+        // <this> must be an instance of <C> ...
         // noinspection unchecked
-        return (B) this;
+        return (C) this;
     }
 
-    public final B addAll(final Collection<? extends E> elements) {
-        Util.addAll(backing, elements);
-        // <this> must be an instance of <B> ...
+    public final C addAll(final Collection<? extends E> elements) {
+        Util.addAll(getBacking(), elements);
+        // <this> must be an instance of <C> ...
         // noinspection unchecked
-        return (B) this;
+        return (C) this;
     }
 
-    public final B remove(final E element) {
-        Util.remove(backing, element);
-        // <this> must be an instance of <B> ...
+    public final C remove(final E element) {
+        Util.remove(getBacking(), element);
+        // <this> must be an instance of <C> ...
         // noinspection unchecked
-        return (B) this;
+        return (C) this;
     }
 
-    public final B removeAll(final Collection<? extends E> elements) {
-        Util.removeAll(backing, elements);
-        // <this> must be an instance of <B> ...
+    public final C removeAll(final Collection<? extends E> elements) {
+        Util.removeAll(getBacking(), elements);
+        // <this> must be an instance of <C> ...
         // noinspection unchecked
-        return (B) this;
+        return (C) this;
     }
 
-    public final B retainAll(final Collection<? extends E> elements) {
-        Util.retainAll(backing, elements);
-        // <this> must be an instance of <B> ...
+    public final C retainAll(final Collection<? extends E> elements) {
+        Util.retainAll(getBacking(), elements);
+        // <this> must be an instance of <C> ...
         // noinspection unchecked
-        return (B) this;
+        return (C) this;
     }
 
-    public final B clear() {
-        Util.clear(backing);
-        // <this> must be an instance of <B> ...
+    public final C clear() {
+        Util.clear(getBacking());
+        // <this> must be an instance of <C> ...
         // noinspection unchecked
-        return (B) this;
-    }
-
-    @Override
-    public final R build() {
-        return Util.<E, R>addAll(newResult.get(), backing);
+        return (C) this;
     }
 }
