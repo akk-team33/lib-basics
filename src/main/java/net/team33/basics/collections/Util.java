@@ -62,6 +62,18 @@ public final class Util {
     }
 
     /**
+     * Removes any element from a given {@code subject}.
+     *
+     * @return The {@code subject}.
+     * @throws NullPointerException          if {@code subject} is {@code null}.
+     * @throws UnsupportedOperationException if {@link Collection#clear()} is not supported by the {@code subject}.
+     */
+    public static <E, C extends Collection<E>> C clear(final C subject) {
+        subject.clear();
+        return subject;
+    }
+
+    /**
      * Removes an {@code element} from a given {@code subject}.
      * Respectively ensures the {@code subject} not to contain the {@code element}.
      * <p/>

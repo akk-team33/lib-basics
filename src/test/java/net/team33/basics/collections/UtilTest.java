@@ -203,4 +203,12 @@ public class UtilTest {
                 Util.containsAll(new TreeSet<>(THREE_STRINGS), TWO_STRINGS_AND_OTHER)
         );
     }
+
+    @Test
+    public final void testClear() {
+        Assert.assertEquals(
+                new TreeSet<>(NO_STRINGS),
+                Util.clear(new TreeSet<>(THREE_STRINGS))
+        );
+    }
 }
