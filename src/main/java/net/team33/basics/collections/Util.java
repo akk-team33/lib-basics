@@ -1,14 +1,21 @@
 package net.team33.basics.collections;
 
+import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 /**
- * Convenience methods to deal with Collections in addition to {@link java.util.Collections}.
+ * Convenience methods to deal with Collections in addition to {@link Collections}.
  */
-@SuppressWarnings({"ProhibitedExceptionCaught", "OverloadedVarargsMethod", "PublicInnerClass"})
+@SuppressWarnings({"ProhibitedExceptionCaught", "OverloadedVarargsMethod", "PublicInnerClass", "StaticMethodOnlyUsedInOneClass"})
 public final class Util {
     private Util() {
     }
@@ -210,6 +217,15 @@ public final class Util {
     }
 
     /**
+     * Supplies an immutable copy* of an original (probably mutable) {@link Set} keeping its iteration order.
+     * <p/>
+     * *in contrast to {@link Collections#unmodifiableSet(Set)}
+     */
+    public static <E> Set<E> finalCopy(final Set<E> origin) {
+        return new FinalSet<>(origin);
+    }
+
+    /**
      * Variable arguments implementations of some Util-methods
      */
     public static final class Alt {
@@ -237,6 +253,7 @@ public final class Util {
          * @throws IllegalStateException         if the {@code elements} cannot be added at this time due to
          *                                       the {@code subject}'s insertion restrictions (if any).
          */
+        @SafeVarargs
         public static <E, C extends Collection<E>> C add(final C subject, final E... elements) {
             if (1 == elements.length) {
                 return Util.add(subject, elements[0]);
@@ -301,6 +318,79 @@ public final class Util {
             } else {
                 return containsAll(subject, asList(elements));
             }
+        }
+    }
+
+    @SuppressWarnings({"RefusedBequest", "NewExceptionWithoutArguments", "StandardVariableNames"})
+    private static class FinalSet<E> extends AbstractSet<E> {
+        /**
+         * Backed by a {@link List} to preserve iteration order.
+         */
+        private final List<E> backing;
+
+        private FinalSet(final Set<E> origin) {
+            backing = unmodifiableList(new ArrayList<>(origin));
+        }
+
+        @Override
+        public final Iterator<E> iterator() {
+            return backing.iterator();
+        }
+
+        @Override
+        public final int size() {
+            return backing.size();
+        }
+
+        @Override
+        public final boolean isEmpty() {
+            return backing.isEmpty();
+        }
+
+        @Override
+        public final boolean contains(final Object o) {
+            return backing.contains(o);
+        }
+
+        @Override
+        public final boolean containsAll(final Collection<?> c) {
+            return backing.containsAll(c);
+        }
+
+        @Override
+        public final boolean add(final E e) {
+            // fast fail ...
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public final boolean addAll(final Collection<? extends E> c) {
+            // fast fail ...
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public final boolean remove(final Object o) {
+            // fast fail ...
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public final boolean removeAll(final Collection<?> c) {
+            // fast fail ...
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public final boolean retainAll(final Collection<?> c) {
+            // fast fail ...
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public final void clear() {
+            // fast fail ...
+            throw new UnsupportedOperationException();
         }
     }
 }

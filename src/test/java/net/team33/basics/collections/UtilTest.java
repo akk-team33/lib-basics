@@ -5,7 +5,11 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
@@ -23,6 +27,27 @@ public class UtilTest {
     private static final List<?> TWO_STRINGS_AND_OTHER = asList(A, 5, C);
     private static final List<String> NO_STRINGS = emptyList();
     private static final Collection<?> COLLECTION_NULL = null;
+    private static final String HERE = "here";
+    private static final String ARE = "are";
+    private static final String SOME = "some";
+    private static final String SHORT = "short";
+    private static final String STRINGS = "strings";
+    private static final String WITH = "with";
+    private static final String DUPLICATE = "duplicate";
+
+    private static void testFinalCopy(final Set<String> originalSet) {
+
+        final Set<String> finalCopy
+                = Util.finalCopy(originalSet);
+        Assert.assertEquals(
+                originalSet,
+                finalCopy
+        );
+        Assert.assertEquals(
+                new ArrayList<>(originalSet),
+                new ArrayList<>(finalCopy)
+        );
+    }
 
     @Test
     public final void testAltAdd() {
@@ -61,7 +86,6 @@ public class UtilTest {
                 Util.Alt.contains(new TreeSet<>(THREE_STRINGS), A, 5, C)
         );
     }
-
 
     @Test(expected = NullPointerException.class)
     public final void testRemove_null_direct() {
@@ -210,5 +234,31 @@ public class UtilTest {
                 new TreeSet<>(NO_STRINGS),
                 Util.clear(new TreeSet<>(THREE_STRINGS))
         );
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public final void testFinalCopy_Empty_removeAll() {
+        Assert.fail(
+                "should fail but returns <"
+                        + Util.finalCopy(Collections.emptySet()).removeAll(THREE_STRINGS)
+                        + ">"
+        );
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public final void testFinalCopy_notEmpty_removeAll() {
+        Assert.assertTrue(
+                Util.finalCopy(new TreeSet<Object>(THREE_STRINGS)).removeAll(THREE_STRINGS)
+        );
+    }
+
+    @SuppressWarnings("JUnitTestMethodWithNoAssertions")
+    @Test
+    public final void testFinalCopy() {
+        final List<String> originalList
+                = asList(HERE, ARE, SOME, SHORT, STRINGS, WITH, SOME, DUPLICATE, STRINGS);
+        testFinalCopy(new HashSet<>(originalList));
+        testFinalCopy(new LinkedHashSet<>(originalList));
+        testFinalCopy(new TreeSet<>(originalList));
     }
 }

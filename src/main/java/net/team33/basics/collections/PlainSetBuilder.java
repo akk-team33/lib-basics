@@ -30,14 +30,14 @@ public class PlainSetBuilder<E, B extends Set<E>, C extends PlainSetBuilder<E, B
     }
 
     @Override
-    public final Set<E> build() {
-        return unmodifiableSet(Util.addAll(newSet.get(), backing));
-    }
-
-    @Override
     protected final B getBacking() {
         // intended to be mutable ...
         // noinspection ReturnOfCollectionOrArrayField
         return backing;
+    }
+
+    @Override
+    public final Set<E> build() {
+        return unmodifiableSet(Util.addAll(newSet.get(), backing));
     }
 }
