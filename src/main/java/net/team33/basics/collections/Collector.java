@@ -1,9 +1,11 @@
 package net.team33.basics.collections;
 
+import net.team33.basics.Builder;
+
 import java.util.Collection;
 
 @SuppressWarnings("ReturnOfThis")
-public abstract class Collector<E, C extends Collector<E, C>> {
+public abstract class Collector<E, R extends Collection<E>, C extends Collector<E, R, C>> implements Builder<R> {
 
     /**
      * Supplies the mutable (!) {@link Collection} this instance is backed by. Of course not {@code null}.

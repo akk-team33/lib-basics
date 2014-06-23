@@ -4,7 +4,7 @@ import com.google.common.base.Supplier;
 
 import java.util.HashSet;
 
-public class HashSetBuilder<E> extends SetBuilder<E, HashSet<E>, HashSetBuilder<E>> {
+public class HashSetBuilder<E> extends PlainSetBuilder<E, HashSet<E>, HashSetBuilder<E>> {
 
     private HashSetBuilder() {
         super(new SetSupplier<E>());

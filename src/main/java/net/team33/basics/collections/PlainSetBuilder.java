@@ -18,13 +18,13 @@ import static java.util.Objects.requireNonNull;
  * @param <B> The specific type of {@link Set} the instance itself and the {@link #build() final result} is backed by.
  * @param <C> The type of the 'final' implementation.
  */
-public class SetBuilder<E, B extends Set<E>, C extends SetBuilder<E, B, C>>
-        extends Collector<E, C> implements Builder<Set<E>> {
+public class PlainSetBuilder<E, B extends Set<E>, C extends PlainSetBuilder<E, B, C>>
+        extends Collector<E, Set<E>, C> {
 
     private final Supplier<B> newSet;
     private final B backing;
 
-    public SetBuilder(final Supplier<B> newSet) {
+    public PlainSetBuilder(final Supplier<B> newSet) {
         this.newSet = requireNonNull(newSet);
         backing = newSet.get();
     }

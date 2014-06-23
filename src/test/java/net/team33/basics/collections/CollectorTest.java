@@ -1,6 +1,5 @@
 package net.team33.basics.collections;
 
-import net.team33.basics.Builder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -86,7 +85,7 @@ public class CollectorTest {
         );
     }
 
-    private static class Subject<E> extends Collector<E, Subject<E>> implements Builder<Set<E>> {
+    private static class Subject<E> extends Collector<E, Set<E>, Subject<E>> {
         private final Set<E> backing = new HashSet<>(0);
 
         @Override

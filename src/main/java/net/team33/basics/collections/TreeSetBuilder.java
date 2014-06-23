@@ -7,7 +7,7 @@ import java.util.TreeSet;
 
 import static java.util.Objects.requireNonNull;
 
-public class TreeSetBuilder<E> extends SetBuilder<E, TreeSet<E>, TreeSetBuilder<E>> {
+public class TreeSetBuilder<E> extends SortedSetBuilder<E, TreeSet<E>, TreeSetBuilder<E>> {
 
     private TreeSetBuilder(final Comparator<? super E> order) {
         super(new SetSupplier<>(order));
