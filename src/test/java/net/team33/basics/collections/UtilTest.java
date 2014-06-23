@@ -1,4 +1,4 @@
-package net.team33.basics;
+package net.team33.basics.collections;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,7 +11,7 @@ import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
 
-public class CollectionsTest {
+public class UtilTest {
 
     private static final List<String> THREE_STRINGS = asList("c", "b", "a");
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -22,7 +22,7 @@ public class CollectionsTest {
         ArrayList<String> subject = new ArrayList<>(0);
         Assert.assertSame(
                 subject,
-                Collections.addAll(subject, "a", "b", "c")
+                Util.addAll(subject, "a", "b", "c")
         );
     }
 
@@ -31,7 +31,7 @@ public class CollectionsTest {
         ArrayList<String> subject = new ArrayList<>(0);
         Assert.assertSame(
                 subject,
-                Collections.addAll(subject, SINGLE_STRING_ARRAY)
+                Util.addAll(subject, SINGLE_STRING_ARRAY)
         );
     }
 
@@ -40,7 +40,7 @@ public class CollectionsTest {
         ArrayList<String> subject = new ArrayList<>(0);
         Assert.assertSame(
                 subject,
-                Collections.addAll(subject, EMPTY_STRING_ARRAY)
+                Util.addAll(subject, EMPTY_STRING_ARRAY)
         );
     }
 
@@ -86,7 +86,7 @@ public class CollectionsTest {
         final TreeSet<String> subject = new TreeSet<>(THREE_STRINGS);
         Assert.assertEquals(
                 new TreeSet<>(THREE_STRINGS),
-                Collections.remove(subject, null)
+                Util.remove(subject, null)
         );
     }
 
@@ -96,7 +96,7 @@ public class CollectionsTest {
         //noinspection AssertEqualsBetweenInconvertibleTypes
         Assert.assertEquals(
                 java.util.Collections.singletonList(null),
-                Collections.removeAll(subject, new TreeSet<>(THREE_STRINGS))
+                Util.removeAll(subject, new TreeSet<>(THREE_STRINGS))
         );
     }
 
@@ -105,7 +105,7 @@ public class CollectionsTest {
         final TreeSet<String> subject = new TreeSet<>(THREE_STRINGS);
         Assert.assertEquals(
                 new TreeSet<>(THREE_STRINGS),
-                Collections.removeAll(subject, 5)
+                Util.removeAll(subject, 5)
         );
     }
 
@@ -115,7 +115,7 @@ public class CollectionsTest {
         //noinspection AssertEqualsBetweenInconvertibleTypes
         Assert.assertEquals(
                 asList("a", "c"),
-                Collections.retainAll(subject, new TreeSet<>(THREE_STRINGS))
+                Util.retainAll(subject, new TreeSet<>(THREE_STRINGS))
         );
     }
 
@@ -125,7 +125,7 @@ public class CollectionsTest {
         //noinspection AssertEqualsBetweenInconvertibleTypes
         Assert.assertEquals(
                 java.util.Collections.singletonList(5),
-                Collections.removeAll(subject, new TreeSet<>(THREE_STRINGS))
+                Util.removeAll(subject, new TreeSet<>(THREE_STRINGS))
         );
     }
 
@@ -135,7 +135,7 @@ public class CollectionsTest {
         //noinspection AssertEqualsBetweenInconvertibleTypes
         Assert.assertEquals(
                 asList("a", "c"),
-                Collections.retainAll(subject, new TreeSet<>(THREE_STRINGS))
+                Util.retainAll(subject, new TreeSet<>(THREE_STRINGS))
         );
     }
 
@@ -145,7 +145,7 @@ public class CollectionsTest {
         //noinspection AssertEqualsBetweenInconvertibleTypes
         Assert.assertEquals(
                 asList("a", "c"),
-                Collections.retainAll(subject, "c", "b", "a")
+                Util.retainAll(subject, "c", "b", "a")
         );
     }
 
@@ -161,7 +161,7 @@ public class CollectionsTest {
     public void testContains_null_indirect() {
         final Set<String> subject = new TreeSet<>(THREE_STRINGS);
         Assert.assertFalse(
-                Collections.contains(subject, null)
+                Util.contains(subject, null)
         );
     }
 }

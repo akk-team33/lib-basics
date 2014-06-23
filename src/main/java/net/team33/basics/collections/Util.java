@@ -1,4 +1,4 @@
-package net.team33.basics;
+package net.team33.basics.collections;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -7,8 +7,8 @@ import java.util.HashSet;
 /**
  * Convenience methods to deal with Collections in addition to {@link java.util.Collections}.
  */
-public final class Collections {
-    private Collections() {
+public final class Util {
+    private Util() {
     }
 
     /**
