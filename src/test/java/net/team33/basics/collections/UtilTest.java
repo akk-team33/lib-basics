@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.TreeSet;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.EnumSet.allOf;
 
 @SuppressWarnings("ClassWithTooManyMethods")
 public class UtilTest {
@@ -34,17 +36,35 @@ public class UtilTest {
     private static final String STRINGS = "strings";
     private static final String WITH = "with";
     private static final String DUPLICATE = "duplicate";
+    private static final String SHOULD_FAIL_BUT_RETURNS = "should fail but returns <%s>";
 
-    private static void testFinalCopy(final Set<String> originalSet) {
+    private static <E> void testFinalCopy(final List<E> originalList) {
+        testFinalCopy(originalList, Util.finalCopy(originalList));
+    }
 
-        final Set<String> finalCopy
-                = Util.finalCopy(originalSet);
+    private static <E extends Enum<E>> void testFinalCopy(final EnumSet<E> originalSet) {
+        testFinalCopy(originalSet, Util.finalCopy(originalSet));
+    }
+
+    private static <E> void testFinalCopy(final Set<E> originalSet) {
+        testFinalCopy(originalSet, Util.finalCopy(originalSet));
+    }
+
+    private static <E> void testFinalList(final Collection<E> original) {
+        testFinalCopy(new ArrayList<>(original), Util.finalList(original));
+    }
+
+    private static <E> void testFinalSet(final Collection<E> original) {
+        testFinalCopy(new LinkedHashSet<>(original), Util.finalSet(original));
+    }
+
+    private static <E, C extends Collection<E>> void testFinalCopy(final C original, final C finalCopy) {
         Assert.assertEquals(
-                originalSet,
+                original,
                 finalCopy
         );
         Assert.assertEquals(
-                new ArrayList<>(originalSet),
+                new ArrayList<>(original),
                 new ArrayList<>(finalCopy)
         );
     }
@@ -239,9 +259,9 @@ public class UtilTest {
     @Test(expected = UnsupportedOperationException.class)
     public final void testFinalCopy_Empty_removeAll() {
         Assert.fail(
-                "should fail but returns <"
-                        + Util.finalCopy(Collections.emptySet()).removeAll(THREE_STRINGS)
-                        + ">"
+                String.format(
+                        SHOULD_FAIL_BUT_RETURNS,
+                        Util.finalCopy(Collections.emptySet()).removeAll(THREE_STRINGS))
         );
     }
 
@@ -257,8 +277,28 @@ public class UtilTest {
     public final void testFinalCopy() {
         final List<String> originalList
                 = asList(HERE, ARE, SOME, SHORT, STRINGS, WITH, SOME, DUPLICATE, STRINGS);
+
         testFinalCopy(new HashSet<>(originalList));
         testFinalCopy(new LinkedHashSet<>(originalList));
         testFinalCopy(new TreeSet<>(originalList));
+        testFinalCopy(allOf(AnEnum.class));
+        testFinalCopy(asList(A, B, null, C, B, C));
+
+        testFinalList(new HashSet<>(originalList));
+        testFinalList(new LinkedHashSet<>(originalList));
+        testFinalList(new TreeSet<>(originalList));
+        testFinalList(allOf(AnEnum.class));
+        testFinalList(asList(A, B, null, C, B, C));
+
+        testFinalSet(new HashSet<>(originalList));
+        testFinalSet(new LinkedHashSet<>(originalList));
+        testFinalSet(new TreeSet<>(originalList));
+        testFinalSet(allOf(AnEnum.class));
+        testFinalSet(asList(A, B, null, C, B, C));
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    private enum AnEnum {
+        ABC, DEF, GHI
     }
 }

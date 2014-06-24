@@ -2,7 +2,7 @@ package net.team33.basics.collections;
 
 import java.util.EnumSet;
 
-public class EnumSetBuilder<E extends Enum<E>> extends PlainSetBuilder<E, EnumSet<E>, EnumSetBuilder<E>> {
+public class EnumSetBuilder<E extends Enum<E>> extends SetBuilder<E, EnumSet<E>, EnumSetBuilder<E>> {
 
     private EnumSetBuilder(final Class<E> enumClass) {
         super(EnumSet.noneOf(enumClass));

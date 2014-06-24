@@ -14,10 +14,10 @@ import java.util.Set;
  * @param <B> The specific type of {@link Set} the instance itself is backed by.
  * @param <C> The type of the 'final' implementation.
  */
-public class PlainSetBuilder<E, B extends Set<E>, C extends PlainSetBuilder<E, B, C>>
-        extends Collector<E, B, Set<E>, C> {
+public class SetBuilder<E, B extends Set<E>, C extends SetBuilder<E, B, C>>
+        extends Collector.Base<E, B, Set<E>, C> {
 
-    protected PlainSetBuilder(final B backing) {
+    protected SetBuilder(final B backing) {
         super(backing);
     }
 

@@ -3,7 +3,7 @@ package net.team33.basics.collections;
 import java.util.Comparator;
 import java.util.TreeSet;
 
-public class TreeSetBuilder<E> extends PlainSetBuilder<E, TreeSet<E>, TreeSetBuilder<E>> {
+public class TreeSetBuilder<E> extends SetBuilder<E, TreeSet<E>, TreeSetBuilder<E>> {
 
     private TreeSetBuilder(final Comparator<? super E> order) {
         super(new TreeSet<E>(order));

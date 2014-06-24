@@ -117,14 +117,14 @@ public class CollectorTest {
         );
     }
 
-    private static class Subject<E> extends Collector<E, Set<E>, Set<E>, Subject<E>> {
+    private static class Subject<E> extends Collector.Base<E, HashSet<E>, Set<E>, Subject<E>> {
         private Subject() {
             super(new HashSet<E>(0));
         }
 
         @Override
         public final Set<E> build() {
-            return new HashSet<>(backing);
+            return Util.finalCopy(backing);
         }
     }
 }
