@@ -1,5 +1,6 @@
 package net.team33.basics.collections;
 
+import java.util.AbstractCollection;
 import java.util.AbstractList;
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -223,33 +224,33 @@ public final class Util {
     }
 
     /**
-     * Supplies an immutable copy* of an original (probably mutable) {@link Set} keeping its iteration order.
+     * Supplies an immutable {@link List} as a copy* of an original (probably mutable) {@link Collection}
+     * keeping its iteration order.
      * <p/>
-     * *in contrast to {@link Collections#unmodifiableSet(Set)}
+     * If the {@code origin} is a {@link List}, the result will {@linkplain List#equals(Object) equal} with it.
+     * <p/>
+     * *in contrast to {@link Collections#unmodifiableCollection(Collection)}
      */
     public static <E> List<E> finalList(final Collection<? extends E> origin) {
         //noinspection rawtypes, unchecked
         return (origin instanceof List<?>) ? finalCopy((List) origin) : finalCopy(new ArrayList<>(origin));
     }
 
+    /**
+     * Supplies an immutable {@link Set} as a copy* of an original (probably mutable) {@link Collection}
+     * keeping its iteration order.
+     * <p/>
+     * If the {@code origin} is a {@link Set}, the result will {@linkplain Set#equals(Object) equal} with it.
+     * <p/>
+     * *in contrast to {@link Collections#unmodifiableCollection(Collection)}
+     */
     public static <E> Set<E> finalSet(final Collection<? extends E> origin) {
-        //noinspection IfStatementWithTooManyBranches,ChainOfInstanceofChecks
-        if (origin instanceof EnumSet) {
-            //noinspection rawtypes, unchecked
-            return finalCopy((EnumSet) origin);
-        } else if (origin instanceof SortedSet) {
-            //noinspection rawtypes, unchecked
-            return finalCopy((SortedSet) origin);
-        } else if (origin instanceof Set) {
-            //noinspection rawtypes, unchecked
-            return finalCopy((Set) origin);
-        } else {
-            return finalCopy(new LinkedHashSet<>(origin));
-        }
+        //noinspection unchecked
+        return (origin instanceof Set) ? finalCopy((Set<E>) origin) : finalCopy(new LinkedHashSet<>(origin));
     }
 
     /**
-     * Supplies an immutable copy* of an original (probably mutable) {@link Set} keeping its iteration order.
+     * Supplies an immutable copy* of an original (probably mutable) {@link List} keeping its iteration order.
      * <p/>
      * *in contrast to {@link Collections#unmodifiableSet(Set)}
      */
@@ -263,7 +264,18 @@ public final class Util {
      * *in contrast to {@link Collections#unmodifiableSet(Set)}
      */
     public static <E> Set<E> finalCopy(final Set<E> origin) {
-        return new FinalSet<>(origin);
+        //noinspection ChainOfInstanceofChecks
+        if (origin instanceof EnumSet) {
+            //noinspection unchecked,rawtypes
+            return finalCopy((EnumSet) origin);
+
+        } else if (origin instanceof SortedSet) {
+            //noinspection unchecked,rawtypes
+            return finalCopy((SortedSet) origin);
+
+        } else {
+            return new FinalPlainSet<>(origin);
+        }
     }
 
     /**
@@ -381,143 +393,12 @@ public final class Util {
         }
     }
 
-    @SuppressWarnings({"RefusedBequest", "NewExceptionWithoutArguments", "StandardVariableNames", "ClassWithTooManyMethods"})
-    private static class FinalList<E> extends AbstractList<E> {
-        @SuppressWarnings("ProtectedField")
-        private final List<E> backing;
-
-        private FinalList(final List<E> origin) {
-            backing = new ArrayList<>(origin);
-        }
-
-        @Override
-        public final Iterator<E> iterator() {
-            return new FinalIterator<>(backing.iterator());
-        }
-
-        @Override
-        public final ListIterator<E> listIterator() {
-            return new FinalListIterator<>(backing.listIterator());
-        }
-
-        @Override
-        public final ListIterator<E> listIterator(final int index) {
-            return new FinalListIterator<>(backing.listIterator(index));
-        }
-
-        @Override
-        public final List<E> subList(final int fromIndex, final int toIndex) {
-            return new FinalList<>(backing.subList(fromIndex, toIndex));
-        }
-
-        @Override
-        protected final void removeRange(final int fromIndex, final int toIndex) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final int size() {
-            return backing.size();
-        }
-
-        @Override
-        public final boolean isEmpty() {
-            return backing.isEmpty();
-        }
-
-        @Override
-        public final boolean contains(final Object o) {
-            return backing.contains(o);
-        }
-
-        @Override
-        public final boolean containsAll(final Collection<?> c) {
-            return backing.containsAll(c);
-        }
-
-        @Override
-        public final E get(final int index) {
-            return backing.get(index);
-        }
-
-        @Override
-        public final int indexOf(final Object o) {
-            return backing.indexOf(o);
-        }
-
-        @Override
-        public final int lastIndexOf(final Object o) {
-            return backing.lastIndexOf(o);
-        }
-
-        @Override
-        public final E set(final int index, final E element) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final void add(final int index, final E element) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final E remove(final int index) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final boolean add(final E e) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final boolean addAll(final Collection<? extends E> c) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final boolean remove(final Object o) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final boolean removeAll(final Collection<?> c) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final boolean retainAll(final Collection<?> c) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final void clear() {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final boolean addAll(final int index, final Collection<? extends E> c) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-    }
-
     @SuppressWarnings({"RefusedBequest", "StandardVariableNames", "NewExceptionWithoutArguments"})
-    private abstract static class FinalSetBase<E, B extends Collection<E>> extends AbstractSet<E> {
+    private abstract static class FinalCollection<E, B extends Collection<E>> extends AbstractCollection<E> {
         @SuppressWarnings("ProtectedField")
         protected final B backing;
 
-        private FinalSetBase(final B backing) {
+        private FinalCollection(final B backing) {
             this.backing = backing;
         }
 
@@ -584,21 +465,147 @@ public final class Util {
     }
 
     @SuppressWarnings({"RefusedBequest", "NewExceptionWithoutArguments", "StandardVariableNames"})
-    private static class FinalSet<E> extends FinalSetBase<E, ArrayList<E>> {
-        private FinalSet(final Set<E> origin) {
+    private static class FinalList<E> extends FinalCollection<E, List<E>> implements List<E> {
+
+        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+        private final AbstractList<E> equals = new Equals();
+
+        private FinalList(final List<E> origin) {
+            super(new ArrayList<>(origin));
+        }
+
+        @Override
+        public final ListIterator<E> listIterator() {
+            return new FinalListIterator<>(backing.listIterator());
+        }
+
+        @Override
+        public final ListIterator<E> listIterator(final int index) {
+            return new FinalListIterator<>(backing.listIterator(index));
+        }
+
+        @Override
+        public final List<E> subList(final int fromIndex, final int toIndex) {
+            return new FinalList<>(backing.subList(fromIndex, toIndex));
+        }
+
+        @Override
+        public final E get(final int index) {
+            return backing.get(index);
+        }
+
+        @Override
+        public final int indexOf(final Object o) {
+            return backing.indexOf(o);
+        }
+
+        @Override
+        public final int lastIndexOf(final Object o) {
+            return backing.lastIndexOf(o);
+        }
+
+        @Override
+        public final E set(final int index, final E element) {
+            // fast fail ...
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public final void add(final int index, final E element) {
+            // fast fail ...
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public final E remove(final int index) {
+            // fast fail ...
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public final boolean addAll(final int index, final Collection<? extends E> c) {
+            // fast fail ...
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public final int hashCode() {
+            return equals.hashCode();
+        }
+
+        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+        @Override
+        public final boolean equals(final Object obj) {
+            return equals.equals(obj);
+        }
+
+        @SuppressWarnings({"InnerClassTooDeeplyNested", "NonStaticInnerClassInSecureContext"})
+        private class Equals extends AbstractList<E> {
+            @Override
+            public final E get(final int index) {
+                return backing.get(index);
+            }
+
+            @Override
+            public final int size() {
+                return backing.size();
+            }
+        }
+    }
+
+    @SuppressWarnings({"RefusedBequest", "StandardVariableNames", "NewExceptionWithoutArguments"})
+    private abstract static class FinalSet<E, B extends Collection<E>>
+            extends FinalCollection<E, B>
+            implements Set<E> {
+
+        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+        private final AbstractSet<E> equals = new Equals();
+
+        private FinalSet(final B backing) {
+            super(backing);
+        }
+
+        @Override
+        public final int hashCode() {
+            return equals.hashCode();
+        }
+
+        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+        @Override
+        public final boolean equals(final Object obj) {
+            return equals.equals(obj);
+        }
+
+        @SuppressWarnings({"InnerClassTooDeeplyNested", "NonStaticInnerClassInSecureContext"})
+        private class Equals extends AbstractSet<E> {
+            @Override
+            public final Iterator<E> iterator() {
+                return backing.iterator();
+            }
+
+            @Override
+            public final int size() {
+                return backing.size();
+            }
+        }
+    }
+
+    @SuppressWarnings({"RefusedBequest", "NewExceptionWithoutArguments", "StandardVariableNames"})
+    private static class FinalPlainSet<E> extends FinalSet<E, ArrayList<E>> {
+        private FinalPlainSet(final Set<E> origin) {
             super(new ArrayList<>(origin));
         }
     }
 
     @SuppressWarnings({"RefusedBequest", "NewExceptionWithoutArguments", "StandardVariableNames"})
-    private static class FinalEnumSet<E extends Enum<E>> extends FinalSetBase<E, EnumSet<E>> {
+    private static class FinalEnumSet<E extends Enum<E>> extends FinalSet<E, EnumSet<E>> {
         private FinalEnumSet(final EnumSet<E> origin) {
             super(EnumSet.copyOf(origin));
         }
     }
 
     @SuppressWarnings({"RefusedBequest", "NewExceptionWithoutArguments", "StandardVariableNames"})
-    private static class FinalSortedSet<E> extends FinalSetBase<E, TreeSet<E>> implements SortedSet<E> {
+    private static class FinalSortedSet<E> extends FinalSet<E, TreeSet<E>> implements SortedSet<E> {
         private FinalSortedSet(final SortedSet<E> origin) {
             super(new TreeSet<>(origin));
         }
