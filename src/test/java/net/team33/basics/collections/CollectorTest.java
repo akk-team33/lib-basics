@@ -42,6 +42,16 @@ public class CollectorTest {
     }
 
     @Test
+    public final void testAddAlt() {
+        Assert.assertEquals(
+                new HashSet<>(asList(INT_278, INT_279, INT_280)),
+                subject()
+                        .alt.add(INT_278, INT_279, INT_280)
+                        .build()
+        );
+    }
+
+    @Test
     public final void testRemove() {
         Assert.assertEquals(
                 singleton(INT_279),
@@ -64,12 +74,34 @@ public class CollectorTest {
     }
 
     @Test
+    public final void testRemoveAlt() {
+        Assert.assertEquals(
+                singleton(INT_280),
+                subject()
+                        .alt.add(INT_278, INT_279, INT_280)
+                        .alt.remove(INT_278, INT_279)
+                        .build()
+        );
+    }
+
+    @Test
     public final void testRetainAll() {
         Assert.assertEquals(
                 new HashSet<>(asList(INT_278, INT_279)),
                 subject()
                         .addAll(asList(INT_278, INT_279, INT_280))
                         .retainAll(asList(INT_278, INT_279))
+                        .build()
+        );
+    }
+
+    @Test
+    public final void testRetainAlt() {
+        Assert.assertEquals(
+                new HashSet<>(asList(INT_278, INT_279)),
+                subject()
+                        .alt.add(INT_278, INT_279, INT_280)
+                        .alt.retain(INT_278, INT_279)
                         .build()
         );
     }
@@ -85,14 +117,9 @@ public class CollectorTest {
         );
     }
 
-    private static class Subject<E> extends Collector<E, Set<E>, Subject<E>> {
-        private final Set<E> backing = new HashSet<>(0);
-
-        @Override
-        protected final Set<E> getBacking() {
-            // intended to be mutable ...
-            // noinspection ReturnOfCollectionOrArrayField
-            return backing;
+    private static class Subject<E> extends Collector<E, Set<E>, Set<E>, Subject<E>> {
+        private Subject() {
+            super(new HashSet<E>(0));
         }
 
         @Override
