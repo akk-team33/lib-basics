@@ -1,115 +1,179 @@
 package net.team33.basics.collections;
 
-import net.team33.basics.Builder;
-
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
 
 /**
- * Abstracts a {@link Builder} for {@link Collection}s.
+ * An instrument to initialize collections in a declarative or iterative way.
  * <p/>
- * Must not be derived directly but through {@link Collector.Base}
+ * May be extended to a {@link net.team33.basics.Builder}.
  *
  * @param <E> The element type of the {@link Collection} to be built.
- * @param <R> The result type of the {@link Builder}.
- * @param <C> The 'final' type of the Collector implementation.
+ * @param <C> The type of the {@link Collection} to be built.
+ * @param <R> The 'final' type of the Collector implementation.
  */
-@SuppressWarnings("ReturnOfThis")
-public abstract class Collector<E, R extends Collection<E>, C extends Collector<E, R, C>>
-        implements Builder<R> {
+@SuppressWarnings({"ReturnOfThis", "UnusedDeclaration"})
+public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>> {
 
     /**
      * Provides alternative access methods
      */
     @SuppressWarnings("PublicField")
     public final Alt alt = new Alt();
+    private final C subject;
 
-    /**
-     * Must not be derived directly but through {@link Base}
-     */
-    private Collector() {
+    protected Collector(final C subject) {
+        // belongs to <this> and is intended to remain mutable ...
+        // noinspection AssignmentToCollectionOrArrayFieldFromParameter
+        this.subject = subject;
     }
 
-    public abstract C add(E element);
+    public static <E> Collector<E, HashSet<E>, ?> hashSet() {
+        return new HashCollector<>(Collections.<E>emptySet());
+    }
 
-    public abstract C addAll(Collection<? extends E> elements);
+    public static <E> Collector<E, HashSet<E>, ?> hashSet(final Collection<? extends E> origin) {
+        return new HashCollector<>(origin);
+    }
 
-    public abstract C remove(E element);
+    public static <E> Collector<E, LinkedHashSet<E>, ?> linkedHashSet() {
+        return new LinkedHashCollector<>(Collections.<E>emptySet());
+    }
 
-    public abstract C removeAll(Collection<? extends E> elements);
+    public static <E> Collector<E, LinkedHashSet<E>, ?> linkedHashSet(final Collection<? extends E> origin) {
+        return new LinkedHashCollector<>(origin);
+    }
 
-    public abstract C retainAll(Collection<? extends E> elements);
+    public static <E> Collector<E, TreeSet<E>, ?> treeSet(final Comparator<? super E> order) {
+        return new TreeCollector<>(order);
+    }
 
-    public abstract C clear();
+    public static <E> Collector<E, TreeSet<E>, ?> treeSet(final Collection<? extends E> origin) {
+        return new TreeCollector<>(origin);
+    }
 
-    /**
-     * Basic {@link Collector} implementation.
-     *
-     * @param <E> The element type of the {@link Collection} to be built.
-     * @param <B> The specific type of {@link Collection} the instance itself is backed by.
-     * @param <R> The result type of the {@link Builder}.
-     * @param <C> The 'final' type of the Collector implementation.
-     */
-    @SuppressWarnings({"ReturnOfThis", "PublicInnerClass"})
-    public abstract static class Base<E, B extends Collection<E>, R extends Collection<E>, C extends Base<E, B, R, C>>
-            extends Collector<E, R, C> {
+    public static <E extends Enum<E>> Collector<E, EnumSet<E>, ?> enumSet(final Class<E> enumClass) {
+        return new EnumCollector<>(enumClass);
+    }
 
-        @SuppressWarnings("ProtectedField")
-        protected final B backing;
+    public static <E extends Enum<E>> Collector<E, EnumSet<E>, ?> enumSet(final Collection<E> origin) {
+        return new EnumCollector<>(origin);
+    }
 
-        protected Base(final B backing) {
-            // belongs to <this> and is intended to remain mutable ...
-            // noinspection AssignmentToCollectionOrArrayFieldFromParameter
-            this.backing = backing;
+    public static <E> Collector<E, ArrayList<E>, ?> arrayList() {
+        return new ArrayCollector<>(Collections.<E>emptyList());
+    }
+
+    public static <E> Collector<E, ArrayList<E>, ?> arrayList(final Collection<? extends E> origin) {
+        return new ArrayCollector<>(origin);
+    }
+
+    public static <E> Collector<E, LinkedList<E>, ?> linkedList() {
+        return new LinkedCollector<>(Collections.<E>emptyList());
+    }
+
+    public static <E> Collector<E, LinkedList<E>, ?> linkedList(final Collection<? extends E> origin) {
+        return new LinkedCollector<>(origin);
+    }
+
+    public final C getSubject() {
+        // Intended to supply the mutable instance to deal with ...
+        // noinspection ReturnOfCollectionOrArrayField
+        return subject;
+    }
+
+    public final R add(final E element) {
+        Util.add(subject, element);
+        // <this> is expected to be an instance of <R> ...
+        // noinspection unchecked
+        return (R) this;
+    }
+
+    public final R addAll(final Collection<? extends E> elements) {
+        Util.addAll(subject, elements);
+        // <this> is expected to be an instance of <R> ...
+        // noinspection unchecked
+        return (R) this;
+    }
+
+    public final R remove(final E element) {
+        Util.remove(subject, element);
+        // <this> is expected to be an instance of <R> ...
+        // noinspection unchecked
+        return (R) this;
+    }
+
+    public final R removeAll(final Collection<? extends E> elements) {
+        Util.removeAll(subject, elements);
+        // <this> is expected to be an instance of <R> ...
+        // noinspection unchecked
+        return (R) this;
+    }
+
+    public final R retainAll(final Collection<? extends E> elements) {
+        Util.retainAll(subject, elements);
+        // <this> is expected to be an instance of <R> ...
+        // noinspection unchecked
+        return (R) this;
+    }
+
+    public final R clear() {
+        Util.clear(subject);
+        // <this> is expected to be an instance of <R> ...
+        // noinspection unchecked
+        return (R) this;
+    }
+
+    private static class HashCollector<E> extends Collector<E, HashSet<E>, HashCollector<E>> {
+        private HashCollector(final Collection<? extends E> origin) {
+            super(new HashSet<>(origin));
+        }
+    }
+
+    private static class LinkedHashCollector<E> extends Collector<E, LinkedHashSet<E>, LinkedHashCollector<E>> {
+        private LinkedHashCollector(final Collection<? extends E> origin) {
+            super(new LinkedHashSet<>(origin));
+        }
+    }
+
+    private static class TreeCollector<E> extends Collector<E, TreeSet<E>, TreeCollector<E>> {
+        private TreeCollector(final Collection<? extends E> origin) {
+            super(new TreeSet<>(origin));
         }
 
-        @Override
-        public final C add(final E element) {
-            Util.add(backing, element);
-            // <this> is expected to be an instance of <C> ...
-            // noinspection unchecked
-            return (C) this;
+        private TreeCollector(final Comparator<? super E> order) {
+            super(new TreeSet<>(order));
+        }
+    }
+
+    private static class EnumCollector<E extends Enum<E>> extends Collector<E, EnumSet<E>, EnumCollector<E>> {
+        private EnumCollector(final Collection<E> origin) {
+            super(EnumSet.copyOf(origin));
         }
 
-        @Override
-        public final C addAll(final Collection<? extends E> elements) {
-            Util.addAll(backing, elements);
-            // <this> is expected to be an instance of <C> ...
-            // noinspection unchecked
-            return (C) this;
+        private EnumCollector(final Class<E> enumClass) {
+            super(EnumSet.noneOf(enumClass));
         }
+    }
 
-        @Override
-        public final C remove(final E element) {
-            Util.remove(backing, element);
-            // <this> is expected to be an instance of <C> ...
-            // noinspection unchecked
-            return (C) this;
+    private static class ArrayCollector<E> extends Collector<E, ArrayList<E>, ArrayCollector<E>> {
+        private ArrayCollector(final Collection<? extends E> origin) {
+            super(new ArrayList<>(origin));
         }
+    }
 
-        @Override
-        public final C removeAll(final Collection<? extends E> elements) {
-            Util.removeAll(backing, elements);
-            // <this> is expected to be an instance of <C> ...
-            // noinspection unchecked
-            return (C) this;
-        }
-
-        @Override
-        public final C retainAll(final Collection<? extends E> elements) {
-            Util.retainAll(backing, elements);
-            // <this> is expected to be an instance of <C> ...
-            // noinspection unchecked
-            return (C) this;
-        }
-
-        @Override
-        public final C clear() {
-            Util.clear(backing);
-            // <this> is expected to be an instance of <C> ...
-            // noinspection unchecked
-            return (C) this;
+    private static class LinkedCollector<E> extends Collector<E, LinkedList<E>, LinkedCollector<E>> {
+        private LinkedCollector(final Collection<? extends E> origin) {
+            super(new LinkedList<>(origin));
         }
     }
 
@@ -122,17 +186,17 @@ public abstract class Collector<E, R extends Collection<E>, C extends Collector<
         }
 
         @SafeVarargs
-        public final C add(final E... elements) {
+        public final R add(final E... elements) {
             return addAll(asList(elements));
         }
 
         @SafeVarargs
-        public final C remove(final E... elements) {
+        public final R remove(final E... elements) {
             return removeAll(asList(elements));
         }
 
         @SafeVarargs
-        public final C retain(final E... elements) {
+        public final R retain(final E... elements) {
             return retainAll(asList(elements));
         }
     }

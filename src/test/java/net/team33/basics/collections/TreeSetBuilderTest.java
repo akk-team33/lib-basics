@@ -15,7 +15,7 @@ public class TreeSetBuilderTest {
     public final void testEmpty() {
         Assert.assertEquals(
                 Collections.emptySet(),
-                TreeSetBuilder.empty(DUMMY).build()
+                Collector.treeSet((Comparator<String>) null).getSubject()
         );
     }
 

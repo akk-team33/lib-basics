@@ -11,7 +11,7 @@ public class HashSetBuilderTest {
     public final void testEmpty() {
         Assert.assertEquals(
                 Collections.emptySet(),
-                HashSetBuilder.empty().build()
+                Collector.hashSet().getSubject()
         );
     }
 }

@@ -11,7 +11,8 @@ public class LinkedHashSetBuilderTest {
     public final void testEmpty() {
         Assert.assertEquals(
                 Collections.emptySet(),
-                LinkedHashSetBuilder.empty().build()
+                Collector.linkedHashSet()
+                        .getSubject()
         );
     }
 }
