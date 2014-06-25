@@ -2,7 +2,6 @@ package net.team33.basics.collections;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -21,7 +20,7 @@ import static java.util.Arrays.asList;
  * @param <C> The type of the {@link Collection} to be built.
  * @param <R> The 'final' type of the Collector implementation.
  */
-@SuppressWarnings({"ReturnOfThis", "UnusedDeclaration"})
+@SuppressWarnings({"ReturnOfThis", "UnusedDeclaration", "ClassReferencesSubclass", "StaticMethodOnlyUsedInOneClass"})
 public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>> {
 
     /**
@@ -37,52 +36,52 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
         this.subject = subject;
     }
 
-    public static <E> Collector<E, HashSet<E>, ?> hashSet() {
-        return new HashCollector<>(Collections.<E>emptySet());
+    public static <E> Set<E> hashSet() {
+        return new Set<>(new HashSet<E>(0));
     }
 
-    public static <E> Collector<E, HashSet<E>, ?> hashSet(final Collection<? extends E> origin) {
-        return new HashCollector<>(origin);
+    public static <E> Set<E> hashSet(final Collection<? extends E> origin) {
+        return new Set<>(new HashSet<>(origin));
     }
 
-    public static <E> Collector<E, LinkedHashSet<E>, ?> linkedHashSet() {
-        return new LinkedHashCollector<>(Collections.<E>emptySet());
+    public static <E> Set<E> linkedHashSet() {
+        return new Set<>(new LinkedHashSet<E>(0));
     }
 
-    public static <E> Collector<E, LinkedHashSet<E>, ?> linkedHashSet(final Collection<? extends E> origin) {
-        return new LinkedHashCollector<>(origin);
+    public static <E> Set<E> linkedHashSet(final Collection<? extends E> origin) {
+        return new Set<>(new LinkedHashSet<>(origin));
     }
 
-    public static <E> Collector<E, TreeSet<E>, ?> treeSet(final Comparator<? super E> order) {
-        return new TreeCollector<>(order);
+    public static <E> Set<E> treeSet(final Comparator<? super E> order) {
+        return new Set<>(new TreeSet<>(order));
     }
 
-    public static <E> Collector<E, TreeSet<E>, ?> treeSet(final Collection<? extends E> origin) {
-        return new TreeCollector<>(origin);
+    public static <E> Set<E> treeSet(final Collection<? extends E> origin) {
+        return new Set<>(new TreeSet<>(origin));
     }
 
-    public static <E extends Enum<E>> Collector<E, EnumSet<E>, ?> enumSet(final Class<E> enumClass) {
-        return new EnumCollector<>(enumClass);
+    public static <E extends Enum<E>> Set<E> enumSet(final Class<E> enumClass) {
+        return new Set<>(EnumSet.noneOf(enumClass));
     }
 
-    public static <E extends Enum<E>> Collector<E, EnumSet<E>, ?> enumSet(final Collection<E> origin) {
-        return new EnumCollector<>(origin);
+    public static <E extends Enum<E>> Set<E> enumSet(final Collection<E> origin) {
+        return new Set<>(EnumSet.copyOf(origin));
     }
 
-    public static <E> Collector<E, ArrayList<E>, ?> arrayList() {
-        return new ArrayCollector<>(Collections.<E>emptyList());
+    public static <E> List<E> arrayList() {
+        return new List<>(new ArrayList<E>(0));
     }
 
-    public static <E> Collector<E, ArrayList<E>, ?> arrayList(final Collection<? extends E> origin) {
-        return new ArrayCollector<>(origin);
+    public static <E> List<E> arrayList(final Collection<? extends E> origin) {
+        return new List<>(new ArrayList<>(origin));
     }
 
-    public static <E> Collector<E, LinkedList<E>, ?> linkedList() {
-        return new LinkedCollector<>(Collections.<E>emptyList());
+    public static <E> List<E> linkedList() {
+        return new List<>(new LinkedList<E>());
     }
 
-    public static <E> Collector<E, LinkedList<E>, ?> linkedList(final Collection<? extends E> origin) {
-        return new LinkedCollector<>(origin);
+    public static <E> List<E> linkedList(final Collection<? extends E> origin) {
+        return new List<>(new LinkedList<>(origin));
     }
 
     public final C getSubject() {
@@ -174,6 +173,20 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
     private static class LinkedCollector<E> extends Collector<E, LinkedList<E>, LinkedCollector<E>> {
         private LinkedCollector(final Collection<? extends E> origin) {
             super(new LinkedList<>(origin));
+        }
+    }
+
+    @SuppressWarnings("PublicInnerClass")
+    public static class Set<E> extends Collector<E, java.util.Set<E>, Set<E>> {
+        protected Set(final java.util.Set<E> subject) {
+            super(subject);
+        }
+    }
+
+    @SuppressWarnings("PublicInnerClass")
+    public static class List<E> extends Collector<E, java.util.List<E>, List<E>> {
+        protected List(final java.util.List<E> subject) {
+            super(subject);
         }
     }
 
