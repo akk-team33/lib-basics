@@ -11,7 +11,7 @@ public class EnumSetBuilderTest {
     public final void testEmpty() {
         Assert.assertEquals(
                 EnumSet.of(Dummy.ABC, Dummy.DEF),
-                Collector.enumSet(Dummy.class)
+                Collector.byEnumSet(Dummy.class)
                         .add(Dummy.ABC)
                         .addAll(EnumSet.of(Dummy.DEF, Dummy.GHI))
                         .remove(Dummy.GHI)

@@ -15,7 +15,7 @@ public class TreeSetBuilderTest {
     public final void testEmpty() {
         Assert.assertEquals(
                 Collections.emptySet(),
-                Collector.treeSet((Comparator<String>) null).getSubject()
+                Collector.byTreeSet((Comparator<String>) null).getSubject()
         );
     }
 

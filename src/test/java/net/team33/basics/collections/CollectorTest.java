@@ -23,7 +23,7 @@ public class CollectorTest {
     public final void testAdd() {
         Assert.assertEquals(
                 singleton(INT_278),
-                Collector.hashSet()
+                Collector.byHashSet()
                         .add(INT_278)
                         .getSubject()
         );
@@ -33,7 +33,7 @@ public class CollectorTest {
     public final void testAddAll() {
         Assert.assertEquals(
                 new HashSet<>(asList(INT_278, INT_279, INT_280)),
-                Collector.linkedHashSet()
+                Collector.byLinkedHashSet()
                         .addAll(asList(INT_278, INT_279, INT_280))
                         .getSubject()
         );
@@ -43,7 +43,7 @@ public class CollectorTest {
     public final void testAddAlt() {
         Assert.assertEquals(
                 new HashSet<>(asList(INT_278, INT_279, INT_280)),
-                Collector.treeSet((Comparator<Integer>) null)
+                Collector.byTreeSet((Comparator<Integer>) null)
                         .alt.add(INT_278, INT_279, INT_280)
                         .getSubject()
         );
@@ -53,7 +53,7 @@ public class CollectorTest {
     public final void testRemove() {
         Assert.assertEquals(
                 singleton(AnEnum.DEF),
-                Collector.enumSet(EnumSet.of(AnEnum.DEF, AnEnum.JKL))
+                Collector.byEnumSet(EnumSet.of(AnEnum.DEF, AnEnum.JKL))
                         .remove(AnEnum.JKL)
                         .getSubject()
         );
@@ -63,7 +63,7 @@ public class CollectorTest {
     public final void testRemoveAll() {
         Assert.assertEquals(
                 singletonList(INT_280),
-                Collector.arrayList(asList(INT_278, INT_279, INT_280))
+                Collector.byArrayList(asList(INT_278, INT_279, INT_280))
                         .removeAll(asList(INT_278, INT_279))
                         .getSubject()
         );
@@ -73,7 +73,7 @@ public class CollectorTest {
     public final void testRemoveAlt() {
         Assert.assertEquals(
                 singletonList(INT_280),
-                Collector.linkedList(asList(INT_278, INT_279, INT_280))
+                Collector.byLinkedList(asList(INT_278, INT_279, INT_280))
                         .alt.remove(INT_278, INT_279)
                         .getSubject()
         );
@@ -83,7 +83,7 @@ public class CollectorTest {
     public final void testRetainAll() {
         Assert.assertEquals(
                 new HashSet<>(asList(INT_278, INT_279)),
-                Collector.hashSet(asList(INT_278, INT_279, INT_280))
+                Collector.byHashSet(asList(INT_278, INT_279, INT_280))
                         .retainAll(asList(INT_278, INT_279))
                         .getSubject()
         );
@@ -93,7 +93,7 @@ public class CollectorTest {
     public final void testRetainAlt() {
         Assert.assertEquals(
                 new HashSet<>(asList(INT_278, INT_279)),
-                Collector.treeSet((Comparator<Integer>) null)
+                Collector.byTreeSet((Comparator<Integer>) null)
                         .alt.add(INT_278, INT_279, INT_280)
                         .alt.retain(INT_278, INT_279)
                         .getSubject()
@@ -104,7 +104,7 @@ public class CollectorTest {
     public final void testClear() {
         Assert.assertEquals(
                 emptySet(),
-                Collector.enumSet(asList(AnEnum.values()))
+                Collector.byEnumSet(asList(AnEnum.values()))
                         .clear()
                         .getSubject()
         );
