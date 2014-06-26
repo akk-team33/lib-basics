@@ -26,7 +26,7 @@ public class FinalSet<E> extends AbstractSet<E> {
     private final Object[] elements;
     private final int[] hashCodes;
 
-    private transient Supplier<Integer> hashCodeSupplier = new HashCode();
+    private transient Supplier<Integer> hashSupplier = new HashCode();
     private transient Supplier<String> stringSupplier = new ToString();
 
     private FinalSet(final Set<? extends E> origin) {
@@ -85,8 +85,9 @@ public class FinalSet<E> extends AbstractSet<E> {
 
     @Override
     public final boolean contains(final Object o) {
+        final int otherCode = Objects.hashCode(o);
         for (int index = 0, limit = elements.length; index < limit; ++index) {
-            if ((hashCodes[index] == Objects.hashCode(o)) && Objects.equals(elements[index], o)) {
+            if ((otherCode == hashCodes[index]) && Objects.equals(o, elements[index])) {
                 return true;
             }
         }
@@ -110,7 +111,7 @@ public class FinalSet<E> extends AbstractSet<E> {
 
     @Override
     public final int hashCode() {
-        return hashCodeSupplier.get();
+        return hashSupplier.get();
     }
 
     private class ITERATOR implements Iterator<E> {
@@ -145,12 +146,12 @@ public class FinalSet<E> extends AbstractSet<E> {
 
         @Override
         protected final Supplier<Integer> getAnchor() {
-            return hashCodeSupplier;
+            return hashSupplier;
         }
 
         @Override
         protected final void setAnchor(final Supplier<Integer> supplier) {
-            hashCodeSupplier = supplier;
+            hashSupplier = supplier;
         }
     }
 
