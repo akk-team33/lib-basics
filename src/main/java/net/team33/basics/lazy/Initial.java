@@ -15,5 +15,5 @@ public abstract class Initial<T> implements Supplier<T> {
 
     protected abstract Supplier<T> getAnchor();
 
-    protected abstract void setAnchor(final Supplier<T> supplier);
+    protected abstract void setAnchor(Supplier<T> supplier);
 }

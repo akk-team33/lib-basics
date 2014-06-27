@@ -3,6 +3,7 @@ package net.team33.basics.collections;
 import com.google.common.base.Supplier;
 import net.team33.basics.lazy.Initial;
 
+import java.io.Serializable;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,17 +12,25 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 
+import static net.team33.basics.collections.FinalIterator.NOT_SUPPORTED;
+
 /**
  * Implementation of an immutable {@link Set}.
+ * <ul>
+ *     <li>To be instantiated as a copy of an original {@link Collection} (eg. via {@link #from(Collection)}).</li>
+ *     <li>Preserves the iteration order of the original {@link Collection} (as far as compatible with a {@link Set}).</li>
+ * </ul>
  * <p/>
  * NOTE (from documentation of {@link Set}):
  * Great care must be exercised if mutable objects are used as set elements. The behavior of a set is not specified if
  * the value of an object is changed in a manner that affects {@link Object#equals(Object) equals} comparisons while the
  * object is an element in the set.
  */
-public class FinalSet<E> extends AbstractSet<E> {
+@SuppressWarnings("EqualsAndHashcode")
+public class FinalSet<E> extends AbstractSet<E> implements Serializable {
 
-    private static final String NOT_SUPPORTED = "Not supported";
+    private static final String NO_SUCH_ELEMENT = "index(%d) >= size(%d) --> %s";
+    private static final long serialVersionUID = 0x9a1a574810bace4eL;
 
     private final Object[] elements;
     private final int[] hashCodes;
@@ -101,7 +110,7 @@ public class FinalSet<E> extends AbstractSet<E> {
 
     @Override
     public final Iterator<E> iterator() {
-        return new ITERATOR();
+        return new InternalIterator();
     }
 
     @Override
@@ -111,30 +120,26 @@ public class FinalSet<E> extends AbstractSet<E> {
 
     @Override
     public final int hashCode() {
+        //noinspection NonFinalFieldReferencedInHashCode
         return hashSupplier.get();
     }
 
-    private class ITERATOR implements Iterator<E> {
+    private class InternalIterator extends FinalIterator<E> {
         private int index = 0;
 
         @Override
-        public boolean hasNext() {
+        public final boolean hasNext() {
             return index < size();
         }
 
         @Override
-        public E next() {
+        public final E next() {
             try {
-                //noinspection unchecked
+                //noinspection unchecked,ValueOfIncrementOrDecrementUsed
                 return (E) elements[index++];
-            } catch (final ArrayIndexOutOfBoundsException caught) {
-                throw new NoSuchElementException(String.format("(index(%d) >= size(%d)) --> %s", index, size(), caught));
+            } catch (@SuppressWarnings("ProhibitedExceptionCaught") final ArrayIndexOutOfBoundsException caught) {
+                throw new NoSuchElementException(String.format(String.format(NO_SUCH_ELEMENT, index, size(), caught), index, size(), caught));
             }
-        }
-
-        @Override
-        public final void remove() throws UnsupportedOperationException {
-            throw new UnsupportedOperationException(NOT_SUPPORTED);
         }
     }
 
