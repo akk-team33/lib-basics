@@ -1,12 +1,10 @@
 package net.team33.basics.collections;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
@@ -17,7 +15,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @param <E> The element type of the {@link Collection} to be initialized.
  * @param <C> The type of the {@link Collection} to be initialized.
- * @param <R> The final type of the {@link Collector} itself.
+ * @param <R> The 'final' type of the {@link Collector} itself.
  */
 @SuppressWarnings({"ClassWithTooManyMethods", "StaticMethodOnlyUsedInOneClass"})
 public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>> {
@@ -97,32 +95,8 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
         return pro(EnumSet.copyOf(origin));
     }
 
-    @SuppressWarnings("OverloadedVarargsMethod")
-    @SafeVarargs
-    public static <E>
-    Collector<E, ArrayList<E>, ?> proArrayList(final E... elements) {
-        return proArrayList(asList(elements));
-    }
-
-    public static <E>
-    Collector<E, ArrayList<E>, ?> proArrayList(final Collection<? extends E> origin) {
-        return pro(new ArrayList<>(origin));
-    }
-
-    @SuppressWarnings("OverloadedVarargsMethod")
-    @SafeVarargs
-    public static <E>
-    Collector<E, LinkedList<E>, ?> proLinkedList(final E... elements) {
-        return proLinkedList(asList(elements));
-    }
-
-    public static <E>
-    Collector<E, LinkedList<E>, ?> proLinkedList(final Collection<? extends E> origin) {
-        return pro(new LinkedList<>(origin));
-    }
-
     @SuppressWarnings("unchecked")
-    private static <E, C extends Collection<E>, R extends Collector<E, C, R>>
+    protected static <E, C extends Collection<E>, R extends Collector<E, C, R>>
     R cast(final Collector<E, C, R> collector) {
         return (R) collector;
     }
@@ -294,7 +268,6 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
         return cast(this);
     }
 
-    @SuppressWarnings("PublicInnerClass")
     private static class Simple<E, C extends Collection<E>> extends Collector<E, C, Simple<E, C>> {
         private Simple(final C subject) {
             super(subject);

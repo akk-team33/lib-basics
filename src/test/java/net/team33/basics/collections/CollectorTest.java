@@ -63,7 +63,7 @@ public class CollectorTest {
     public final void testRemoveAll() {
         Assert.assertEquals(
                 singletonList(INT_280),
-                Collector.proArrayList(INT_278, INT_279, INT_280)
+                Lister.proArrayList(INT_278, INT_279, INT_280)
                         .removeAll(asList(INT_278, INT_279))
                         .getSubject()
         );
@@ -73,7 +73,7 @@ public class CollectorTest {
     public final void testRemoveAlt() {
         Assert.assertEquals(
                 singletonList(INT_280),
-                Collector.proLinkedList(INT_278, INT_279, INT_280)
+                Lister.proLinkedList(INT_278, INT_279, INT_280)
                         .removeAlt(INT_278, INT_279)
                         .getSubject()
         );
