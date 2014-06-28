@@ -44,7 +44,7 @@ public class CollectorTest {
         Assert.assertEquals(
                 new HashSet<>(asList(INT_277, INT_278, INT_279, INT_280)),
                 Collector.proTreeSet(INT_277)
-                        .alt.add(INT_278, INT_279, INT_280)
+                        .addAlt(INT_278, INT_279, INT_280)
                         .getSubject()
         );
     }
@@ -74,7 +74,7 @@ public class CollectorTest {
         Assert.assertEquals(
                 singletonList(INT_280),
                 Collector.proLinkedList(INT_278, INT_279, INT_280)
-                        .alt.remove(INT_278, INT_279)
+                        .removeAlt(INT_278, INT_279)
                         .getSubject()
         );
     }
@@ -94,8 +94,8 @@ public class CollectorTest {
         Assert.assertEquals(
                 new HashSet<>(asList(INT_278, INT_279)),
                 Collector.proTreeSet((Comparator<Integer>) null)
-                        .alt.add(INT_278, INT_279, INT_280)
-                        .alt.retain(INT_278, INT_279)
+                        .addAlt(INT_278, INT_279, INT_280)
+                        .retainAlt(INT_278, INT_279)
                         .getSubject()
         );
     }

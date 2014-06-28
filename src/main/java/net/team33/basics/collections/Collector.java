@@ -22,11 +22,6 @@ import static java.util.Objects.requireNonNull;
 @SuppressWarnings({"ClassWithTooManyMethods", "StaticMethodOnlyUsedInOneClass"})
 public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>> {
 
-    /**
-     * Provides alternative access methods
-     */
-    @SuppressWarnings("PublicField")
-    public final Alt alt = new Alt();
     private final C subject;
 
     /**
@@ -174,6 +169,32 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
      *                                       if the class of the specified {@code elements} prevents them from being
      *                                       added to the {@code subject}.
      * @throws NullPointerException          <ul>
+     *                                       <li>if the {@code array} of {@code elements} is {@code null}</li>
+     *                                       <li>if some of the specified {@code elements} are {@code null} and the
+     *                                       underlying {@link #getSubject() subject} does not permit {@code null}
+     *                                       elements.</li>
+     *                                       </ul>
+     * @throws IllegalArgumentException      if some property of some {@code elements} prevents them from being
+     *                                       added to the underlying {@link #getSubject() subject}.
+     * @throws IllegalStateException         if the {@code elements} cannot be added at this time due to the underlying
+     *                                       {@link #getSubject() subject}'s insertion restrictions (if any).
+     */
+    @SafeVarargs
+    public final R addAlt(final E... elements) {
+        return addAll(asList(elements));
+    }
+
+    /**
+     * Substitutes {@link Collection#addAll(Collection)} for the underlying {@link #getSubject() subject}.
+     *
+     * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     *                                       if {@link Collection#addAll(Collection)} is not supported by the
+     *                                       underlying {@link #getSubject() subject}.
+     * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
+     *                                       if the class of the specified {@code elements} prevents them from being
+     *                                       added to the {@code subject}.
+     * @throws NullPointerException          <ul>
      *                                       <li>if the {@link Collection} of {@code elements} is {@code null}</li>
      *                                       <li>if some of the specified {@code elements} are {@code null} and the
      *                                       underlying {@link #getSubject() subject} does not permit {@code null}
@@ -211,11 +232,39 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
      * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
      *                                       if {@link Collection#removeAll(Collection)} is not supported by the
      *                                       underlying {@link #getSubject() subject}.
+     * @throws NullPointerException          if the {@code array} of {@code elements} is {@code null}.
+     */
+    @SafeVarargs
+    public final R removeAlt(final E... element) {
+        return removeAll(asList(element));
+    }
+
+    /**
+     * Substitutes {@link Collection#removeAll(Collection)} for the underlying {@link #getSubject() subject}.
+     *
+     * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     *                                       if {@link Collection#removeAll(Collection)} is not supported by the
+     *                                       underlying {@link #getSubject() subject}.
      * @throws NullPointerException          if the {@link Collection} of {@code elements} is {@code null}.
      */
     public final R removeAll(final Collection<? extends E> elements) {
         Util.removeAll(subject, elements);
         return cast(this);
+    }
+
+    /**
+     * Substitutes {@link Collection#retainAll(Collection)} for the underlying {@link #getSubject() subject}.
+     *
+     * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     *                                       if {@link Collection#retainAll(Collection)} is not supported by the
+     *                                       underlying {@link #getSubject() subject}.
+     * @throws NullPointerException          if the {@code array} of {@code elements} is {@code null}.
+     */
+    @SafeVarargs
+    public final R retainAlt(final E... elements) {
+        return retainAll(asList(elements));
     }
 
     /**
@@ -249,30 +298,6 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
     private static class Simple<E, C extends Collection<E>> extends Collector<E, C, Simple<E, C>> {
         private Simple(final C subject) {
             super(subject);
-        }
-    }
-
-    /**
-     * Provides alternative access methods
-     */
-    @SuppressWarnings({"PublicInnerClass", "NonStaticInnerClassInSecureContext"})
-    public class Alt {
-        private Alt() {
-        }
-
-        @SafeVarargs
-        public final R add(final E... elements) {
-            return addAll(asList(elements));
-        }
-
-        @SafeVarargs
-        public final R remove(final E... elements) {
-            return removeAll(asList(elements));
-        }
-
-        @SafeVarargs
-        public final R retain(final E... elements) {
-            return retainAll(asList(elements));
         }
     }
 }
