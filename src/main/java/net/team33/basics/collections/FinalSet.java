@@ -3,7 +3,6 @@ package net.team33.basics.collections;
 import com.google.common.base.Supplier;
 import net.team33.basics.lazy.Initial;
 
-import java.io.Serializable;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
@@ -26,28 +25,16 @@ import static net.team33.basics.collections.Package.NOT_SUPPORTED;
  * object is an element in the set.
  */
 @SuppressWarnings("EqualsAndHashcode")
-public class FinalSet<E> extends AbstractSet<E> implements Serializable {
-
-    private static final String NO_SUCH_ELEMENT = "index(%d) >= size(%d) --> %s";
-    private static final long serialVersionUID = 0x9a1a574810bace4eL;
+public class FinalSet<E> extends AbstractSet<E> {
 
     private final FinalList<E> elements;
-    private final int[] hashCodes;
 
     private transient Supplier<Integer> hashSupplier = new HashCode();
     private transient Supplier<String> stringSupplier = new ToString();
 
+    @SuppressWarnings("TypeMayBeWeakened")
     private FinalSet(final Set<? extends E> origin) {
-        this(origin, origin.size());
-    }
-
-    private FinalSet(final Set<? extends E> origin, final int size) {
         elements = FinalList.from(origin);
-        hashCodes = new int[size];
-        int index = 0;
-        for (final E element : elements) {
-            hashCodes[index++] = Objects.hashCode(element);
-        }
     }
 
     public static <E> FinalSet<E> from(final Collection<? extends E> origin) {
@@ -60,41 +47,67 @@ public class FinalSet<E> extends AbstractSet<E> implements Serializable {
         return (origin instanceof FinalSet) ? (FinalSet<E>) origin : new FinalSet<>(origin);
     }
 
+    /**
+     * @throws UnsupportedOperationException on any attempt.
+     */
+    @SuppressWarnings("RefusedBequest")
     @Override
-    public final boolean removeAll(final Collection<?> c) throws UnsupportedOperationException {
+    public final boolean removeAll(final Collection<?> c) {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
+    /**
+     * @throws UnsupportedOperationException on any attempt.
+     */
+    @SuppressWarnings("RefusedBequest")
     @Override
-    public final boolean add(final E e) throws UnsupportedOperationException {
+    public final boolean add(final E e) {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
+    /**
+     * @throws UnsupportedOperationException on any attempt.
+     */
+    @SuppressWarnings("RefusedBequest")
     @Override
-    public final boolean remove(final Object o) throws UnsupportedOperationException {
+    public final boolean remove(final Object o) {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
+    /**
+     * @throws UnsupportedOperationException on any attempt.
+     */
+    @SuppressWarnings("RefusedBequest")
     @Override
-    public final boolean addAll(final Collection<? extends E> c) throws UnsupportedOperationException {
+    public final boolean addAll(final Collection<? extends E> c) {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
+    /**
+     * @throws UnsupportedOperationException on any attempt.
+     */
+    @SuppressWarnings("RefusedBequest")
     @Override
-    public final boolean retainAll(final Collection<?> c) throws UnsupportedOperationException {
+    public final boolean retainAll(final Collection<?> c) {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
+    /**
+     * @throws UnsupportedOperationException on any attempt.
+     */
+    @SuppressWarnings("RefusedBequest")
     @Override
-    public final void clear() throws UnsupportedOperationException {
+    public final void clear() {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
+    @SuppressWarnings("RefusedBequest")
     @Override
     public final boolean contains(final Object o) {
-        final int otherCode = Objects.hashCode(o);
+        // TODO? final int otherCode = Objects.hashCode(o);
+        // noinspection ForLoopReplaceableByForEach
         for (int index = 0, limit = elements.size(); index < limit; ++index) {
-            if ((otherCode == hashCodes[index]) && Objects.equals(o, elements.get(index))) {
+            if (/* TODO? (otherCode == hashCodes[index]) && */ Objects.equals(o, elements.get(index))) {
                 return true;
             }
         }
@@ -122,6 +135,7 @@ public class FinalSet<E> extends AbstractSet<E> implements Serializable {
         return hashSupplier.get();
     }
 
+    @SuppressWarnings("NonStaticInnerClassInSecureContext")
     private class HashCode extends Initial<Integer> {
         @Override
         protected final Integer getFinal() {
@@ -139,6 +153,7 @@ public class FinalSet<E> extends AbstractSet<E> implements Serializable {
         }
     }
 
+    @SuppressWarnings("NonStaticInnerClassInSecureContext")
     private class ToString extends Initial<String> {
         @Override
         protected final String getFinal() {

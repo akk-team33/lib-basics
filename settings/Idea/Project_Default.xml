@@ -87,7 +87,6 @@
     <inspection_tool class="AssignmentToSuperclassField" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="AssignmentUsedAsCondition" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="AutoCloseableResource" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="AutoUnboxing" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="AwaitNotInLoop" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="AwaitWithoutCorrespondingSignal" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="BadExceptionCaught" enabled="true" level="WARNING" enabled_by_default="true">
@@ -169,9 +168,6 @@
     <inspection_tool class="ClassEscapesItsScope" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ClassInTopLevelPackage" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ClassIndependentOfModule" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="ClassInheritanceDepth" enabled="true" level="WARNING" enabled_by_default="true">
-        <option name="m_limit" value="2"/>
-    </inspection_tool>
     <inspection_tool class="ClassInitializer" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ClassLoaderInstantiation" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ClassMayBeInterface" enabled="true" level="WARNING" enabled_by_default="true"/>
@@ -248,7 +244,6 @@
         <option name="m_minLength" value="5"/>
         <option name="m_maxLength" value="32"/>
     </inspection_tool>
-    <inspection_tool class="ConstantOnLHSOfComparison" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ConstantOnRHSOfComparison" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ConstantStringIntern" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ConstantValueVariableUse" enabled="true" level="WARNING" enabled_by_default="true"/>
@@ -314,7 +309,6 @@
     <inspection_tool class="EmptyInitializer" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="EmptySynchronizedStatement" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="EnumAsName" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="EnumClass" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="EnumSwitchStatementWhichMissesCases" enabled="true" level="WARNING"
                      enabled_by_default="true">
         <option name="ignoreSwitchStatementsWithDefault" value="false"/>
@@ -388,53 +382,94 @@
     <inspection_tool class="ForLoopWithMissingComponent" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="ignoreCollectionLoops" value="false"/>
     </inspection_tool>
-    <inspection_tool class="ForeachStatement" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GrFieldAlreadyDefined" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="GroovyAnnotationNamingConvention" enabled="true" level="WARNING" enabled_by_default="true"/>
+    <inspection_tool class="GroovyAnnotationNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="m_regex" value="[A-Z][A-Za-z\d]*"/>
+        <option name="m_minLength" value="8"/>
+        <option name="m_maxLength" value="64"/>
+    </inspection_tool>
     <inspection_tool class="GroovyAssignmentCanBeOperatorAssignment" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
+                     enabled_by_default="true">
+        <option name="ignoreLazyOperators" value="true"/>
+        <option name="ignoreObscureOperators" value="false"/>
+    </inspection_tool>
     <inspection_tool class="GroovyAssignmentToForLoopParameter" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="GroovyAssignmentToMethodParameter" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="GroovyBreak" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyBusyWait" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="GroovyClassNamingConvention" enabled="true" level="WARNING" enabled_by_default="true"/>
+    <inspection_tool class="GroovyClassNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="m_regex" value="[A-Z][A-Za-z\d]*"/>
+        <option name="m_minLength" value="8"/>
+        <option name="m_maxLength" value="64"/>
+    </inspection_tool>
     <inspection_tool class="GroovyConditional" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyConditionalCanBeConditionalCall" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="GroovyConditionalCanBeElvis" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="GroovyConstantNamingConvention" enabled="true" level="WARNING" enabled_by_default="true"/>
+    <inspection_tool class="GroovyConstantNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="m_regex" value="[A-Z\d]*"/>
+        <option name="m_minLength" value="4"/>
+        <option name="m_maxLength" value="32"/>
+    </inspection_tool>
     <inspection_tool class="GroovyContinue" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyContinueOrBreakFromFinallyBlock" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
-    <inspection_tool class="GroovyDoubleCheckedLocking" enabled="true" level="WARNING" enabled_by_default="true"/>
+    <inspection_tool class="GroovyDoubleCheckedLocking" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="ignoreOnVolatileVariables" value="false"/>
+    </inspection_tool>
     <inspection_tool class="GroovyEmptyCatchBlock" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyEmptyFinallyBlock" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyEmptySyncBlock" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyEmptyTryBlock" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="GroovyEnumerationNamingConvention" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
+    <inspection_tool class="GroovyEnumerationNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="m_regex" value="[A-Z][A-Za-z\d]*"/>
+        <option name="m_minLength" value="8"/>
+        <option name="m_maxLength" value="64"/>
+    </inspection_tool>
     <inspection_tool class="GroovyIfStatementWithTooManyBranches" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
+                     enabled_by_default="true">
+        <option name="m_limit" value="3"/>
+    </inspection_tool>
     <inspection_tool class="GroovyInstanceMethodNamingConvention" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
+                     enabled_by_default="true">
+        <option name="m_regex" value="[a-z][A-Za-z\d]*"/>
+        <option name="m_minLength" value="4"/>
+        <option name="m_maxLength" value="32"/>
+    </inspection_tool>
     <inspection_tool class="GroovyInstanceVariableNamingConvention" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
-    <inspection_tool class="GroovyInterfaceNamingConvention" enabled="true" level="WARNING" enabled_by_default="true"/>
+                     enabled_by_default="true">
+        <option name="m_regex" value="m_[a-z][A-Za-z\d]*"/>
+        <option name="m_minLength" value="1"/>
+        <option name="m_maxLength" value="32"/>
+    </inspection_tool>
+    <inspection_tool class="GroovyInterfaceNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="m_regex" value="[A-Z][A-Za-z\d]*"/>
+        <option name="m_minLength" value="8"/>
+        <option name="m_maxLength" value="64"/>
+    </inspection_tool>
     <inspection_tool class="GroovyListGetCanBeKeyedAccess" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyListSetCanBeKeyedAccess" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyLocalVariableNamingConvention" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
+                     enabled_by_default="true">
+        <option name="m_regex" value="[a-z][A-Za-z\d]*"/>
+        <option name="m_minLength" value="4"/>
+        <option name="m_maxLength" value="32"/>
+    </inspection_tool>
     <inspection_tool class="GroovyLoopStatementThatDoesntLoop" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="GroovyMapGetCanBeKeyedAccess" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyMapPutCanBeKeyedAccess" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="GroovyMethodParameterCount" enabled="true" level="WARNING" enabled_by_default="true"/>
+    <inspection_tool class="GroovyMethodParameterCount" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="m_limit" value="5"/>
+    </inspection_tool>
     <inspection_tool class="GroovyMethodWithMoreThanThreeNegations" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="GroovyMultipleReturnPointsPerMethod" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
+                     enabled_by_default="true">
+        <option name="m_limit" value="1"/>
+    </inspection_tool>
     <inspection_tool class="GroovyNegatedConditional" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyNegatedIf" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyNestedAssignment" enabled="true" level="WARNING" enabled_by_default="true"/>
@@ -446,13 +481,27 @@
     <inspection_tool class="GroovyNotifyWhileNotSynchronized" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyOctalInteger" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyOverlyComplexArithmeticExpression" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
+                     enabled_by_default="true">
+        <option name="m_limit" value="3"/>
+    </inspection_tool>
     <inspection_tool class="GroovyOverlyComplexBooleanExpression" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
-    <inspection_tool class="GroovyOverlyComplexMethod" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="GroovyOverlyLongMethod" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="GroovyOverlyNestedMethod" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="GroovyParameterNamingConvention" enabled="true" level="WARNING" enabled_by_default="true"/>
+                     enabled_by_default="true">
+        <option name="m_limit" value="3"/>
+    </inspection_tool>
+    <inspection_tool class="GroovyOverlyComplexMethod" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="m_limit" value="10"/>
+    </inspection_tool>
+    <inspection_tool class="GroovyOverlyLongMethod" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="m_limit" value="30"/>
+    </inspection_tool>
+    <inspection_tool class="GroovyOverlyNestedMethod" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="m_limit" value="5"/>
+    </inspection_tool>
+    <inspection_tool class="GroovyParameterNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="m_regex" value="[a-z][A-Za-z\d]*"/>
+        <option name="m_minLength" value="4"/>
+        <option name="m_maxLength" value="32"/>
+    </inspection_tool>
     <inspection_tool class="GroovyPointlessArithmetic" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyPublicFieldAccessedInSynchronizedContext" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
@@ -464,9 +513,17 @@
                      enabled_by_default="true"/>
     <inspection_tool class="GroovyReturnFromFinallyBlock" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyStaticMethodNamingConvention" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
+                     enabled_by_default="true">
+        <option name="m_regex" value="[a-z][A-Za-z\d]*"/>
+        <option name="m_minLength" value="4"/>
+        <option name="m_maxLength" value="32"/>
+    </inspection_tool>
     <inspection_tool class="GroovyStaticVariableNamingConvention" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
+                     enabled_by_default="true">
+        <option name="m_regex" value="s_[a-z][A-Za-z\d]*"/>
+        <option name="m_minLength" value="4"/>
+        <option name="m_maxLength" value="32"/>
+    </inspection_tool>
     <inspection_tool class="GroovySwitchStatementWithNoDefault" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="GroovySynchronizationOnThis" enabled="true" level="WARNING" enabled_by_default="true"/>
@@ -478,7 +535,9 @@
     <inspection_tool class="GroovyUntypedAccess" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyWaitCallNotInLoop" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="GroovyWaitWhileNotSynchronized" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="GroovyWhileLoopSpinsOnField" enabled="true" level="WARNING" enabled_by_default="true"/>
+    <inspection_tool class="GroovyWhileLoopSpinsOnField" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="ignoreNonEmtpyLoops" value="false"/>
+    </inspection_tool>
     <inspection_tool class="HardcodedFileSeparators" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="m_recognizeExampleMediaType" value="false"/>
     </inspection_tool>
@@ -554,11 +613,8 @@
                      enabled_by_default="true"/>
     <inspection_tool class="InterfaceNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="m_regex" value="[A-Z][A-Za-z\d]*"/>
-        <option name="m_minLength" value="8"/>
+        <option name="m_minLength" value="3"/>
         <option name="m_maxLength" value="64"/>
-    </inspection_tool>
-    <inspection_tool class="InterfaceNeverImplemented" enabled="true" level="WARNING" enabled_by_default="true">
-        <option name="ignoreInterfacesThatOnlyDeclareConstants" value="false"/>
     </inspection_tool>
     <inspection_tool class="InterfaceWithOnlyOneDirectInheritor" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
@@ -787,8 +843,17 @@
     <inspection_tool class="NotifyNotInSynchronizedContext" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="NotifyWithoutCorrespondingWait" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="NullThrown" enabled="true" level="WARNING" enabled_by_default="true"/>
+    <inspection_tool class="NullableProblems" enabled="false" level="WARNING" enabled_by_default="false">
+        <option name="REPORT_NULLABLE_METHOD_OVERRIDES_NOTNULL" value="true"/>
+        <option name="REPORT_NOT_ANNOTATED_METHOD_OVERRIDES_NOTNULL" value="true"/>
+        <option name="REPORT_NOTNULL_PARAMETER_OVERRIDES_NULLABLE" value="true"/>
+        <option name="REPORT_NOT_ANNOTATED_PARAMETER_OVERRIDES_NOTNULL" value="true"/>
+        <option name="REPORT_NOT_ANNOTATED_GETTER" value="true"/>
+        <option name="REPORT_NOT_ANNOTATED_SETTER_PARAMETER" value="true"/>
+        <option name="REPORT_ANNOTATION_NOT_PROPAGATED_TO_OVERRIDERS" value="true"/>
+        <option name="REPORT_NULLS_PASSED_TO_NON_ANNOTATED_METHOD" value="true"/>
+    </inspection_tool>
     <inspection_tool class="NumericToString" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="ObjectAllocationInLoop" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ObjectEquality" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="m_ignoreEnums" value="true"/>
         <option name="m_ignoreClassObjects" value="false"/>
@@ -984,7 +1049,9 @@
     <inspection_tool class="SocketResource" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="insideTryAllowed" value="false"/>
     </inspection_tool>
-    <inspection_tool class="StandardVariableNames" enabled="true" level="WARNING" enabled_by_default="true"/>
+    <inspection_tool class="StandardVariableNames" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="ignoreParameterNameSameAsSuper" value="true"/>
+    </inspection_tool>
     <inspection_tool class="StaticCallOnSubclass" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="StaticCollection" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="m_ignoreWeakCollections" value="false"/>
@@ -1131,8 +1198,6 @@
         <option name="m_onlyLookAtBlocks" value="false"/>
     </inspection_tool>
     <inspection_tool class="TooBroadThrows" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="TransientFieldInNonSerializableClass" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
     <inspection_tool class="TransientFieldNotInitialized" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="TrivialStringConcatenation" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="TypeMayBeWeakened" enabled="true" level="WARNING" enabled_by_default="true">
@@ -1168,6 +1233,7 @@
     <inspection_tool class="UnnecessaryBlockStatement" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="ignoreSwitchBranches" value="false"/>
     </inspection_tool>
+    <inspection_tool class="UnnecessaryBoxing" enabled="false" level="WARNING" enabled_by_default="false"/>
     <inspection_tool class="UnnecessaryCallToStringValueOf" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="UnnecessaryConstantArrayCreationExpression" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
@@ -1193,7 +1259,9 @@
     <inspection_tool class="UnnecessaryQualifierForThis" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="UnnecessarySuperConstructor" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="UnnecessarySuperQualifier" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="UnnecessaryThis" enabled="true" level="WARNING" enabled_by_default="true"/>
+    <inspection_tool class="UnnecessaryThis" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="ignoreAssignments" value="true"/>
+    </inspection_tool>
     <inspection_tool class="UnnecessaryToStringCall" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="UnnecessaryUnaryMinus" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="UnnecessaryUnicodeEscape" enabled="true" level="WARNING" enabled_by_default="true"/>
