@@ -8,17 +8,16 @@ import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 
-import static net.team33.basics.collections.FinalIterator.NOT_SUPPORTED;
+import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 
 /**
  * Implementation of an immutable {@link Set}.
  * <ul>
- *     <li>To be instantiated as a copy of an original {@link Collection} (eg. via {@link #from(Collection)}).</li>
- *     <li>Preserves the iteration order of the original {@link Collection} (as far as compatible with a {@link Set}).</li>
+ * <li>To be instantiated as a copy of an original {@link Collection} (eg. via {@link #from(Collection)}).</li>
+ * <li>Preserves the iteration order of the original {@link Collection} (as far as compatible with a {@link Set}).</li>
  * </ul>
  * <p/>
  * NOTE (from documentation of {@link Set}):
@@ -32,23 +31,22 @@ public class FinalSet<E> extends AbstractSet<E> implements Serializable {
     private static final String NO_SUCH_ELEMENT = "index(%d) >= size(%d) --> %s";
     private static final long serialVersionUID = 0x9a1a574810bace4eL;
 
-    private final Object[] elements;
+    private final FinalList<E> elements;
     private final int[] hashCodes;
 
     private transient Supplier<Integer> hashSupplier = new HashCode();
     private transient Supplier<String> stringSupplier = new ToString();
 
     private FinalSet(final Set<? extends E> origin) {
-        this(origin.iterator(), origin.size());
+        this(origin, origin.size());
     }
 
-    private FinalSet(final Iterator<? extends E> origin, final int size) {
-        elements = new Object[size];
+    private FinalSet(final Set<? extends E> origin, final int size) {
+        elements = FinalList.from(origin);
         hashCodes = new int[size];
-        for (int index = 0; origin.hasNext(); ++index) {
-            final Object next = origin.next();
-            elements[index] = next;
-            hashCodes[index] = Objects.hashCode(next);
+        int index = 0;
+        for (final E element : elements) {
+            hashCodes[index++] = Objects.hashCode(element);
         }
     }
 
@@ -95,8 +93,8 @@ public class FinalSet<E> extends AbstractSet<E> implements Serializable {
     @Override
     public final boolean contains(final Object o) {
         final int otherCode = Objects.hashCode(o);
-        for (int index = 0, limit = elements.length; index < limit; ++index) {
-            if ((otherCode == hashCodes[index]) && Objects.equals(o, elements[index])) {
+        for (int index = 0, limit = elements.size(); index < limit; ++index) {
+            if ((otherCode == hashCodes[index]) && Objects.equals(o, elements.get(index))) {
                 return true;
             }
         }
@@ -110,37 +108,18 @@ public class FinalSet<E> extends AbstractSet<E> implements Serializable {
 
     @Override
     public final Iterator<E> iterator() {
-        return new InternalIterator();
+        return elements.iterator();
     }
 
     @Override
     public final int size() {
-        return elements.length;
+        return elements.size();
     }
 
     @Override
     public final int hashCode() {
         //noinspection NonFinalFieldReferencedInHashCode
         return hashSupplier.get();
-    }
-
-    private class InternalIterator extends FinalIterator<E> {
-        private int index = 0;
-
-        @Override
-        public final boolean hasNext() {
-            return index < size();
-        }
-
-        @Override
-        public final E next() {
-            try {
-                //noinspection unchecked,ValueOfIncrementOrDecrementUsed
-                return (E) elements[index++];
-            } catch (@SuppressWarnings("ProhibitedExceptionCaught") final ArrayIndexOutOfBoundsException caught) {
-                throw new NoSuchElementException(String.format(String.format(NO_SUCH_ELEMENT, index, size(), caught), index, size(), caught));
-            }
-        }
     }
 
     private class HashCode extends Initial<Integer> {

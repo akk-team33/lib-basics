@@ -20,7 +20,7 @@ public class Lister<E, L extends List<E>, R extends Lister<E, L, R>> extends Col
     /**
      * Initiates a new instance giving the {@code subject} to be built.
      *
-     * @param subject a mutable {@link Collection} that is mentioned to be modified through the new instance.
+     * @param subject a mutable {@link List} that is mentioned to be modified through the new instance.
      */
     protected Lister(final L subject) {
         super(subject);
