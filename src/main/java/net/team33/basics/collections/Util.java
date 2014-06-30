@@ -1,5 +1,7 @@
 package net.team33.basics.collections;
 
+import com.google.common.base.Function;
+
 import java.util.AbstractCollection;
 import java.util.AbstractList;
 import java.util.AbstractSet;
@@ -72,6 +74,34 @@ public final class Util {
      */
     public static <E, C extends Collection<E>> C addAll(final C subject, final Collection<? extends E> elements) {
         subject.addAll(elements);
+        return subject;
+    }
+
+    /**
+     * Adds some {@code elements} after {@code conversion} to a given {@code subject}.
+     *
+     * @return The {@code subject}.
+     * @throws UnsupportedOperationException if {@link Collection#addAll(Collection)} is not supported by the
+     *                                       {@code subject}.
+     * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
+     *                                       if the class of the specified {@code elements} prevents them from being
+     *                                       added to the {@code subject}.
+     * @throws NullPointerException          <ul>
+     *                                       <li>if {@code subject} or the {@link Collection} of {@code elements}
+     *                                       is {@code null}</li>
+     *                                       <li>if some of the specified {@code elements} are {@code null}
+     *                                       and the {@code subject} does not permit {@code null} elements.</li>
+     *                                       </ul>
+     * @throws IllegalArgumentException      if some property of some {@code elements} prevents them from being
+     *                                       added to the {@code subject}.
+     * @throws IllegalStateException         if the {@code elements} cannot be added at this time due to
+     *                                       the {@code subject}'s insertion restrictions (if any).
+     */
+    public static <I, E, C extends Collection<E>> C addAll(
+            final C subject, final Iterable<? extends I> elements, final Function<? super I, ? extends E> conversion) {
+        for (final I input : elements) {
+            add(subject, conversion.apply(input));
+        }
         return subject;
     }
 

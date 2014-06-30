@@ -1,5 +1,7 @@
 package net.team33.basics.collections;
 
+import com.google.common.base.Function;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -180,6 +182,33 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
      */
     public final R addAll(final Collection<? extends E> elements) {
         Util.addAll(subject, elements);
+        return cast(this);
+    }
+
+    /**
+     * Substitutes {@link Collection#addAll(Collection)} with {@code conversion} for the underlying
+     * {@link #getSubject() subject}.
+     *
+     * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     *                                       if {@link Collection#addAll(Collection)} is not supported by the
+     *                                       underlying {@link #getSubject() subject}.
+     * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
+     *                                       if the class of the specified {@code elements} prevents them from being
+     *                                       added to the {@code subject}.
+     * @throws NullPointerException          <ul>
+     *                                       <li>if the {@link Collection} of {@code elements} is {@code null}</li>
+     *                                       <li>if some of the specified {@code elements} are {@code null} and the
+     *                                       underlying {@link #getSubject() subject} does not permit {@code null}
+     *                                       elements.</li>
+     *                                       </ul>
+     * @throws IllegalArgumentException      if some property of some {@code elements} prevents them from being
+     *                                       added to the underlying {@link #getSubject() subject}.
+     * @throws IllegalStateException         if the {@code elements} cannot be added at this time due to the underlying
+     *                                       {@link #getSubject() subject}'s insertion restrictions (if any).
+     */
+    public final <I> R addAll(final Iterable<? extends I> elements, final Function<? super I, ? extends E> conversion) {
+        Util.addAll(subject, elements, conversion);
         return cast(this);
     }
 
