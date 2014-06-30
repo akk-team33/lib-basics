@@ -72,8 +72,7 @@ public class Mapper<K, V, M extends Map<K, V>, R extends Mapper<K, V, M, R>> {
     }
 
     public final R put(final Map.Entry<? extends K, ? extends V> entry) {
-        subject.put(entry.getKey(), entry.getValue());
-        return cast(this);
+        return put(entry.getKey(), entry.getValue());
     }
 
     public final R putAll(final Map<? extends K, ? extends V> origin) {
