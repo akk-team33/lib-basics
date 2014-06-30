@@ -32,8 +32,7 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
         this.subject = requireNonNull(subject);
     }
 
-    public static <E, C extends Collection<E>>
-    Collector<E, C, ?> pro(final C subject) {
+    public static <E, C extends Collection<E>> Collector<E, C, ?> pro(final C subject) {
         return new Simple<>(subject);
     }
 
