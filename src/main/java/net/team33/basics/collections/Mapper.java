@@ -16,9 +16,10 @@ import static java.util.Arrays.asList;
 /**
  * Represents an instrument to initialize a map in a declarative style.
  *
- * @param <K> The key type of the {@link java.util.Map} to be built.
- * @param <V> The value type of the {@link java.util.Map} to be built.
- * @param <M> The type of the {@link java.util.Map} to be built.
+ * @param <K> The key type of the {@link Map} to be built.
+ * @param <V> The value type of the {@link Map} to be built.
+ * @param <M> The type of the {@link Map} to be built.
+ * @param <R> The 'final' type of the {@link Mapper} itself.
  */
 @SuppressWarnings({"ReturnOfThis", "StaticMethodOnlyUsedInOneClass"})
 public class Mapper<K, V, M extends Map<K, V>, R extends Mapper<K, V, M, R>> {
