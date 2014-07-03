@@ -3,16 +3,29 @@ package net.team33.basics.collections;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.Collections.unmodifiableMap;
+import static net.team33.basics.collections.Mapper.mapping;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
-@SuppressWarnings("ClassWithTooManyMethods")
+@SuppressWarnings({"ClassWithTooManyMethods", "ProhibitedExceptionCaught", "ConstantNamingConvention", "AssertEqualsBetweenInconvertibleTypes"})
 public class UtilTest {
 
     private static final String A = "a";
@@ -21,12 +34,129 @@ public class UtilTest {
     private static final List<String> THREE_STRINGS = asList(C, B, A);
     private static final List<String> TWO_STRINGS_AND_NULL = asList(A, null, C);
     private static final List<?> TWO_STRINGS_AND_OTHER = asList(A, 5, C);
+    private static final String D = "D";
     private static final List<String> NO_STRINGS = emptyList();
     private static final Collection<?> COLLECTION_NULL = null;
+    private static final Map<String, String> THREE_MAPPINGS = unmodifiableMap(
+            mapping(new HashMap<String, String>(3))
+                    .put(A, B)
+                    .put(B, C)
+                    .put(C, A)
+                    .getSubject()
+    );
+
+    @Test
+    public final void testGet() {
+        final Map<?, ?> subject = new TreeMap<>(THREE_MAPPINGS);
+        for (final String key : asList(A, B, C, D)) {
+            assertEquals(
+                    subject.get(key),
+                    Util.get(subject, key)
+            );
+        }
+
+        try {
+            fail("should fail but returns <"
+                    + subject.get(null)
+                    + ">");
+        } catch (final NullPointerException ignored) {
+            assertNull(
+                    Util.get(subject, null)
+            );
+        }
+
+        try {
+            fail("should fail but returns <"
+                    + subject.get(5)
+                    + ">");
+        } catch (final ClassCastException ignored) {
+            assertNull(
+                    Util.get(subject, 5)
+            );
+        }
+    }
+
+    @Test
+    public final void testContainsKey() {
+        final Map<?, ?> subject = new TreeMap<>(THREE_MAPPINGS);
+        for (final String key : asList(A, B, C, D)) {
+            assertEquals(
+                    subject.containsKey(key),
+                    Util.containsKey(subject, key)
+            );
+        }
+
+        try {
+            fail("should fail but returns <"
+                    + subject.containsKey(null)
+                    + ">");
+        } catch (final NullPointerException ignored) {
+            assertFalse(
+                    Util.containsKey(subject, null)
+            );
+        }
+
+        try {
+            fail("should fail but returns <"
+                    + subject.containsKey(5)
+                    + ">");
+        } catch (final ClassCastException ignored) {
+            assertFalse(
+                    Util.containsKey(subject, 5)
+            );
+        }
+    }
+
+    @Test
+    public final void testContainsValue() {
+        final Map<?, ?> subject = new SpecialMap(THREE_MAPPINGS);
+        for (final String value : asList(A, B, C, D)) {
+            assertEquals(
+                    subject.containsValue(value),
+                    Util.containsValue(subject, value)
+            );
+        }
+
+        try {
+            fail("should fail but returns <"
+                    + subject.containsValue(null)
+                    + ">");
+        } catch (final NullPointerException ignored) {
+            assertFalse(
+                    Util.containsValue(subject, null)
+            );
+        }
+
+        try {
+            fail("should fail but returns <"
+                    + subject.containsValue(5)
+                    + ">");
+        } catch (final ClassCastException ignored) {
+            assertFalse(
+                    Util.containsValue(subject, 5)
+            );
+        }
+    }
+
+    @Test
+    public final void testClear_Map() {
+        assertEquals(
+                Collections.emptyMap(),
+                Util.clear(new HashMap<>(THREE_MAPPINGS))
+        );
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public final void testClear_Map__Unsupported() {
+        fail(
+                "Should fail but returns "
+                        + Util.clear(THREE_MAPPINGS)
+        );
+    }
 
     @Test
     public final void testAltAdd() {
-        Assert.assertEquals(
+        assertEquals(
                 new TreeSet<>(THREE_STRINGS),
                 Util.Alt.add(new TreeSet<>(NO_STRINGS), A, B, C)
         );
@@ -34,7 +164,7 @@ public class UtilTest {
 
     @Test
     public final void testAltRemove() {
-        Assert.assertEquals(
+        assertEquals(
                 new TreeSet<>(NO_STRINGS),
                 Util.Alt.remove(new TreeSet<>(THREE_STRINGS), A, null, B, 5, C)
         );
@@ -42,7 +172,7 @@ public class UtilTest {
 
     @Test
     public final void testAltRetain() {
-        Assert.assertEquals(
+        assertEquals(
                 new TreeSet<>(asList(A, C)),
                 Util.Alt.retain(new TreeSet<>(THREE_STRINGS), A, null, 5, C)
         );
@@ -50,14 +180,14 @@ public class UtilTest {
 
     @Test
     public final void testAltContains_with_Null() {
-        Assert.assertFalse(
+        assertFalse(
                 Util.Alt.contains(new TreeSet<>(THREE_STRINGS), A, null, C)
         );
     }
 
     @Test
     public final void testAltContains_with_Other() {
-        Assert.assertFalse(
+        assertFalse(
                 Util.Alt.contains(new TreeSet<>(THREE_STRINGS), A, 5, C)
         );
     }
@@ -102,7 +232,7 @@ public class UtilTest {
     @Test
     public final void testRemove_null_indirect() {
         final TreeSet<String> subject = new TreeSet<>(THREE_STRINGS);
-        Assert.assertEquals(
+        assertEquals(
                 new TreeSet<>(THREE_STRINGS),
                 Util.remove(subject, null)
         );
@@ -112,7 +242,7 @@ public class UtilTest {
     public final void testRemoveAll_null_indirect() {
         final Collection<String> subject = new ArrayList<>(TWO_STRINGS_AND_NULL);
         //noinspection AssertEqualsBetweenInconvertibleTypes
-        Assert.assertEquals(
+        assertEquals(
                 singletonList(null),
                 Util.removeAll(subject, new TreeSet<>(THREE_STRINGS))
         );
@@ -122,7 +252,7 @@ public class UtilTest {
     public final void testRetainAll_null_indirect() {
         final Collection<String> subject = new ArrayList<>(TWO_STRINGS_AND_NULL);
         //noinspection AssertEqualsBetweenInconvertibleTypes
-        Assert.assertEquals(
+        assertEquals(
                 asList(A, C),
                 Util.retainAll(subject, new TreeSet<>(THREE_STRINGS))
         );
@@ -132,7 +262,7 @@ public class UtilTest {
     public final void testRemoveAll_other_indirect() {
         final Collection<Object> subject = new ArrayList<Object>(asList(A, 5, C));
         //noinspection AssertEqualsBetweenInconvertibleTypes
-        Assert.assertEquals(
+        assertEquals(
                 singletonList(5),
                 Util.removeAll(subject, new TreeSet<>(THREE_STRINGS))
         );
@@ -142,7 +272,7 @@ public class UtilTest {
     public final void testRetainAll_other_indirect() {
         final Collection<Object> subject = new ArrayList<Object>(asList(A, 5, C));
         //noinspection AssertEqualsBetweenInconvertibleTypes
-        Assert.assertEquals(
+        assertEquals(
                 asList(A, C),
                 Util.retainAll(subject, new TreeSet<>(THREE_STRINGS))
         );
@@ -159,7 +289,7 @@ public class UtilTest {
     @Test
     public final void testContains_null_indirect() {
         final Collection<String> subject = new TreeSet<>(THREE_STRINGS);
-        Assert.assertFalse(
+        assertFalse(
                 Util.contains(subject, null)
         );
     }
@@ -181,38 +311,52 @@ public class UtilTest {
 
     @Test(expected = NullPointerException.class)
     public final void testContainsAll_STUFF_STUFF_with_Null_direct() {
-        (new TreeSet<>(THREE_STRINGS)).containsAll(TWO_STRINGS_AND_NULL);
+        new TreeSet<>(THREE_STRINGS).containsAll(TWO_STRINGS_AND_NULL);
     }
 
     @Test(expected = ClassCastException.class)
     public final void testContainsAll_STUFF_STUFF_with_Other_direct() {
-        (new TreeSet<>(THREE_STRINGS)).containsAll(TWO_STRINGS_AND_OTHER);
+        new TreeSet<>(THREE_STRINGS).containsAll(TWO_STRINGS_AND_OTHER);
     }
 
     @Test
     public final void testContainsAll_STUFF_STUFF_with_Null_indirect() {
-        Assert.assertFalse(
+        assertFalse(
                 Util.containsAll(new TreeSet<>(THREE_STRINGS), TWO_STRINGS_AND_NULL)
         );
     }
 
     @Test
     public final void testContainsAll_STUFF_STUFF_with_Other_indirect() {
-        Assert.assertFalse(
+        assertFalse(
                 Util.containsAll(new TreeSet<>(THREE_STRINGS), TWO_STRINGS_AND_OTHER)
         );
     }
 
     @Test
-    public final void testClear() {
-        Assert.assertEquals(
+    public final void testClear_Collection() {
+        assertEquals(
                 new TreeSet<>(NO_STRINGS),
                 Util.clear(new TreeSet<>(THREE_STRINGS))
         );
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    private enum AnEnum {
-        ABC, DEF, GHI, JKL, MNO
+    @SuppressWarnings("ProhibitedExceptionThrown")
+    private static class SpecialMap extends AbstractMap<String, String> {
+        private final Map<String, String> backing;
+
+        private SpecialMap(final Map<String, String> origin) {
+            backing = new HashMap<>(origin);
+        }
+
+        @Override
+        public final boolean containsValue(final Object value) {
+            return super.containsValue(String.class.cast(Objects.requireNonNull(value)));
+        }
+
+        @Override
+        public final Set<Entry<String, String>> entrySet() {
+            return backing.entrySet();
+        }
     }
 }

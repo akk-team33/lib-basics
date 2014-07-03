@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inspections version="1.0" is_locked="false">
     <option name="myName" value="Project Default"/>
-    <option name="myLocal" value="false"/>
+    <option name="myLocal" value="true"/>
     <inspection_tool class="AbsoluteAlignmentInUserInterface" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="AbstractClassExtendsConcreteClass" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
@@ -368,7 +368,6 @@
     </inspection_tool>
     <inspection_tool class="FieldMayBeFinal" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="FieldMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="FinalClass" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="FinalMethodInFinalClass" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="Finalize" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="ignoreTrivialFinalizers" value="true"/>
@@ -552,7 +551,6 @@
                 value="java.io.ByteArrayOutputStream,java.io.ByteArrayInputStream,java.io.StringBufferInputStream,java.io.CharArrayWriter,java.io.CharArrayReader,java.io.StringWriter,java.io.StringReader"/>
         <option name="insideTryAllowed" value="false"/>
     </inspection_tool>
-    <inspection_tool class="IfMayBeConditional" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="IfStatementWithIdenticalBranches" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="IfStatementWithTooManyBranches" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="m_limit" value="3"/>
@@ -653,7 +651,6 @@
     <inspection_tool class="LambdaParameterHidingMemberVariable" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="LengthOneStringInIndexOf" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="LengthOneStringsInConcatenation" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="LimitedScopeInnerClass" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ListIndexOfReplaceableByContains" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ListenerMayUseAdapter" enabled="true" level="WARNING" enabled_by_default="true">
@@ -758,7 +755,7 @@
     <inspection_tool class="MultipleReturnPointsPerMethod" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="ignoreGuardClauses" value="false"/>
         <option name="ignoreEqualsMethod" value="false"/>
-        <option name="m_limit" value="1"/>
+        <option name="m_limit" value="4"/>
     </inspection_tool>
     <inspection_tool class="MultipleTopLevelClassesInFile" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="MultipleTypedDeclaration" enabled="true" level="WARNING" enabled_by_default="true"/>
@@ -1038,7 +1035,6 @@
     <inspection_tool class="SharedThreadLocalRandom" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="SignalWithoutCorrespondingAwait" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="SimpleDateFormatWithoutLocale" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="SimplifiableAnnotation" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="SimplifiableEqualsExpression" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="SimplifiableJUnitAssertion" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="Since15" enabled="true" level="ERROR" enabled_by_default="true"/>
@@ -1087,6 +1083,15 @@
                      enabled_by_default="true"/>
     <inspection_tool class="StringCompareTo" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="StringConcatenation" enabled="true" level="WARNING" enabled_by_default="true">
+        <scope name="Tests" level="WARNING" enabled="false">
+            <option name="ignoreAsserts" value="false"/>
+            <option name="ignoreSystemOuts" value="false"/>
+            <option name="ignoreSystemErrs" value="false"/>
+            <option name="ignoreThrowableArguments" value="false"/>
+            <option name="ignoreConstantInitializers" value="false"/>
+            <option name="ignoreInTestCode" value="false"/>
+            <option name="ignoreInToString" value="false"/>
+        </scope>
         <option name="ignoreAsserts" value="false"/>
         <option name="ignoreSystemOuts" value="false"/>
         <option name="ignoreSystemErrs" value="false"/>
@@ -1289,11 +1294,6 @@
     <inspection_tool class="UseOfProcessBuilder" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="UseOfPropertiesAsHashtable" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="UseOfSunClasses" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="UtilityClass" enabled="true" level="WARNING" enabled_by_default="true">
-        <option name="ignorableAnnotations">
-            <value/>
-        </option>
-    </inspection_tool>
     <inspection_tool class="UtilityClassWithPublicConstructor" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="UtilityClassWithoutPrivateConstructor" enabled="true" level="WARNING"

@@ -2,28 +2,17 @@ package net.team33.basics.collections;
 
 import com.google.common.base.Function;
 
-import java.util.AbstractCollection;
-import java.util.AbstractList;
-import java.util.AbstractSet;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 
 /**
  * Convenience methods to deal with Collections in addition to {@link Collections}.
  */
-@SuppressWarnings({"ProhibitedExceptionCaught", "StaticMethodOnlyUsedInOneClass"})
+@SuppressWarnings("ProhibitedExceptionCaught")
 public final class Util {
     private Util() {
     }
@@ -120,12 +109,25 @@ public final class Util {
     }
 
     /**
+     * Removes all entries from a given {@code subject}.
+     *
+     * @return The {@code subject}.
+     * @throws NullPointerException          if {@code subject} is {@code null}.
+     * @throws UnsupportedOperationException if {@link Collection#clear()} is not supported by the {@code subject}.
+     * @see Map#clear()
+     */
+    public static <K, V, M extends Map<K, V>> M clear(final M subject) {
+        subject.clear();
+        return subject;
+    }
+
+    /**
      * Removes an {@code element} from a given {@code subject}.
      * Respectively ensures the {@code subject} not to contain the {@code element}.
      * <p/>
-     * If {@code subject} contains the {@code element} several times, each occurance will be removed!
+     * If {@code subject} contains the {@code element} several times, each occurrence will be removed!
      * <p/>
-     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which may be caused by
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
      * {@link Collection#remove(Object)} when the {@code subject} does not support the requested {@code element}.
      *
      * @return The {@code subject}.
@@ -152,10 +154,38 @@ public final class Util {
     }
 
     /**
+     * Removes an entry by a specific {@code key} from a given {@code subject}.
+     * <p/>
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
+     * {@link Map#remove(Object)} when the {@code subject} does not support the requested {@code key}.
+     *
+     * @return The {@code subject}.
+     * @throws UnsupportedOperationException if {@link Map#remove(Object)} is not supported by the {@code subject}.
+     * @throws NullPointerException          if {@code subject} is {@code null}.
+     * @see Map#remove(Object)
+     */
+    public static <K, V, M extends Map<K, V>> M remove(final M subject, final Object key) {
+        try {
+            //noinspection SuspiciousMethodCalls
+            subject.remove(key);
+
+        } catch (final NullPointerException | ClassCastException caught) {
+            if (null == subject) {
+                throw caught; // expected to be a NullPointerException
+            }
+
+            // --> <subject> can not contain <key>
+            // --> <subject> simply does not contain <key>
+            // --> Nothing else to do.
+        }
+        return subject;
+    }
+
+    /**
      * Removes some {@code elements} from a given {@code subject}.
      * Respectively ensures the {@code subject} not to contain any of the specified {@code elements}.
      * <p/>
-     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which may be caused by
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
      * {@link Collection#removeAll(Collection)} when the {@code subject} does not support some of the requested
      * {@code elements}.
      *
@@ -188,7 +218,7 @@ public final class Util {
      * Retains some {@code elements} in a given {@code subject}.
      * Respectively ensures the {@code subject} not to contain any element, not also contained in {@code elements}.
      * <p/>
-     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which may be caused by
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
      * {@link Collection#retainAll(Collection)} when the {@code subject} does not support some of the requested
      * {@code elements}.
      *
@@ -219,6 +249,9 @@ public final class Util {
 
     /**
      * Indicates if a given {@code subject} contains a specific {@code element}.
+     * <p/>
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
+     * {@link Collection#contains(Object)} when the {@code subject} does not support the requested {@code element}.
      *
      * @throws NullPointerException if {@code subject} is {@code null}.
      * @see Collection#contains(Object)
@@ -240,7 +273,61 @@ public final class Util {
     }
 
     /**
+     * Indicates if a given {@code subject} contains an entry for a specific {@code key}.
+     * <p/>
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
+     * {@link Map#containsKey(Object)} when the {@code subject} does not support the requested {@code key}.
+     *
+     * @throws NullPointerException if {@code subject} is {@code null}.
+     * @see Map#containsKey(Object)
+     */
+    public static boolean containsKey(final Map<?, ?> subject, final Object key) {
+        try {
+            return subject.containsKey(key);
+
+        } catch (final NullPointerException | ClassCastException caught) {
+            if (null == subject) {
+                throw caught; // expected to be a NullPointerException
+
+            } else {
+                // --> <subject> can not contain <key>
+                // --> <subject> simply does not contain <key> ...
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Indicates if a given {@code subject} contains an entry with a specific {@code value}.
+     * <p/>
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
+     * {@link Map#containsValue(Object)} when the {@code subject} does not support the requested {@code value}.
+     *
+     * @throws NullPointerException if {@code subject} is {@code null}.
+     * @see Map#containsValue(Object)
+     */
+    public static boolean containsValue(final Map<?, ?> subject, final Object value) {
+        try {
+            return subject.containsValue(value);
+
+        } catch (final NullPointerException | ClassCastException caught) {
+            if (null == subject) {
+                throw caught; // expected to be a NullPointerException
+
+            } else {
+                // --> <subject> can not contain <value>
+                // --> <subject> simply does not contain <value> ...
+                return false;
+            }
+        }
+    }
+
+    /**
      * Indicates if a given {@code subject} contains specific {@code elements}.
+     * <p/>
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
+     * {@link Collection#containsAll(Collection)} when the {@code subject} does not support some of the requested
+     * {@code elements}.
      *
      * @throws NullPointerException if {@code subject} or the {@link Collection} of {@code elements}
      *                              is {@code null}.
@@ -258,6 +345,35 @@ public final class Util {
                 // --> <subject> can not contain all <elements>
                 // --> <subject> simply does not contain all <elements> ...
                 return false;
+            }
+        }
+    }
+
+    /**
+     * Retrieves the value for a specific {@code key} from a given {@code subject}.
+     * <p/>
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
+     * {@link Map#containsKey(Object)} when the {@code subject} does not support the requested {@code key}.
+     *
+     * @return The value or {@code null} if the {@code subject} doesn't contain (an entry for) the {@code key}.
+     *
+     * @throws NullPointerException if {@code subject} is {@code null}.
+     * @see Map#get(Object)
+     */
+    public static <V> V get(final Map<?, V> subject, final Object key) {
+        try {
+            return subject.get(key);
+
+        } catch (final NullPointerException | ClassCastException caught) {
+            if (null == subject) {
+                throw caught; // expected to be a NullPointerException
+
+            } else {
+                // --> <subject> can not contain <key>
+                // --> <subject> simply does not contain <key>
+                // --> as specified for Map ...
+                // noinspection ReturnOfNull
+                return null;
             }
         }
     }
@@ -306,7 +422,7 @@ public final class Util {
          * Removes some {@code elements} from a given {@code subject}.
          * Respectively ensures the {@code subject} not to contain any of the specified {@code elements}.
          * <p/>
-         * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which may be caused by
+         * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
          * {@link Collection#removeAll(Collection)} when the {@code subject} does not support some of the requested
          * {@code elements}.
          *
@@ -330,7 +446,7 @@ public final class Util {
          * Retains some {@code elements} in a given {@code subject}.
          * Respectively ensures the {@code subject} not to contain any element, not also contained in {@code elements}.
          * <p/>
-         * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which may be caused by
+         * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
          * {@link Collection#retainAll(Collection)} when the {@code subject} does not support some of the requested
          * {@code elements}.
          *
@@ -356,326 +472,6 @@ public final class Util {
             } else {
                 return containsAll(subject, asList(elements));
             }
-        }
-    }
-
-    @SuppressWarnings({"RefusedBequest", "StandardVariableNames", "NewExceptionWithoutArguments"})
-    private abstract static class FinalCollection<E, B extends Collection<E>> extends AbstractCollection<E> {
-        @SuppressWarnings("ProtectedField")
-        protected final B backing;
-
-        private FinalCollection(final B backing) {
-            this.backing = backing;
-        }
-
-        @Override
-        public final Iterator<E> iterator() {
-            return new FinalIterator<>(backing.iterator());
-        }
-
-        @Override
-        public final int size() {
-            return backing.size();
-        }
-
-        @Override
-        public final boolean isEmpty() {
-            return backing.isEmpty();
-        }
-
-        @Override
-        public final boolean contains(final Object o) {
-            return backing.contains(o);
-        }
-
-        @Override
-        public final boolean containsAll(final Collection<?> c) {
-            return backing.containsAll(c);
-        }
-
-        @Override
-        public final boolean add(final E e) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final boolean addAll(final Collection<? extends E> c) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final boolean remove(final Object o) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final boolean removeAll(final Collection<?> c) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final boolean retainAll(final Collection<?> c) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final void clear() {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    @SuppressWarnings({"RefusedBequest", "NewExceptionWithoutArguments", "StandardVariableNames"})
-    private static class FinalList<E> extends FinalCollection<E, List<E>> implements List<E> {
-
-        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-        private final AbstractList<E> equals = new Equals();
-
-        private FinalList(final List<E> origin) {
-            super(new ArrayList<>(origin));
-        }
-
-        @Override
-        public final ListIterator<E> listIterator() {
-            return new FinalListIterator<>(backing.listIterator());
-        }
-
-        @Override
-        public final ListIterator<E> listIterator(final int index) {
-            return new FinalListIterator<>(backing.listIterator(index));
-        }
-
-        @Override
-        public final List<E> subList(final int fromIndex, final int toIndex) {
-            return new FinalList<>(backing.subList(fromIndex, toIndex));
-        }
-
-        @Override
-        public final E get(final int index) {
-            return backing.get(index);
-        }
-
-        @Override
-        public final int indexOf(final Object o) {
-            return backing.indexOf(o);
-        }
-
-        @Override
-        public final int lastIndexOf(final Object o) {
-            return backing.lastIndexOf(o);
-        }
-
-        @Override
-        public final E set(final int index, final E element) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final void add(final int index, final E element) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final E remove(final int index) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final boolean addAll(final int index, final Collection<? extends E> c) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final int hashCode() {
-            return equals.hashCode();
-        }
-
-        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-        @Override
-        public final boolean equals(final Object obj) {
-            return equals.equals(obj);
-        }
-
-        @SuppressWarnings({"InnerClassTooDeeplyNested", "NonStaticInnerClassInSecureContext"})
-        private class Equals extends AbstractList<E> {
-            @Override
-            public final E get(final int index) {
-                return backing.get(index);
-            }
-
-            @Override
-            public final int size() {
-                return backing.size();
-            }
-        }
-    }
-
-    @SuppressWarnings({"RefusedBequest", "StandardVariableNames", "NewExceptionWithoutArguments"})
-    private abstract static class FinalSet<E, B extends Collection<E>>
-            extends FinalCollection<E, B>
-            implements Set<E> {
-
-        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-        private final AbstractSet<E> equals = new Equals();
-
-        private FinalSet(final B backing) {
-            super(backing);
-        }
-
-        @Override
-        public final int hashCode() {
-            return equals.hashCode();
-        }
-
-        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-        @Override
-        public final boolean equals(final Object obj) {
-            return equals.equals(obj);
-        }
-
-        @SuppressWarnings({"InnerClassTooDeeplyNested", "NonStaticInnerClassInSecureContext"})
-        private class Equals extends AbstractSet<E> {
-            @Override
-            public final Iterator<E> iterator() {
-                return backing.iterator();
-            }
-
-            @Override
-            public final int size() {
-                return backing.size();
-            }
-        }
-    }
-
-    @SuppressWarnings({"RefusedBequest", "NewExceptionWithoutArguments", "StandardVariableNames"})
-    private static class FinalPlainSet<E> extends FinalSet<E, ArrayList<E>> {
-        private FinalPlainSet(final Set<E> origin) {
-            super(new ArrayList<>(origin));
-        }
-    }
-
-    @SuppressWarnings({"RefusedBequest", "NewExceptionWithoutArguments", "StandardVariableNames"})
-    private static class FinalEnumSet<E extends Enum<E>> extends FinalSet<E, EnumSet<E>> {
-        private FinalEnumSet(final EnumSet<E> origin) {
-            super(EnumSet.copyOf(origin));
-        }
-    }
-
-    @SuppressWarnings({"RefusedBequest", "NewExceptionWithoutArguments", "StandardVariableNames"})
-    private static class FinalSortedSet<E> extends FinalSet<E, TreeSet<E>> implements SortedSet<E> {
-        private FinalSortedSet(final SortedSet<E> origin) {
-            super(new TreeSet<>(origin));
-        }
-
-        @Override
-        public final Comparator<? super E> comparator() {
-            return backing.comparator();
-        }
-
-        @Override
-        public final SortedSet<E> subSet(final E fromElement, final E toElement) {
-            return new FinalSortedSet<>(backing.subSet(fromElement, toElement));
-        }
-
-        @Override
-        public final SortedSet<E> headSet(final E toElement) {
-            return new FinalSortedSet<>(backing.headSet(toElement));
-        }
-
-        @Override
-        public final SortedSet<E> tailSet(final E fromElement) {
-            return new FinalSortedSet<>(backing.tailSet(fromElement));
-        }
-
-        @Override
-        public final E first() {
-            return backing.first();
-        }
-
-        @Override
-        public final E last() {
-            return backing.last();
-        }
-    }
-
-    @SuppressWarnings("NewExceptionWithoutArguments")
-    private static class FinalIteratorBase<E, B extends Iterator<E>> implements Iterator<E> {
-        @SuppressWarnings("ProtectedField")
-        protected final B backing;
-
-        private FinalIteratorBase(final B backing) {
-            this.backing = backing;
-        }
-
-        @Override
-        public final boolean hasNext() {
-            return backing.hasNext();
-        }
-
-        @Override
-        public final E next() {
-            return backing.next();
-        }
-
-        @Override
-        public final void remove() {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    @SuppressWarnings("NewExceptionWithoutArguments")
-    private static class FinalIterator<E> extends FinalIteratorBase<E, Iterator<E>> {
-        private FinalIterator(final Iterator<E> backing) {
-            super(backing);
-        }
-    }
-
-    @SuppressWarnings("NewExceptionWithoutArguments")
-    private static class FinalListIterator<E> extends FinalIteratorBase<E, ListIterator<E>> implements ListIterator<E> {
-        private FinalListIterator(final ListIterator<E> backing) {
-            super(backing);
-        }
-
-        @Override
-        public final boolean hasPrevious() {
-            return backing.hasPrevious();
-        }
-
-        @Override
-        public final E previous() {
-            return backing.previous();
-        }
-
-        @Override
-        public final int nextIndex() {
-            return backing.nextIndex();
-        }
-
-        @Override
-        public final int previousIndex() {
-            return backing.previousIndex();
-        }
-
-        @Override
-        public final void set(final E e) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public final void add(final E e) {
-            // fast fail ...
-            throw new UnsupportedOperationException();
         }
     }
 }
