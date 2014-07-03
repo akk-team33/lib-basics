@@ -24,7 +24,7 @@ public class Mapper<K, V, M extends Map<K, V>, R extends Mapper<K, V, M, R>> {
         this.subject = subject;
     }
 
-    public static <K, V, M extends Map<K, V>> Mapper<K, V, M, ?> mapping(final M subject) {
+    public static <K, V, M extends Map<K, V>> Mapper<K, V, M, ?> support(final M subject) {
         return new Simple<>(subject);
     }
 

@@ -1,11 +1,7 @@
 package net.team33.basics.collections;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-
-import static java.util.Arrays.asList;
 
 /**
  * Abstracts an instrument to initialize a {@link List} in a declarative style.
@@ -26,33 +22,8 @@ public class Lister<E, L extends List<E>, R extends Lister<E, L, R>> extends Col
         super(subject);
     }
 
-    public static <E, L extends List<E>>
-    Lister<E, L, ?> pro(final L subject) {
+    public static <E, L extends List<E>> Lister<E, L, ?> support(final L subject) {
         return new Simple<>(subject);
-    }
-
-    @SuppressWarnings("OverloadedVarargsMethod")
-    @SafeVarargs
-    public static <E>
-    Lister<E, ArrayList<E>, ?> proArrayList(final E... elements) {
-        return proArrayList(asList(elements));
-    }
-
-    public static <E>
-    Lister<E, ArrayList<E>, ?> proArrayList(final Collection<? extends E> origin) {
-        return pro(new ArrayList<>(origin));
-    }
-
-    @SuppressWarnings("OverloadedVarargsMethod")
-    @SafeVarargs
-    public static <E>
-    Lister<E, LinkedList<E>, ?> proLinkedList(final E... elements) {
-        return proLinkedList(asList(elements));
-    }
-
-    public static <E>
-    Lister<E, LinkedList<E>, ?> proLinkedList(final Collection<? extends E> origin) {
-        return pro(new LinkedList<>(origin));
     }
 
     /**

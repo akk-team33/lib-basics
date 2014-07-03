@@ -3,11 +3,6 @@ package net.team33.basics.collections;
 import com.google.common.base.Function;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
@@ -19,7 +14,6 @@ import static java.util.Objects.requireNonNull;
  * @param <C> The type of the {@link Collection} to be initialized.
  * @param <R> The 'final' type of the {@link Collector} itself.
  */
-@SuppressWarnings({"ClassWithTooManyMethods", "StaticMethodOnlyUsedInOneClass"})
 public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>> {
 
     private final C subject;
@@ -34,66 +28,8 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
         this.subject = requireNonNull(subject);
     }
 
-    public static <E, C extends Collection<E>> Collector<E, C, ?> pro(final C subject) {
+    public static <E, C extends Collection<E>> Collector<E, C, ?> support(final C subject) {
         return new Simple<>(subject);
-    }
-
-    @SuppressWarnings("OverloadedVarargsMethod")
-    @SafeVarargs
-    public static <E>
-    Collector<E, HashSet<E>, ?> proHashSet(final E... elements) {
-        return proHashSet(asList(elements));
-    }
-
-    public static <E>
-    Collector<E, HashSet<E>, ?> proHashSet(final Collection<? extends E> origin) {
-        return pro(new HashSet<>(origin));
-    }
-
-    @SuppressWarnings("OverloadedVarargsMethod")
-    @SafeVarargs
-    public static <E>
-    Collector<E, LinkedHashSet<E>, ?> proLinkedHashSet(final E... elements) {
-        return proLinkedHashSet(asList(elements));
-    }
-
-    public static <E>
-    Collector<E, LinkedHashSet<E>, ?> proLinkedHashSet(final Collection<? extends E> origin) {
-        return pro(new LinkedHashSet<>(origin));
-    }
-
-    public static <E>
-    Collector<E, TreeSet<E>, ?> proTreeSet(final Comparator<? super E> order) {
-        return pro(new TreeSet<>(order));
-    }
-
-    @SuppressWarnings("OverloadedVarargsMethod")
-    @SafeVarargs
-    public static <E extends Comparable<E>>
-    Collector<E, TreeSet<E>, ?> proTreeSet(final E... elements) {
-        return proTreeSet(asList(elements));
-    }
-
-    public static <E extends Comparable<E>>
-    Collector<E, TreeSet<E>, ?> proTreeSet(final Collection<? extends E> origin) {
-        return pro(new TreeSet<>(origin));
-    }
-
-    public static <E extends Enum<E>>
-    Collector<E, EnumSet<E>, ?> proEnumSet(final Class<E> enumClass) {
-        return pro(EnumSet.noneOf(enumClass));
-    }
-
-    @SuppressWarnings("OverloadedVarargsMethod")
-    @SafeVarargs
-    public static <E extends Enum<E>>
-    Collector<E, EnumSet<E>, ?> proEnumSet(final E... elements) {
-        return proEnumSet(asList(elements));
-    }
-
-    public static <E extends Enum<E>>
-    Collector<E, EnumSet<E>, ?> proEnumSet(final Collection<E> origin) {
-        return pro(EnumSet.copyOf(origin));
     }
 
     @SuppressWarnings("unchecked")

@@ -19,7 +19,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableMap;
-import static net.team33.basics.collections.Mapper.mapping;
+import static net.team33.basics.collections.Mapper.support;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -38,7 +38,7 @@ public class UtilTest {
     private static final List<String> NO_STRINGS = emptyList();
     private static final Collection<?> COLLECTION_NULL = null;
     private static final Map<String, String> THREE_MAPPINGS = unmodifiableMap(
-            mapping(new HashMap<String, String>(3))
+            support(new HashMap<String, String>(3))
                     .put(A, B)
                     .put(B, C)
                     .put(C, A)
