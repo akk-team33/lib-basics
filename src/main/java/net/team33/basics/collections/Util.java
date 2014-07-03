@@ -12,7 +12,6 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -20,8 +19,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableSet;
 
 /**
  * Convenience methods to deal with Collections in addition to {@link Collections}.
@@ -263,65 +260,6 @@ public final class Util {
                 return false;
             }
         }
-    }
-
-    /**
-     * Supplies an immutable {@link List} as a copy* of an original (probably mutable) {@link Collection}
-     * keeping its iteration order.
-     * <p/>
-     * If the {@code origin} is a {@link List}, the result will {@linkplain List#equals(Object) equal} with it.
-     * <p/>
-     * *in contrast to {@link Collections#unmodifiableCollection(Collection)}
-     *
-     * @throws NullPointerException if {@code origin} is {@code null}
-     */
-    public static <E> List<E> finalList(final Collection<? extends E> origin) {
-        return unmodifiableList(new ArrayList<>(origin));
-    }
-
-    /**
-     * Supplies an immutable {@link Set} as a copy* of an original (probably mutable) {@link Collection}
-     * keeping its iteration order.
-     * <p/>
-     * If the {@code origin} is a {@link Set}, the result will {@linkplain Set#equals(Object) equal} with it.
-     * <p/>
-     * *in contrast to {@link Collections#unmodifiableCollection(Collection)}
-     *
-     * @throws NullPointerException if {@code origin} is {@code null}
-     */
-    public static <E> Set<E> finalSet(final Collection<? extends E> origin) {
-        return unmodifiableSet(new LinkedHashSet<>(origin));
-    }
-
-    /**
-     * Supplies an immutable {@link Set} backed by an {@link EnumSet} as a copy* of an original (probably mutable)
-     * {@link Collection} providing the enum´s 'natural' iteration order.
-     * <p/>
-     * If the {@code origin} is a {@link Set}, the result will {@linkplain Set#equals(Object) equal} with it.
-     * <p/>
-     * *in contrast to {@link Collections#unmodifiableCollection(Collection)}
-     *
-     * @throws NullPointerException if {@code origin} is {@code null}
-     * @throws IllegalArgumentException if {@code origin} is not an {@link EnumSet} instance and contains no elements
-     */
-    public static <E extends Enum<E>> Set<E> finalEnumSet(final Collection<E> origin) {
-        return unmodifiableSet(EnumSet.copyOf(origin));
-    }
-
-    /**
-     * Supplies an immutable {@link Set} backed by an {@link EnumSet} as a copy* of an original (probably mutable)
-     * {@link Collection} providing the enum´s 'natural' iteration order.
-     * <p/>
-     * If the {@code origin} is a {@link Set}, the result will {@linkplain Set#equals(Object) equal} with it.
-     * <p/>
-     * *in contrast to {@link Collections#unmodifiableCollection(Collection)}
-     *
-     * @throws NullPointerException if {@code origin} is {@code null}
-     * @throws IllegalArgumentException if {@code origin} is not an {@link EnumSet} instance and contains no elements
-     */
-    public static <E extends Enum<E>> Set<E> finalEnumSet(
-            final Class<E> enumClass, final Collection<? extends E> origin) {
-        return unmodifiableSet(addAll(EnumSet.noneOf(enumClass), origin));
     }
 
     /**

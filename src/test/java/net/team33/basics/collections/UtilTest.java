@@ -5,18 +5,12 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.EnumSet.allOf;
 
 @SuppressWarnings("ClassWithTooManyMethods")
 public class UtilTest {
@@ -29,52 +23,6 @@ public class UtilTest {
     private static final List<?> TWO_STRINGS_AND_OTHER = asList(A, 5, C);
     private static final List<String> NO_STRINGS = emptyList();
     private static final Collection<?> COLLECTION_NULL = null;
-    private static final String HERE = "here";
-    private static final String ARE = "are";
-    private static final String SOME = "some";
-    private static final String SHORT = "short";
-    private static final String STRINGS = "strings";
-    private static final String WITH = "with";
-    private static final String DUPLICATE = "duplicate";
-    private static final List<String> ORIGINAL_LIST
-            = asList(HERE, ARE, SOME, SHORT, STRINGS, WITH, SOME, DUPLICATE, STRINGS);
-    private static final String SHOULD_FAIL_BUT_RETURNS = "should fail but returns <%s>";
-
-    private static <E> void testFinalCopy(final List<E> originalList) {
-        testFinalCopy(originalList, Util.finalList(originalList));
-    }
-
-    private static <E extends Enum<E>> void testFinalCopy(
-            @SuppressWarnings("TypeMayBeWeakened") final EnumSet<E> originalSet) {
-        testFinalCopy(originalSet, Util.finalEnumSet(originalSet));
-    }
-
-    private static <E> void testFinalCopy(final Set<E> originalSet) {
-        testFinalCopy(originalSet, Util.finalSet(originalSet));
-    }
-
-    private static <E> void testFinalList(final Collection<E> original) {
-        testFinalCopy(new ArrayList<>(original), Util.finalList(original));
-    }
-
-    private static <E> void testFinalSet(final Collection<E> original) {
-        testFinalCopy(new LinkedHashSet<>(original), Util.finalSet(original));
-    }
-
-    private static <E, C extends Collection<E>> void testFinalCopy(final C original, final C finalCopy) {
-        Assert.assertEquals(
-                original,
-                finalCopy
-        );
-        Assert.assertEquals(
-                finalCopy,
-                original
-        );
-        Assert.assertEquals(
-                new ArrayList<>(original),
-                new ArrayList<>(finalCopy)
-        );
-    }
 
     @Test
     public final void testAltAdd() {
@@ -261,54 +209,6 @@ public class UtilTest {
                 new TreeSet<>(NO_STRINGS),
                 Util.clear(new TreeSet<>(THREE_STRINGS))
         );
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public final void testFinalCopy_Empty_removeAll() {
-        Assert.fail(
-                String.format(
-                        SHOULD_FAIL_BUT_RETURNS,
-                        Util.finalSet(Collections.emptySet()).removeAll(THREE_STRINGS))
-        );
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public final void testFinalCopy_notEmpty_removeAll() {
-        Assert.fail(
-                String.format(
-                        SHOULD_FAIL_BUT_RETURNS,
-                        Util.finalSet(new TreeSet<Object>(THREE_STRINGS)).removeAll(THREE_STRINGS))
-        );
-    }
-
-    @SuppressWarnings("JUnitTestMethodWithNoAssertions")
-    @Test
-    public final void testFinalCopy() {
-        testFinalCopy(new HashSet<>(ORIGINAL_LIST));
-        testFinalCopy(new LinkedHashSet<>(ORIGINAL_LIST));
-        testFinalCopy(new TreeSet<>(ORIGINAL_LIST));
-        testFinalCopy(allOf(AnEnum.class));
-        testFinalCopy(asList(A, B, null, C, B, C));
-    }
-
-    @SuppressWarnings("JUnitTestMethodWithNoAssertions")
-    @Test
-    public final void testFinalList() {
-        testFinalList(new HashSet<>(ORIGINAL_LIST));
-        testFinalList(new LinkedHashSet<>(ORIGINAL_LIST));
-        testFinalList(new TreeSet<>(ORIGINAL_LIST));
-        testFinalList(allOf(AnEnum.class));
-        testFinalList(asList(A, B, null, C, B, C));
-    }
-
-    @SuppressWarnings("JUnitTestMethodWithNoAssertions")
-    @Test
-    public final void testFinalSet() {
-        testFinalSet(new HashSet<>(ORIGINAL_LIST));
-        testFinalSet(new LinkedHashSet<>(ORIGINAL_LIST));
-        testFinalSet(new TreeSet<>(ORIGINAL_LIST));
-        testFinalSet(allOf(AnEnum.class));
-        testFinalSet(asList(A, B, null, C, B, C));
     }
 
     @SuppressWarnings("UnusedDeclaration")
