@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -47,7 +48,7 @@ public class MapperTest {
     public final void testPut() {
         Assert.assertEquals(
                 ORIGIN_A,
-                Mapper.proEnumMap(Key.class)
+                Mapper.mapping(new EnumMap<>(Key.class))
                         .put(Key.KEY_01, VALUE_01)
                         .put(Key.KEY_02, VALUE_02)
                         .put(Key.KEY_03, VALUE_03)
@@ -59,7 +60,7 @@ public class MapperTest {
     public final void testPut_Entry() {
         Assert.assertEquals(
                 ORIGIN_A,
-                Mapper.pro(new TreeMap<Key, String>())
+                Mapper.mapping(new TreeMap<Key, String>())
                         .put(ENTRIES_A.get(0))
                         .put(ENTRIES_A.get(1))
                         .put(ENTRIES_A.get(2))
@@ -71,28 +72,8 @@ public class MapperTest {
     public final void testPutAll() {
         Assert.assertEquals(
                 ORIGIN_A,
-                Mapper.pro(new TreeMap<Key, String>())
+                Mapper.mapping(new TreeMap<Key, String>())
                         .putAll(ORIGIN_A)
-                        .getSubject()
-        );
-    }
-
-    @Test
-    public final void testPutAll_Entries() {
-        Assert.assertEquals(
-                ORIGIN_A,
-                Mapper.pro(new TreeMap<Key, String>())
-                        .putAll(ENTRIES_A)
-                        .getSubject()
-        );
-    }
-
-    @Test
-    public final void testAltPut_Entries() {
-        Assert.assertEquals(
-                ORIGIN_A,
-                Mapper.proTreeMap(NATURAL_ORDER)
-                        .putAlt(ENTRIES_A.get(0), ENTRIES_A.get(1), ENTRIES_A.get(2))
                         .getSubject()
         );
     }
@@ -101,7 +82,7 @@ public class MapperTest {
     public final void testRemove() {
         Assert.assertEquals(
                 emptyMap(),
-                Mapper.pro(new LinkedHashMap<>(ORIGIN_A))
+                Mapper.mapping(new LinkedHashMap<>(ORIGIN_A))
                         .remove(Key.KEY_01)
                         .remove(Key.KEY_02)
                         .remove(Key.KEY_03)
@@ -113,7 +94,7 @@ public class MapperTest {
     public final void testRemoveAll() {
         Assert.assertEquals(
                 ORIGIN_B,
-                Mapper.proEnumMap(Key.class)
+                Mapper.mapping(new EnumMap<>(Key.class))
                         .putAll(ORIGIN_C)
                         .removeAll(ORIGIN_A.keySet())
                         .getSubject()
@@ -124,7 +105,7 @@ public class MapperTest {
     public final void testAltRemove() {
         Assert.assertEquals(
                 ORIGIN_B,
-                Mapper.proHashMap()
+                Mapper.mapping(new HashMap<>(0))
                         .putAll(ORIGIN_C)
                         .removeAlt(Key.KEY_01, Key.KEY_02, Key.KEY_03)
                         .getSubject()
@@ -135,7 +116,7 @@ public class MapperTest {
     public final void testRetainAll() {
         Assert.assertEquals(
                 ORIGIN_A,
-                Mapper.pro(new HashMap<>(ORIGIN_C))
+                Mapper.mapping(new HashMap<>(ORIGIN_C))
                         .retainAll(ORIGIN_A.keySet())
                         .getSubject()
         );
@@ -145,7 +126,7 @@ public class MapperTest {
     public final void testAltRetain() {
         Assert.assertEquals(
                 ORIGIN_A,
-                Mapper.pro(new HashMap<>(ORIGIN_C))
+                Mapper.mapping(new HashMap<>(ORIGIN_C))
                         .retainAlt(Key.KEY_01, Key.KEY_02, Key.KEY_03)
                         .getSubject()
         );
@@ -155,7 +136,7 @@ public class MapperTest {
     public final void testClear() {
         Assert.assertEquals(
                 emptyMap(),
-                Mapper.proLinkedHashMap()
+                Mapper.mapping(new LinkedHashMap<>(0))
                         .putAll(ORIGIN_A)
                         .clear()
                         .getSubject()

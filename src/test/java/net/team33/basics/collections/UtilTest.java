@@ -41,15 +41,16 @@ public class UtilTest {
     private static final String SHOULD_FAIL_BUT_RETURNS = "should fail but returns <%s>";
 
     private static <E> void testFinalCopy(final List<E> originalList) {
-        testFinalCopy(originalList, Util.finalCopy(originalList));
+        testFinalCopy(originalList, Util.finalList(originalList));
     }
 
-    private static <E extends Enum<E>> void testFinalCopy(final EnumSet<E> originalSet) {
-        testFinalCopy(originalSet, Util.finalCopy(originalSet));
+    private static <E extends Enum<E>> void testFinalCopy(
+            @SuppressWarnings("TypeMayBeWeakened") final EnumSet<E> originalSet) {
+        testFinalCopy(originalSet, Util.finalEnumSet(originalSet));
     }
 
     private static <E> void testFinalCopy(final Set<E> originalSet) {
-        testFinalCopy(originalSet, Util.finalCopy(originalSet));
+        testFinalCopy(originalSet, Util.finalSet(originalSet));
     }
 
     private static <E> void testFinalList(final Collection<E> original) {
@@ -267,7 +268,7 @@ public class UtilTest {
         Assert.fail(
                 String.format(
                         SHOULD_FAIL_BUT_RETURNS,
-                        Util.finalCopy(Collections.emptySet()).removeAll(THREE_STRINGS))
+                        Util.finalSet(Collections.emptySet()).removeAll(THREE_STRINGS))
         );
     }
 
@@ -276,7 +277,7 @@ public class UtilTest {
         Assert.fail(
                 String.format(
                         SHOULD_FAIL_BUT_RETURNS,
-                        Util.finalCopy(new TreeSet<Object>(THREE_STRINGS)).removeAll(THREE_STRINGS))
+                        Util.finalSet(new TreeSet<Object>(THREE_STRINGS)).removeAll(THREE_STRINGS))
         );
     }
 

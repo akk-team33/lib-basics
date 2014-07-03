@@ -20,6 +20,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * Convenience methods to deal with Collections in addition to {@link Collections}.
@@ -46,6 +48,7 @@ public final class Util {
      *                                       added to the {@code subject}.
      * @throws IllegalStateException         if the {@code element} cannot be added at this time due to
      *                                       the {@code subject}'s insertion restrictions (if any).
+     * @see Collection#add(Object)
      */
     public static <E, C extends Collection<E>> C add(final C subject, final E element) {
         subject.add(element);
@@ -58,9 +61,9 @@ public final class Util {
      * @return The {@code subject}.
      * @throws UnsupportedOperationException if {@link Collection#addAll(Collection)} is not supported by the
      *                                       {@code subject}.
-     * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
-     *                                       if the class of the specified {@code elements} prevents them from being
-     *                                       added to the {@code subject}.
+     * @throws ClassCastException            if the class of the specified {@code elements} prevents them from being
+     *                                       added to the {@code subject}
+     *                                       (may occur only if used raw or forced in a mismatched class context).
      * @throws NullPointerException          <ul>
      *                                       <li>if {@code subject} or the {@link Collection} of {@code elements}
      *                                       is {@code null}</li>
@@ -71,6 +74,7 @@ public final class Util {
      *                                       added to the {@code subject}.
      * @throws IllegalStateException         if the {@code elements} cannot be added at this time due to
      *                                       the {@code subject}'s insertion restrictions (if any).
+     * @see Collection#addAll(Collection)
      */
     public static <E, C extends Collection<E>> C addAll(final C subject, final Collection<? extends E> elements) {
         subject.addAll(elements);
@@ -83,9 +87,9 @@ public final class Util {
      * @return The {@code subject}.
      * @throws UnsupportedOperationException if {@link Collection#addAll(Collection)} is not supported by the
      *                                       {@code subject}.
-     * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
-     *                                       if the class of the specified {@code elements} prevents them from being
-     *                                       added to the {@code subject}.
+     * @throws ClassCastException            if the class of the specified {@code elements} prevents them from being
+     *                                       added to the {@code subject}
+     *                                       (may occur only if used raw or forced in a mismatched class context).
      * @throws NullPointerException          <ul>
      *                                       <li>if {@code subject} or the {@link Collection} of {@code elements}
      *                                       is {@code null}</li>
@@ -111,6 +115,7 @@ public final class Util {
      * @return The {@code subject}.
      * @throws NullPointerException          if {@code subject} is {@code null}.
      * @throws UnsupportedOperationException if {@link Collection#clear()} is not supported by the {@code subject}.
+     * @see Collection#clear()
      */
     public static <E, C extends Collection<E>> C clear(final C subject) {
         subject.clear();
@@ -121,6 +126,8 @@ public final class Util {
      * Removes an {@code element} from a given {@code subject}.
      * Respectively ensures the {@code subject} not to contain the {@code element}.
      * <p/>
+     * If {@code subject} contains the {@code element} several times, each occurance will be removed!
+     * <p/>
      * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which may be caused by
      * {@link Collection#remove(Object)} when the {@code subject} does not support the requested {@code element}.
      *
@@ -128,6 +135,7 @@ public final class Util {
      * @throws UnsupportedOperationException if {@link Collection#remove(Object)} is not supported by the
      *                                       {@code subject}.
      * @throws NullPointerException          if {@code subject} is {@code null}.
+     * @see Collection#remove(Object)
      */
     public static <E, C extends Collection<E>> C remove(final C subject, final Object element) {
         try {
@@ -141,7 +149,7 @@ public final class Util {
 
             // --> <subject> can not contain <element>
             // --> <subject> simply does not contain <element>
-            // --> Nothing to do.
+            // --> Nothing else to do.
         }
         return subject;
     }
@@ -159,6 +167,7 @@ public final class Util {
      *                                       {@code subject}.
      * @throws NullPointerException          if {@code subject} or the {@link Collection} of {@code elements}
      *                                       is {@code null}.
+     * @see Collection#removeAll(Collection)
      */
     public static <E, C extends Collection<E>> C removeAll(final C subject, final Collection<?> elements) {
         try {
@@ -191,6 +200,7 @@ public final class Util {
      *                                       {@code subject}.
      * @throws NullPointerException          if {@code subject} or the {@link Collection} of {@code elements}
      *                                       is {@code null}.
+     * @see Collection#retainAll(Collection)
      */
     public static <E, C extends Collection<E>> C retainAll(final C subject, final Collection<?> elements) {
         try {
@@ -214,6 +224,7 @@ public final class Util {
      * Indicates if a given {@code subject} contains a specific {@code element}.
      *
      * @throws NullPointerException if {@code subject} is {@code null}.
+     * @see Collection#contains(Object)
      */
     public static boolean contains(final Collection<?> subject, final Object element) {
         try {
@@ -236,6 +247,7 @@ public final class Util {
      *
      * @throws NullPointerException if {@code subject} or the {@link Collection} of {@code elements}
      *                              is {@code null}.
+     * @see Collection#containsAll(Collection)
      */
     public static boolean containsAll(final Collection<?> subject, final Collection<?> elements) {
         try {
@@ -260,10 +272,11 @@ public final class Util {
      * If the {@code origin} is a {@link List}, the result will {@linkplain List#equals(Object) equal} with it.
      * <p/>
      * *in contrast to {@link Collections#unmodifiableCollection(Collection)}
+     *
+     * @throws NullPointerException if {@code origin} is {@code null}
      */
     public static <E> List<E> finalList(final Collection<? extends E> origin) {
-        //noinspection rawtypes, unchecked
-        return (origin instanceof List<?>) ? finalCopy((List) origin) : finalCopy(new ArrayList<>(origin));
+        return unmodifiableList(new ArrayList<>(origin));
     }
 
     /**
@@ -273,57 +286,42 @@ public final class Util {
      * If the {@code origin} is a {@link Set}, the result will {@linkplain Set#equals(Object) equal} with it.
      * <p/>
      * *in contrast to {@link Collections#unmodifiableCollection(Collection)}
+     *
+     * @throws NullPointerException if {@code origin} is {@code null}
      */
     public static <E> Set<E> finalSet(final Collection<? extends E> origin) {
-        //noinspection unchecked
-        return (origin instanceof Set) ? finalCopy((Set<E>) origin) : finalCopy(new LinkedHashSet<>(origin));
+        return unmodifiableSet(new LinkedHashSet<>(origin));
     }
 
     /**
-     * Supplies an immutable copy* of an original (probably mutable) {@link List} keeping its iteration order.
+     * Supplies an immutable {@link Set} backed by an {@link EnumSet} as a copy* of an original (probably mutable)
+     * {@link Collection} providing the enum´s 'natural' iteration order.
      * <p/>
-     * *in contrast to {@link Collections#unmodifiableSet(Set)}
+     * If the {@code origin} is a {@link Set}, the result will {@linkplain Set#equals(Object) equal} with it.
+     * <p/>
+     * *in contrast to {@link Collections#unmodifiableCollection(Collection)}
+     *
+     * @throws NullPointerException if {@code origin} is {@code null}
+     * @throws IllegalArgumentException if {@code origin} is not an {@link EnumSet} instance and contains no elements
      */
-    public static <E> List<E> finalCopy(final List<E> origin) {
-        return new FinalList<>(origin);
+    public static <E extends Enum<E>> Set<E> finalEnumSet(final Collection<E> origin) {
+        return unmodifiableSet(EnumSet.copyOf(origin));
     }
 
     /**
-     * Supplies an immutable copy* of an original (probably mutable) {@link Set} keeping its iteration order.
+     * Supplies an immutable {@link Set} backed by an {@link EnumSet} as a copy* of an original (probably mutable)
+     * {@link Collection} providing the enum´s 'natural' iteration order.
      * <p/>
-     * *in contrast to {@link Collections#unmodifiableSet(Set)}
-     */
-    public static <E> Set<E> finalCopy(final Set<E> origin) {
-        //noinspection ChainOfInstanceofChecks
-        if (origin instanceof EnumSet) {
-            //noinspection unchecked,rawtypes
-            return finalCopy((EnumSet) origin);
-
-        } else if (origin instanceof SortedSet) {
-            //noinspection unchecked,rawtypes
-            return finalCopy((SortedSet) origin);
-
-        } else {
-            return new FinalPlainSet<>(origin);
-        }
-    }
-
-    /**
-     * Supplies an immutable copy* of an original (probably mutable) {@link SortedSet} keeping its iteration order.
+     * If the {@code origin} is a {@link Set}, the result will {@linkplain Set#equals(Object) equal} with it.
      * <p/>
-     * *in contrast to {@link Collections#unmodifiableSet(Set)}
+     * *in contrast to {@link Collections#unmodifiableCollection(Collection)}
+     *
+     * @throws NullPointerException if {@code origin} is {@code null}
+     * @throws IllegalArgumentException if {@code origin} is not an {@link EnumSet} instance and contains no elements
      */
-    public static <E> SortedSet<E> finalCopy(final SortedSet<E> origin) {
-        return new FinalSortedSet<>(origin);
-    }
-
-    /**
-     * Supplies an immutable copy* of an original (probably mutable) {@link EnumSet} keeping its iteration order.
-     * <p/>
-     * *in contrast to {@link Collections#unmodifiableSet(Set)}
-     */
-    public static <E extends Enum<E>> Set<E> finalCopy(final EnumSet<E> origin) {
-        return new FinalEnumSet<>(origin);
+    public static <E extends Enum<E>> Set<E> finalEnumSet(
+            final Class<E> enumClass, final Collection<? extends E> origin) {
+        return unmodifiableSet(addAll(EnumSet.noneOf(enumClass), origin));
     }
 
     /**
