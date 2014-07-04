@@ -19,7 +19,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableMap;
-import static net.team33.basics.collections.Mapper.support;
+import static net.team33.basics.collections.Mapper.apply;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -38,11 +38,11 @@ public class CollectingTest {
     private static final List<String> NO_STRINGS = emptyList();
     private static final Collection<?> COLLECTION_NULL = null;
     private static final Map<String, String> THREE_MAPPINGS = unmodifiableMap(
-            support(new HashMap<String, String>(3))
+            apply(new HashMap<String, String>(3))
                     .put(A, B)
                     .put(B, C)
                     .put(C, A)
-                    .getSubject()
+                    .getCore()
     );
     private static final String NULL = null;
 
@@ -167,7 +167,7 @@ public class CollectingTest {
     public final void testAltRemove() {
         assertEquals(
                 new TreeSet<>(NO_STRINGS),
-                Collecting.remove(new TreeSet<>(THREE_STRINGS), A, null, B, 5, C)
+                Collecting.removeAlt(new TreeSet<>(THREE_STRINGS), A, null, B, 5, C)
         );
     }
 
@@ -175,7 +175,7 @@ public class CollectingTest {
     public final void testAltRetain() {
         assertEquals(
                 new TreeSet<>(asList(A, C)),
-                Collecting.retain(new TreeSet<>(THREE_STRINGS), A, null, 5, C)
+                Collecting.retainAlt(new TreeSet<>(THREE_STRINGS), A, null, 5, C)
         );
     }
 
@@ -221,7 +221,7 @@ public class CollectingTest {
         final TreeSet<String> subject = new TreeSet<>(THREE_STRINGS);
         assertEquals(
                 new TreeSet<>(THREE_STRINGS),
-                Collecting.remove(subject, NULL)
+                Collecting.removeAlt(subject, NULL)
         );
     }
 
@@ -309,14 +309,14 @@ public class CollectingTest {
     @Test
     public final void testContainsAll_STUFF_STUFF_with_Null_indirect() {
         assertFalse(
-                Collecting.containsAll(new TreeSet<>(THREE_STRINGS), TWO_STRINGS_AND_NULL)
+                Collecting.containsAlt(new TreeSet<>(THREE_STRINGS), A, null, C)
         );
     }
 
     @Test
     public final void testContainsAll_STUFF_STUFF_with_Other_indirect() {
         assertFalse(
-                Collecting.containsAll(new TreeSet<>(THREE_STRINGS), TWO_STRINGS_AND_OTHER)
+                Collecting.containsAlt(new TreeSet<>(THREE_STRINGS), A, 5, C)
         );
     }
 

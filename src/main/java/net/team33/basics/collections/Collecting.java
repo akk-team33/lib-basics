@@ -134,6 +134,38 @@ public final class Collecting {
     }
 
     /**
+     * Removes an {@code element} from a given {@code subject}.
+     * Respectively ensures the {@code subject} not to contain the {@code element}.
+     * <p/>
+     * If {@code subject} contains the {@code element} several times, each occurrence will be removed!
+     * <p/>
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
+     * {@link Collection#remove(Object)} when the {@code subject} does not support the requested {@code element}.
+     *
+     * @return The {@code subject}.
+     * @throws UnsupportedOperationException if {@link Collection#remove(Object)} is not supported by the
+     *                                       {@code subject}.
+     * @throws NullPointerException          if {@code subject} is {@code null}.
+     * @see Collection#remove(Object)
+     */
+    public static <E, C extends Collection<E>> C remove(final C subject, final Object element) {
+        try {
+            //noinspection SuspiciousMethodCalls,StatementWithEmptyBody,ControlFlowStatementWithoutBraces
+            while (subject.remove(element)) ;
+
+        } catch (final NullPointerException | ClassCastException caught) {
+            if (null == subject) {
+                throw caught; // expected to be a NullPointerException
+            }
+
+            // --> <subject> can not contain <element>
+            // --> <subject> simply does not contain <element>
+            // --> Nothing else to do.
+        }
+        return subject;
+    }
+
+    /**
      * Removes some {@code elements} from a given {@code subject}.
      * Respectively ensures the {@code subject} not to contain any of the specified {@code elements}.
      * <p/>
@@ -151,9 +183,8 @@ public final class Collecting {
      * @see Collection#remove(Object)
      * @see Collection#removeAll(Collection)
      */
-    @SuppressWarnings("OverloadedVarargsMethod")
-    public static <E, C extends Collection<E>> C remove(final C subject, final Object... elements) {
-        return removeAll(subject, asList(elements));
+    public static <E, C extends Collection<E>> C removeAlt(final C subject, final Object... elements) {
+        return (1 == elements.length) ? remove(subject, elements[0]) : removeAll(subject, asList(elements));
     }
 
     /**
@@ -231,7 +262,7 @@ public final class Collecting {
      * @throws NullPointerException          if {@code subject} or the {@link Collection} of {@code elements}
      *                                       is {@code null}.
      */
-    public static <E, C extends Collection<E>> C retain(final C subject, final Object... elements) {
+    public static <E, C extends Collection<E>> C retainAlt(final C subject, final Object... elements) {
         return retainAll(subject, asList(elements));
     }
 
@@ -341,6 +372,20 @@ public final class Collecting {
                 return false;
             }
         }
+    }
+
+    /**
+     * Indicates if a given {@code subject} contains specific {@code elements}.
+     * <p/>
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
+     * {@link Collection#containsAll(Collection)} when the {@code subject} does not support some of the requested
+     * {@code elements}.
+     *
+     * @throws NullPointerException if {@code subject} or the {@code array} of {@code elements} is {@code null}.
+     * @see Collection#containsAll(Collection)
+     */
+    public static boolean containsAlt(final Collection<?> subject, final Object... elements) {
+        return (1 == elements.length) ? contains(subject, elements[0]) : containsAll(subject, asList(elements));
     }
 
     /**

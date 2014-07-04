@@ -48,11 +48,11 @@ public class MapperTest {
     public final void testPut() {
         Assert.assertEquals(
                 ORIGIN_A,
-                Mapper.support(new EnumMap<>(Key.class))
+                Mapper.apply(new EnumMap<>(Key.class))
                         .put(Key.KEY_01, VALUE_01)
                         .put(Key.KEY_02, VALUE_02)
                         .put(Key.KEY_03, VALUE_03)
-                        .getSubject()
+                        .getCore()
         );
     }
 
@@ -60,11 +60,11 @@ public class MapperTest {
     public final void testPut_Entry() {
         Assert.assertEquals(
                 ORIGIN_A,
-                Mapper.support(new TreeMap<Key, String>())
+                Mapper.apply(new TreeMap<Key, String>())
                         .put(ENTRIES_A.get(0))
                         .put(ENTRIES_A.get(1))
                         .put(ENTRIES_A.get(2))
-                        .getSubject()
+                        .getCore()
         );
     }
 
@@ -72,9 +72,9 @@ public class MapperTest {
     public final void testPutAll() {
         Assert.assertEquals(
                 ORIGIN_A,
-                Mapper.support(new TreeMap<Key, String>())
+                Mapper.apply(new TreeMap<Key, String>())
                         .putAll(ORIGIN_A)
-                        .getSubject()
+                        .getCore()
         );
     }
 
@@ -82,11 +82,11 @@ public class MapperTest {
     public final void testRemove() {
         Assert.assertEquals(
                 emptyMap(),
-                Mapper.support(new LinkedHashMap<>(ORIGIN_A))
+                Mapper.apply(new LinkedHashMap<>(ORIGIN_A))
                         .remove(Key.KEY_01)
                         .remove(Key.KEY_02)
                         .remove(Key.KEY_03)
-                        .getSubject()
+                        .getCore()
         );
     }
 
@@ -94,10 +94,10 @@ public class MapperTest {
     public final void testRemoveAll() {
         Assert.assertEquals(
                 ORIGIN_B,
-                Mapper.support(new EnumMap<>(Key.class))
+                Mapper.apply(new EnumMap<>(Key.class))
                         .putAll(ORIGIN_C)
                         .removeAll(ORIGIN_A.keySet())
-                        .getSubject()
+                        .getCore()
         );
     }
 
@@ -105,10 +105,10 @@ public class MapperTest {
     public final void testAltRemove() {
         Assert.assertEquals(
                 ORIGIN_B,
-                Mapper.support(new HashMap<>(0))
+                Mapper.apply(new HashMap<>(0))
                         .putAll(ORIGIN_C)
                         .removeAlt(Key.KEY_01, Key.KEY_02, Key.KEY_03)
-                        .getSubject()
+                        .getCore()
         );
     }
 
@@ -116,9 +116,9 @@ public class MapperTest {
     public final void testRetainAll() {
         Assert.assertEquals(
                 ORIGIN_A,
-                Mapper.support(new HashMap<>(ORIGIN_C))
+                Mapper.apply(new HashMap<>(ORIGIN_C))
                         .retainAll(ORIGIN_A.keySet())
-                        .getSubject()
+                        .getCore()
         );
     }
 
@@ -126,9 +126,9 @@ public class MapperTest {
     public final void testAltRetain() {
         Assert.assertEquals(
                 ORIGIN_A,
-                Mapper.support(new HashMap<>(ORIGIN_C))
+                Mapper.apply(new HashMap<>(ORIGIN_C))
                         .retainAlt(Key.KEY_01, Key.KEY_02, Key.KEY_03)
-                        .getSubject()
+                        .getCore()
         );
     }
 
@@ -136,10 +136,10 @@ public class MapperTest {
     public final void testClear() {
         Assert.assertEquals(
                 emptyMap(),
-                Mapper.support(new LinkedHashMap<>(0))
+                Mapper.apply(new LinkedHashMap<>(0))
                         .putAll(ORIGIN_A)
                         .clear()
-                        .getSubject()
+                        .getCore()
         );
     }
 

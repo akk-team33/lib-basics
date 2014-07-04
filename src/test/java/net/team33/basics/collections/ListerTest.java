@@ -21,10 +21,10 @@ public class ListerTest {
     public final void testAdd() {
         Assert.assertEquals(
                 asList(INT_277, INT_278, INT_279, INT_280),
-                Lister.support(new ArrayList<>(asList(INT_277, INT_280)))
+                Lister.apply(new ArrayList<>(asList(INT_277, INT_280)))
                         .add(1, INT_279)
                         .add(1, INT_278)
-                        .getSubject()
+                        .getCore()
         );
     }
 
@@ -32,10 +32,10 @@ public class ListerTest {
     public final void testAddAll() {
         Assert.assertEquals(
                 asList(INT_277, INT_278, INT_279, INT_280, INT_278, INT_279),
-                Lister.support(new LinkedList<>(asList(INT_277, INT_280)))
+                Lister.apply(new LinkedList<>(asList(INT_277, INT_280)))
                         .addAll(1, asList(INT_278, INT_279))
                         .addAll(4, asList(INT_278, INT_279))
-                        .getSubject()
+                        .getCore()
         );
     }
 
@@ -43,9 +43,9 @@ public class ListerTest {
     public final void testRemove() {
         Assert.assertEquals(
                 asList(INT_277, INT_279, INT_280),
-                Lister.support(new LinkedList<>(asList(INT_277, INT_278, INT_279, INT_280)))
+                Lister.apply(new LinkedList<>(asList(INT_277, INT_278, INT_279, INT_280)))
                         .remove(1)
-                        .getSubject()
+                        .getCore()
         );
     }
 
@@ -53,10 +53,10 @@ public class ListerTest {
     public final void testSet() {
         Assert.assertEquals(
                 asList(INT_277, INT_279, INT_280),
-                Lister.support(new ArrayList<>(asList(INT_278, INT_278, INT_280)))
+                Lister.apply(new ArrayList<>(asList(INT_278, INT_278, INT_280)))
                         .set(0, INT_277)
                         .set(1, INT_279)
-                        .getSubject()
+                        .getCore()
         );
     }
 
@@ -64,9 +64,9 @@ public class ListerTest {
     public final void testRemoveAlt() {
         Assert.assertEquals(
                 singletonList(INT_280),
-                Lister.support(new LinkedList<>(asList(INT_278, INT_279, INT_280)))
+                Lister.apply(new LinkedList<>(asList(INT_278, INT_279, INT_280)))
                         .removeAlt(INT_278, INT_279)
-                        .getSubject()
+                        .getCore()
         );
     }
 }

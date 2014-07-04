@@ -16,15 +16,21 @@ import static java.util.Arrays.asList;
 @SuppressWarnings({"ReturnOfThis", "StaticMethodOnlyUsedInOneClass"})
 public class Mapper<K, V, M extends Map<K, V>, R extends Mapper<K, V, M, R>> {
 
-    private final M subject;
+    private final M core;
 
-    protected Mapper(final M subject) {
-        // belongs to <this> and is intended to remain mutable ...
-        // noinspection AssignmentToCollectionOrArrayFieldFromParameter
-        this.subject = subject;
+    /**
+     * Initiates a new instance giving the {@code core} to be initialized.
+     * <p/>
+     * Mentioned to be used by a derivative. Use {@link #apply(Map)} to straightly create a new Instance.
+     *
+     * @param core a mutable {@link Collection} that is mentioned to be modified through the new instance.
+     */
+    @SuppressWarnings("AssignmentToCollectionOrArrayFieldFromParameter") // by intention
+    protected Mapper(final M core) {
+        this.core = core;
     }
 
-    public static <K, V, M extends Map<K, V>> Mapper<K, V, M, ?> support(final M subject) {
+    public static <K, V, M extends Map<K, V>> Mapper<K, V, M, ?> apply(final M subject) {
         return new Simple<>(subject);
     }
 
@@ -33,14 +39,14 @@ public class Mapper<K, V, M extends Map<K, V>, R extends Mapper<K, V, M, R>> {
         return (R) mapper;
     }
 
-    public final M getSubject() {
+    public final M getCore() {
         // Intended to supply the mutable instance to deal with ...
         // noinspection ReturnOfCollectionOrArrayField
-        return subject;
+        return core;
     }
 
     public final R put(final K key, final V value) {
-        subject.put(key, value);
+        core.put(key, value);
         return cast(this);
     }
 
@@ -49,17 +55,17 @@ public class Mapper<K, V, M extends Map<K, V>, R extends Mapper<K, V, M, R>> {
     }
 
     public final R putAll(final Map<? extends K, ? extends V> origin) {
-        subject.putAll(origin);
+        core.putAll(origin);
         return cast(this);
     }
 
     public final R remove(final K key) {
-        subject.remove(key);
+        core.remove(key);
         return cast(this);
     }
 
     public final R removeAll(final Collection<? extends K> keys) {
-        subject.keySet().removeAll(keys);
+        core.keySet().removeAll(keys);
         return cast(this);
     }
 
@@ -69,7 +75,7 @@ public class Mapper<K, V, M extends Map<K, V>, R extends Mapper<K, V, M, R>> {
     }
 
     public final R retainAll(final Collection<? extends K> keys) {
-        subject.keySet().retainAll(keys);
+        core.keySet().retainAll(keys);
         return cast(this);
     }
 
@@ -79,7 +85,7 @@ public class Mapper<K, V, M extends Map<K, V>, R extends Mapper<K, V, M, R>> {
     }
 
     public final R clear() {
-        subject.clear();
+        core.clear();
         return cast(this);
     }
 

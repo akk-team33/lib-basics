@@ -16,19 +16,21 @@ import static java.util.Objects.requireNonNull;
  */
 public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>> {
 
-    private final C subject;
+    private final C core;
 
     /**
-     * Initiates a new instance giving the {@code subject} to be built.
+     * Initiates a new instance giving the {@code core} to be initialized.
+     * <p/>
+     * Mentioned to be used by a derivative. Use {@link #apply(Collection)} to straightly create a new Instance.
      *
-     * @param subject a mutable {@link Collection} that is mentioned to be modified through the new instance.
+     * @param core a mutable {@link Collection} that is mentioned to be modified through the new instance.
      */
     @SuppressWarnings("AssignmentToCollectionOrArrayFieldFromParameter") // by intention
-    protected Collector(final C subject) {
-        this.subject = requireNonNull(subject);
+    protected Collector(final C core) {
+        this.core = requireNonNull(core);
     }
 
-    public static <E, C extends Collection<E>> Collector<E, C, ?> support(final C subject) {
+    public static <E, C extends Collection<E>> Collector<E, C, ?> apply(final C subject) {
         return new Simple<>(subject);
     }
 
@@ -41,54 +43,54 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
     /**
      * Supplies the underlying {@link Collection} in its original representation. Not {@code null}.
      */
-    public final C getSubject() {
+    public final C getCore() {
         // Intended to supply the mutable instance as is ...
         // noinspection ReturnOfCollectionOrArrayField
-        return subject;
+        return core;
     }
 
     /**
-     * Substitutes {@link Collection#add(Object)} for the underlying {@link #getSubject() subject}.
+     * Substitutes {@link Collection#add(Object)} for the underlying {@link #getCore() core}.
      *
      * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
-     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code core})
      *                                       if {@link Collection#add(Object)} is not supported by the underlying
-     *                                       {@link #getSubject() subject}.
+     *                                       {@link #getCore() core}.
      * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
      *                                       if the class of the specified {@code element} prevents it from being added
-     *                                       to the underlying {@link #getSubject() subject}.
+     *                                       to the underlying {@link #getCore() core}.
      * @throws NullPointerException          if the specified {@code element} is {@code null} and the underlying
-     *                                       {@link #getSubject() subject} does not permit {@code null} elements.
+     *                                       {@link #getCore() core} does not permit {@code null} elements.
      * @throws IllegalArgumentException      if some property of the specified {@code element} prevents it from being
-     *                                       added to the underlying {@link #getSubject() subject}.
+     *                                       added to the underlying {@link #getCore() core}.
      * @throws IllegalStateException         if the {@code element} cannot be added at this time due to
-     *                                       the {@code subject}'s insertion restrictions (if any).
+     *                                       the {@code core}'s insertion restrictions (if any).
      */
     public final R add(final E element) {
-        subject.add(element);
+        core.add(element);
         return cast(this);
     }
 
     /**
-     * Substitutes {@link Collection#addAll(Collection)} for the underlying {@link #getSubject() subject}.
+     * Substitutes {@link Collection#addAll(Collection)} for the underlying {@link #getCore() core}.
      *
      * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
-     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code core})
      *                                       if {@link Collection#addAll(Collection)} is not supported by the
-     *                                       underlying {@link #getSubject() subject}.
+     *                                       underlying {@link #getCore() core}.
      * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
      *                                       if the class of the specified {@code elements} prevents them from being
-     *                                       added to the {@code subject}.
+     *                                       added to the {@code core}.
      * @throws NullPointerException          <ul>
      *                                       <li>if the {@code array} of {@code elements} is {@code null}</li>
      *                                       <li>if some of the specified {@code elements} are {@code null} and the
-     *                                       underlying {@link #getSubject() subject} does not permit {@code null}
+     *                                       underlying {@link #getCore() core} does not permit {@code null}
      *                                       elements.</li>
      *                                       </ul>
      * @throws IllegalArgumentException      if some property of some {@code elements} prevents them from being
-     *                                       added to the underlying {@link #getSubject() subject}.
+     *                                       added to the underlying {@link #getCore() core}.
      * @throws IllegalStateException         if the {@code elements} cannot be added at this time due to the underlying
-     *                                       {@link #getSubject() subject}'s insertion restrictions (if any).
+     *                                       {@link #getCore() core}'s insertion restrictions (if any).
      */
     @SafeVarargs
     public final R addAlt(final E... elements) {
@@ -96,80 +98,80 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
     }
 
     /**
-     * Substitutes {@link Collection#addAll(Collection)} for the underlying {@link #getSubject() subject}.
+     * Substitutes {@link Collection#addAll(Collection)} for the underlying {@link #getCore() core}.
      *
      * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
-     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code core})
      *                                       if {@link Collection#addAll(Collection)} is not supported by the
-     *                                       underlying {@link #getSubject() subject}.
+     *                                       underlying {@link #getCore() core}.
      * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
      *                                       if the class of the specified {@code elements} prevents them from being
-     *                                       added to the {@code subject}.
+     *                                       added to the {@code core}.
      * @throws NullPointerException          <ul>
      *                                       <li>if the {@link Collection} of {@code elements} is {@code null}</li>
      *                                       <li>if some of the specified {@code elements} are {@code null} and the
-     *                                       underlying {@link #getSubject() subject} does not permit {@code null}
+     *                                       underlying {@link #getCore() core} does not permit {@code null}
      *                                       elements.</li>
      *                                       </ul>
      * @throws IllegalArgumentException      if some property of some {@code elements} prevents them from being
-     *                                       added to the underlying {@link #getSubject() subject}.
+     *                                       added to the underlying {@link #getCore() core}.
      * @throws IllegalStateException         if the {@code elements} cannot be added at this time due to the underlying
-     *                                       {@link #getSubject() subject}'s insertion restrictions (if any).
+     *                                       {@link #getCore() core}'s insertion restrictions (if any).
      */
     public final R addAll(final Collection<? extends E> elements) {
-        subject.addAll(elements);
+        core.addAll(elements);
         return cast(this);
     }
 
     /**
      * Substitutes {@link Collection#addAll(Collection)} with {@code conversion} for the underlying
-     * {@link #getSubject() subject}.
+     * {@link #getCore() core}.
      *
      * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
-     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code core})
      *                                       if {@link Collection#addAll(Collection)} is not supported by the
-     *                                       underlying {@link #getSubject() subject}.
+     *                                       underlying {@link #getCore() core}.
      * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
      *                                       if the class of the specified {@code elements} prevents them from being
-     *                                       added to the {@code subject}.
+     *                                       added to the {@code core}.
      * @throws NullPointerException          <ul>
      *                                       <li>if the {@link Collection} of {@code elements} is {@code null}</li>
      *                                       <li>if some of the specified {@code elements} are {@code null} and the
-     *                                       underlying {@link #getSubject() subject} does not permit {@code null}
+     *                                       underlying {@link #getCore() core} does not permit {@code null}
      *                                       elements.</li>
      *                                       </ul>
      * @throws IllegalArgumentException      if some property of some {@code elements} prevents them from being
-     *                                       added to the underlying {@link #getSubject() subject}.
+     *                                       added to the underlying {@link #getCore() core}.
      * @throws IllegalStateException         if the {@code elements} cannot be added at this time due to the underlying
-     *                                       {@link #getSubject() subject}'s insertion restrictions (if any).
+     *                                       {@link #getCore() core}'s insertion restrictions (if any).
      */
-    public final <I> R addAll(final Iterable<? extends I> elements, final Function<? super I, ? extends E> conversion) {
-        Collecting.addAll(subject, conversion, elements);
+    public final <I> R addAll(final Function<I, ? extends E> conversion, final Iterable<? extends I> elements) {
+        Collecting.addAll(core, conversion, elements);
         return cast(this);
     }
 
     /**
-     * Substitutes {@link Collection#remove(Object)} for the underlying {@link #getSubject() subject}.
+     * Substitutes {@link Collection#remove(Object)} for the underlying {@link #getCore() core}.
      * <p/>
      * In contrast to that, not just the first but any occurrence of the requested {@code element} will be removed!
      *
      * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
-     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code core})
      *                                       if {@link Collection#remove(Object)} is not supported by the underlying
-     *                                       {@link #getSubject() subject}.
+     *                                       {@link #getCore() core}.
      */
     public final R remove(final E element) {
-        Collecting.remove(subject, element);
+        Collecting.removeAlt(core, element);
         return cast(this);
     }
 
     /**
-     * Substitutes {@link Collection#removeAll(Collection)} for the underlying {@link #getSubject() subject}.
+     * Substitutes {@link Collection#removeAll(Collection)} for the underlying {@link #getCore() core}.
      *
      * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
-     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code core})
      *                                       if {@link Collection#removeAll(Collection)} is not supported by the
-     *                                       underlying {@link #getSubject() subject}.
+     *                                       underlying {@link #getCore() core}.
      * @throws NullPointerException          if the {@code array} of {@code elements} is {@code null}.
      */
     @SafeVarargs
@@ -178,26 +180,26 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
     }
 
     /**
-     * Substitutes {@link Collection#removeAll(Collection)} for the underlying {@link #getSubject() subject}.
+     * Substitutes {@link Collection#removeAll(Collection)} for the underlying {@link #getCore() core}.
      *
      * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
-     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code core})
      *                                       if {@link Collection#removeAll(Collection)} is not supported by the
-     *                                       underlying {@link #getSubject() subject}.
+     *                                       underlying {@link #getCore() core}.
      * @throws NullPointerException          if the {@link Collection} of {@code elements} is {@code null}.
      */
     public final R removeAll(final Collection<? extends E> elements) {
-        Collecting.removeAll(subject, elements);
+        Collecting.removeAll(core, elements);
         return cast(this);
     }
 
     /**
-     * Substitutes {@link Collection#retainAll(Collection)} for the underlying {@link #getSubject() subject}.
+     * Substitutes {@link Collection#retainAll(Collection)} for the underlying {@link #getCore() core}.
      *
      * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
-     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code core})
      *                                       if {@link Collection#retainAll(Collection)} is not supported by the
-     *                                       underlying {@link #getSubject() subject}.
+     *                                       underlying {@link #getCore() core}.
      * @throws NullPointerException          if the {@code array} of {@code elements} is {@code null}.
      */
     @SafeVarargs
@@ -206,29 +208,29 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
     }
 
     /**
-     * Substitutes {@link Collection#retainAll(Collection)} for the underlying {@link #getSubject() subject}.
+     * Substitutes {@link Collection#retainAll(Collection)} for the underlying {@link #getCore() core}.
      *
      * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
-     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code core})
      *                                       if {@link Collection#retainAll(Collection)} is not supported by the
-     *                                       underlying {@link #getSubject() subject}.
+     *                                       underlying {@link #getCore() core}.
      * @throws NullPointerException          if the {@link Collection} of {@code elements} is {@code null}.
      */
     public final R retainAll(final Collection<? extends E> elements) {
-        Collecting.retainAll(subject, elements);
+        Collecting.retainAll(core, elements);
         return cast(this);
     }
 
     /**
-     * Substitutes {@link Collection#clear()} for the underlying {@link #getSubject() subject}.
+     * Substitutes {@link Collection#clear()} for the underlying {@link #getCore() core}.
      *
      * @return The related {@code Collector} itself in its 'final' representation. Of course not {@code null}.
-     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
+     * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code core})
      *                                       if {@link Collection#retainAll(Collection)} is not supported by the
-     *                                       underlying {@link #getSubject() subject}.
+     *                                       underlying {@link #getCore() core}.
      */
     public final R clear() {
-        Collecting.clear(subject);
+        Collecting.clear(core);
         return cast(this);
     }
 

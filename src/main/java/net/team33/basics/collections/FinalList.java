@@ -215,7 +215,7 @@ public class FinalList<E> extends AbstractList<E>
 
         @Override
         public final FinalList<E> build() {
-            return from(getSubject());
+            return from(getCore());
         }
     }
 }
