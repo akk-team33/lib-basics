@@ -234,6 +234,11 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
         return cast(this);
     }
 
+    @Override
+    public final String toString() {
+        return getClass().getSimpleName().concat(core.toString());
+    }
+
     private static class Simple<E, C extends Collection<E>> extends Collector<E, C, Simple<E, C>> {
         private Simple(final C subject) {
             super(subject);
