@@ -65,7 +65,7 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
      *                                       the {@code subject}'s insertion restrictions (if any).
      */
     public final R add(final E element) {
-        Util.add(subject, element);
+        subject.add(element);
         return cast(this);
     }
 
@@ -117,7 +117,7 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
      *                                       {@link #getSubject() subject}'s insertion restrictions (if any).
      */
     public final R addAll(final Collection<? extends E> elements) {
-        Util.addAll(subject, elements);
+        subject.addAll(elements);
         return cast(this);
     }
 
@@ -144,7 +144,7 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
      *                                       {@link #getSubject() subject}'s insertion restrictions (if any).
      */
     public final <I> R addAll(final Iterable<? extends I> elements, final Function<? super I, ? extends E> conversion) {
-        Util.addAll(subject, elements, conversion);
+        Collecting.addAll(subject, conversion, elements);
         return cast(this);
     }
 
@@ -159,7 +159,7 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
      *                                       {@link #getSubject() subject}.
      */
     public final R remove(final E element) {
-        Util.remove(subject, element);
+        Collecting.remove(subject, element);
         return cast(this);
     }
 
@@ -187,7 +187,7 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
      * @throws NullPointerException          if the {@link Collection} of {@code elements} is {@code null}.
      */
     public final R removeAll(final Collection<? extends E> elements) {
-        Util.removeAll(subject, elements);
+        Collecting.removeAll(subject, elements);
         return cast(this);
     }
 
@@ -215,7 +215,7 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
      * @throws NullPointerException          if the {@link Collection} of {@code elements} is {@code null}.
      */
     public final R retainAll(final Collection<? extends E> elements) {
-        Util.retainAll(subject, elements);
+        Collecting.retainAll(subject, elements);
         return cast(this);
     }
 
@@ -228,7 +228,7 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
      *                                       underlying {@link #getSubject() subject}.
      */
     public final R clear() {
-        Util.clear(subject);
+        Collecting.clear(subject);
         return cast(this);
     }
 

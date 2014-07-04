@@ -12,46 +12,22 @@ import static java.util.Arrays.asList;
 /**
  * Convenience methods to deal with Collections in addition to {@link Collections}.
  */
-@SuppressWarnings("ProhibitedExceptionCaught")
-public final class Util {
-    private Util() {
-    }
-
-    /**
-     * Adds a single {@code element} to a given {@code subject}.
-     *
-     * @return The {@code subject}.
-     * @throws UnsupportedOperationException if {@link Collection#add(Object)} is not supported by the {@code subject}.
-     * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
-     *                                       if the class of the specified {@code element} prevents it from being added
-     *                                       to the {@code subject}.
-     * @throws NullPointerException          <ul>
-     *                                       <li>if {@code subject} is {@code null}.</li>
-     *                                       <li>if the specified {@code element} is {@code null}
-     *                                       and the {@code subject} does not permit {@code null} elements.</li>
-     *                                       </ul>
-     * @throws IllegalArgumentException      if some property of the specified {@code element} prevents it from being
-     *                                       added to the {@code subject}.
-     * @throws IllegalStateException         if the {@code element} cannot be added at this time due to
-     *                                       the {@code subject}'s insertion restrictions (if any).
-     * @see Collection#add(Object)
-     */
-    public static <E, C extends Collection<E>> C add(final C subject, final E element) {
-        subject.add(element);
-        return subject;
+@SuppressWarnings({"ProhibitedExceptionCaught", "StaticMethodOnlyUsedInOneClass"})
+public final class Collecting {
+    private Collecting() {
     }
 
     /**
      * Adds some {@code elements} to a given {@code subject}.
      *
      * @return The {@code subject}.
-     * @throws UnsupportedOperationException if {@link Collection#addAll(Collection)} is not supported by the
-     *                                       {@code subject}.
-     * @throws ClassCastException            if the class of the specified {@code elements} prevents them from being
-     *                                       added to the {@code subject}
-     *                                       (may occur only if used raw or forced in a mismatched class context).
+     * @throws UnsupportedOperationException if {@link Collection#addAll(Collection)} or {@link Collection#add(Object)}
+     *                                       is not supported by the {@code subject}.
+     * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
+     *                                       if the class of the specified {@code elements} prevents them from being
+     *                                       added to the {@code subject}.
      * @throws NullPointerException          <ul>
-     *                                       <li>if {@code subject} or the {@link Collection} of {@code elements}
+     *                                       <li>if {@code subject} or the {@code array} of {@code elements}
      *                                       is {@code null}</li>
      *                                       <li>if some of the specified {@code elements} are {@code null}
      *                                       and the {@code subject} does not permit {@code null} elements.</li>
@@ -60,10 +36,15 @@ public final class Util {
      *                                       added to the {@code subject}.
      * @throws IllegalStateException         if the {@code elements} cannot be added at this time due to
      *                                       the {@code subject}'s insertion restrictions (if any).
-     * @see Collection#addAll(Collection)
      */
-    public static <E, C extends Collection<E>> C addAll(final C subject, final Collection<? extends E> elements) {
-        subject.addAll(elements);
+    @SuppressWarnings("OverloadedVarargsMethod")
+    @SafeVarargs
+    public static <E, C extends Collection<E>> C add(final C subject, final E... elements) {
+        if (1 == elements.length) {
+            subject.add(elements[0]);
+        } else if (1 < elements.length) {
+            subject.addAll(asList(elements));
+        }
         return subject;
     }
 
@@ -71,26 +52,57 @@ public final class Util {
      * Adds some {@code elements} after {@code conversion} to a given {@code subject}.
      *
      * @return The {@code subject}.
-     * @throws UnsupportedOperationException if {@link Collection#addAll(Collection)} is not supported by the
-     *                                       {@code subject}.
-     * @throws ClassCastException            if the class of the specified {@code elements} prevents them from being
+     * @throws UnsupportedOperationException if {@link Collection#add(Object)} is not supported by the {@code subject}.
+     * @throws ClassCastException            if the class of the results of {@link Function} prevents them from being
      *                                       added to the {@code subject}
      *                                       (may occur only if used raw or forced in a mismatched class context).
      * @throws NullPointerException          <ul>
-     *                                       <li>if {@code subject} or the {@link Collection} of {@code elements}
-     *                                       is {@code null}</li>
+     *                                       <li>if {@code subject}, the {@link Function} or the {@code array} of
+     *                                       {@code elements} is {@code null}</li>
      *                                       <li>if some of the specified {@code elements} are {@code null}
+     *                                       and the {@link Function} does not permit {@code null} arguments.</li>
+     *                                       <li>if some results of {@link Function} are {@code null}
      *                                       and the {@code subject} does not permit {@code null} elements.</li>
      *                                       </ul>
-     * @throws IllegalArgumentException      if some property of some {@code elements} prevents them from being
-     *                                       added to the {@code subject}.
-     * @throws IllegalStateException         if the {@code elements} cannot be added at this time due to
+     * @throws IllegalArgumentException      if some property of some results of {@link Function} prevents them from
+     *                                       being added to the {@code subject}.
+     * @throws IllegalStateException         if the results of {@link Function} cannot be added at this time due to
+     *                                       the {@code subject}'s insertion restrictions (if any).
+     */
+    @SuppressWarnings("OverloadedVarargsMethod")
+    @SafeVarargs
+    public static <I, E, C extends Collection<E>> C add(
+            final C subject, final Function<? super I, ? extends E> conversion, final I... elements) {
+
+        return addAll(subject, conversion, asList(elements));
+    }
+
+    /**
+     * Adds some {@code elements} after {@code conversion} to a given {@code subject}.
+     *
+     * @return The {@code subject}.
+     * @throws UnsupportedOperationException if {@link Collection#add(Object)} is not supported by the {@code subject}.
+     * @throws ClassCastException            if the class of the results of {@link Function} prevents them from being
+     *                                       added to the {@code subject}
+     *                                       (may occur only if used raw or forced in a mismatched class context).
+     * @throws NullPointerException          <ul>
+     *                                       <li>if {@code subject}, the {@link Function} or the {@link Collection} of
+     *                                       {@code elements} is {@code null}</li>
+     *                                       <li>if some of the specified {@code elements} are {@code null}
+     *                                       and the {@link Function} does not permit {@code null} arguments.</li>
+     *                                       <li>if some results of {@link Function} are {@code null}
+     *                                       and the {@code subject} does not permit {@code null} elements.</li>
+     *                                       </ul>
+     * @throws IllegalArgumentException      if some property of some results of {@link Function} prevents them from
+     *                                       being added to the {@code subject}.
+     * @throws IllegalStateException         if the results of {@link Function} cannot be added at this time due to
      *                                       the {@code subject}'s insertion restrictions (if any).
      */
     public static <I, E, C extends Collection<E>> C addAll(
-            final C subject, final Iterable<? extends I> elements, final Function<? super I, ? extends E> conversion) {
+            final C subject, final Function<I, ? extends E> conversion, final Iterable<? extends I> elements) {
+
         for (final I input : elements) {
-            add(subject, conversion.apply(input));
+            subject.add(conversion.apply(input));
         }
         return subject;
     }
@@ -122,35 +134,26 @@ public final class Util {
     }
 
     /**
-     * Removes an {@code element} from a given {@code subject}.
-     * Respectively ensures the {@code subject} not to contain the {@code element}.
+     * Removes some {@code elements} from a given {@code subject}.
+     * Respectively ensures the {@code subject} not to contain any of the specified {@code elements}.
      * <p/>
-     * If {@code subject} contains the {@code element} several times, each occurrence will be removed!
+     * If {@code subject} contains some of the {@code elements} several times, each occurrence will be removed!
      * <p/>
      * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
-     * {@link Collection#remove(Object)} when the {@code subject} does not support the requested {@code element}.
+     * {@link Collection#removeAll(Collection)} when the {@code subject} does not support some of the requested
+     * {@code elements}.
      *
      * @return The {@code subject}.
-     * @throws UnsupportedOperationException if {@link Collection#remove(Object)} is not supported by the
+     * @throws UnsupportedOperationException if {@link Collection#removeAll(Collection)} is not supported by the
      *                                       {@code subject}.
-     * @throws NullPointerException          if {@code subject} is {@code null}.
+     * @throws NullPointerException          if {@code subject} or the {@link Collection} of {@code elements}
+     *                                       is {@code null}.
      * @see Collection#remove(Object)
+     * @see Collection#removeAll(Collection)
      */
-    public static <E, C extends Collection<E>> C remove(final C subject, final Object element) {
-        try {
-            //noinspection SuspiciousMethodCalls,StatementWithEmptyBody,ControlFlowStatementWithoutBraces
-            while (subject.remove(element)) ;
-
-        } catch (final NullPointerException | ClassCastException caught) {
-            if (null == subject) {
-                throw caught; // expected to be a NullPointerException
-            }
-
-            // --> <subject> can not contain <element>
-            // --> <subject> simply does not contain <element>
-            // --> Nothing else to do.
-        }
-        return subject;
+    @SuppressWarnings("OverloadedVarargsMethod")
+    public static <E, C extends Collection<E>> C remove(final C subject, final Object... elements) {
+        return removeAll(subject, asList(elements));
     }
 
     /**
@@ -212,6 +215,24 @@ public final class Util {
             }
         }
         return subject;
+    }
+
+    /**
+     * Retains some {@code elements} in a given {@code subject}.
+     * Respectively ensures the {@code subject} not to contain any element, not also contained in {@code elements}.
+     * <p/>
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
+     * {@link Collection#retainAll(Collection)} when the {@code subject} does not support some of the requested
+     * {@code elements}.
+     *
+     * @return The {@code subject}.
+     * @throws UnsupportedOperationException if {@link Collection#retainAll(Collection)} is not supported by the
+     *                                       {@code subject}.
+     * @throws NullPointerException          if {@code subject} or the {@link Collection} of {@code elements}
+     *                                       is {@code null}.
+     */
+    public static <E, C extends Collection<E>> C retain(final C subject, final Object... elements) {
+        return retainAll(subject, asList(elements));
     }
 
     /**
@@ -356,7 +377,6 @@ public final class Util {
      * {@link Map#containsKey(Object)} when the {@code subject} does not support the requested {@code key}.
      *
      * @return The value or {@code null} if the {@code subject} doesn't contain (an entry for) the {@code key}.
-     *
      * @throws NullPointerException if {@code subject} is {@code null}.
      * @see Map#get(Object)
      */
@@ -374,103 +394,6 @@ public final class Util {
                 // --> as specified for Map ...
                 // noinspection ReturnOfNull
                 return null;
-            }
-        }
-    }
-
-    /**
-     * Variable arguments implementations of some Util-methods
-     */
-    @SuppressWarnings("PublicInnerClass")
-    public static final class Alt {
-
-        private Alt() {
-        }
-
-        /**
-         * Adds some {@code elements} to a given {@code subject}.
-         *
-         * @return The {@code subject}.
-         * @throws UnsupportedOperationException if {@link Collection#addAll(Collection)} is not supported by the
-         *                                       {@code subject}.
-         * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
-         *                                       if the class of the specified {@code elements} prevents them from being
-         *                                       added to the {@code subject}.
-         * @throws NullPointerException          <ul>
-         *                                       <li>if {@code subject} or the {@code array} of {@code elements}
-         *                                       is {@code null}</li>
-         *                                       <li>if some of the specified {@code elements} are {@code null}
-         *                                       and the {@code subject} does not permit {@code null} elements.</li>
-         *                                       </ul>
-         * @throws IllegalArgumentException      if some property of some {@code elements} prevents them from being
-         *                                       added to the {@code subject}.
-         * @throws IllegalStateException         if the {@code elements} cannot be added at this time due to
-         *                                       the {@code subject}'s insertion restrictions (if any).
-         */
-        @SafeVarargs
-        public static <E, C extends Collection<E>> C add(final C subject, final E... elements) {
-            if (1 == elements.length) {
-                return Util.add(subject, elements[0]);
-            } else if (1 < elements.length) {
-                return addAll(subject, asList(elements));
-            } else {
-                return subject;
-            }
-        }
-
-        /**
-         * Removes some {@code elements} from a given {@code subject}.
-         * Respectively ensures the {@code subject} not to contain any of the specified {@code elements}.
-         * <p/>
-         * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
-         * {@link Collection#removeAll(Collection)} when the {@code subject} does not support some of the requested
-         * {@code elements}.
-         *
-         * @return The {@code subject}.
-         * @throws UnsupportedOperationException if {@link Collection#removeAll(Collection)} is not supported by the
-         *                                       {@code subject}.
-         * @throws NullPointerException          if {@code subject} or the {@link Collection} of {@code elements}
-         *                                       is {@code null}.
-         */
-        public static <E, C extends Collection<E>> C remove(final C subject, final Object... elements) {
-            if (1 == elements.length) {
-                return Util.remove(subject, elements[0]);
-            } else if (1 < elements.length) {
-                return removeAll(subject, asList(elements));
-            } else {
-                return subject;
-            }
-        }
-
-        /**
-         * Retains some {@code elements} in a given {@code subject}.
-         * Respectively ensures the {@code subject} not to contain any element, not also contained in {@code elements}.
-         * <p/>
-         * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
-         * {@link Collection#retainAll(Collection)} when the {@code subject} does not support some of the requested
-         * {@code elements}.
-         *
-         * @return The {@code subject}.
-         * @throws UnsupportedOperationException if {@link Collection#retainAll(Collection)} is not supported by the
-         *                                       {@code subject}.
-         * @throws NullPointerException          if {@code subject} or the {@link Collection} of {@code elements}
-         *                                       is {@code null}.
-         */
-        public static <E, C extends Collection<E>> C retain(final C subject, final Object... elements) {
-            return retainAll(subject, asList(elements));
-        }
-
-        /**
-         * Indicates if a given {@code subject} contains specific {@code elements}.
-         *
-         * @throws NullPointerException if {@code subject} or the {@link Collection} of {@code elements}
-         *                              is {@code null}.
-         */
-        public static boolean contains(final Collection<?> subject, final Object... elements) {
-            if (1 == elements.length) {
-                return Util.contains(subject, elements[0]);
-            } else {
-                return containsAll(subject, asList(elements));
             }
         }
     }

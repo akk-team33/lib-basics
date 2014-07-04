@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 @SuppressWarnings({"ClassWithTooManyMethods", "ProhibitedExceptionCaught", "ConstantNamingConvention", "AssertEqualsBetweenInconvertibleTypes"})
-public class UtilTest {
+public class CollectingTest {
 
     private static final String A = "a";
     private static final String B = "b";
@@ -44,6 +44,7 @@ public class UtilTest {
                     .put(C, A)
                     .getSubject()
     );
+    private static final String NULL = null;
 
     @Test
     public final void testGet() {
@@ -51,7 +52,7 @@ public class UtilTest {
         for (final String key : asList(A, B, C, D)) {
             assertEquals(
                     subject.get(key),
-                    Util.get(subject, key)
+                    Collecting.get(subject, key)
             );
         }
 
@@ -61,7 +62,7 @@ public class UtilTest {
                     + ">");
         } catch (final NullPointerException ignored) {
             assertNull(
-                    Util.get(subject, null)
+                    Collecting.get(subject, null)
             );
         }
 
@@ -71,7 +72,7 @@ public class UtilTest {
                     + ">");
         } catch (final ClassCastException ignored) {
             assertNull(
-                    Util.get(subject, 5)
+                    Collecting.get(subject, 5)
             );
         }
     }
@@ -82,7 +83,7 @@ public class UtilTest {
         for (final String key : asList(A, B, C, D)) {
             assertEquals(
                     subject.containsKey(key),
-                    Util.containsKey(subject, key)
+                    Collecting.containsKey(subject, key)
             );
         }
 
@@ -92,7 +93,7 @@ public class UtilTest {
                     + ">");
         } catch (final NullPointerException ignored) {
             assertFalse(
-                    Util.containsKey(subject, null)
+                    Collecting.containsKey(subject, null)
             );
         }
 
@@ -102,7 +103,7 @@ public class UtilTest {
                     + ">");
         } catch (final ClassCastException ignored) {
             assertFalse(
-                    Util.containsKey(subject, 5)
+                    Collecting.containsKey(subject, 5)
             );
         }
     }
@@ -113,7 +114,7 @@ public class UtilTest {
         for (final String value : asList(A, B, C, D)) {
             assertEquals(
                     subject.containsValue(value),
-                    Util.containsValue(subject, value)
+                    Collecting.containsValue(subject, value)
             );
         }
 
@@ -123,7 +124,7 @@ public class UtilTest {
                     + ">");
         } catch (final NullPointerException ignored) {
             assertFalse(
-                    Util.containsValue(subject, null)
+                    Collecting.containsValue(subject, null)
             );
         }
 
@@ -133,7 +134,7 @@ public class UtilTest {
                     + ">");
         } catch (final ClassCastException ignored) {
             assertFalse(
-                    Util.containsValue(subject, 5)
+                    Collecting.containsValue(subject, 5)
             );
         }
     }
@@ -142,7 +143,7 @@ public class UtilTest {
     public final void testClear_Map() {
         assertEquals(
                 Collections.emptyMap(),
-                Util.clear(new HashMap<>(THREE_MAPPINGS))
+                Collecting.clear(new HashMap<>(THREE_MAPPINGS))
         );
     }
 
@@ -150,7 +151,7 @@ public class UtilTest {
     public final void testClear_Map__Unsupported() {
         fail(
                 "Should fail but returns "
-                        + Util.clear(THREE_MAPPINGS)
+                        + Collecting.clear(THREE_MAPPINGS)
         );
     }
 
@@ -158,7 +159,7 @@ public class UtilTest {
     public final void testAltAdd() {
         assertEquals(
                 new TreeSet<>(THREE_STRINGS),
-                Util.Alt.add(new TreeSet<>(NO_STRINGS), A, B, C)
+                Collecting.add(new TreeSet<>(NO_STRINGS), A, B, C)
         );
     }
 
@@ -166,7 +167,7 @@ public class UtilTest {
     public final void testAltRemove() {
         assertEquals(
                 new TreeSet<>(NO_STRINGS),
-                Util.Alt.remove(new TreeSet<>(THREE_STRINGS), A, null, B, 5, C)
+                Collecting.remove(new TreeSet<>(THREE_STRINGS), A, null, B, 5, C)
         );
     }
 
@@ -174,21 +175,7 @@ public class UtilTest {
     public final void testAltRetain() {
         assertEquals(
                 new TreeSet<>(asList(A, C)),
-                Util.Alt.retain(new TreeSet<>(THREE_STRINGS), A, null, 5, C)
-        );
-    }
-
-    @Test
-    public final void testAltContains_with_Null() {
-        assertFalse(
-                Util.Alt.contains(new TreeSet<>(THREE_STRINGS), A, null, C)
-        );
-    }
-
-    @Test
-    public final void testAltContains_with_Other() {
-        assertFalse(
-                Util.Alt.contains(new TreeSet<>(THREE_STRINGS), A, 5, C)
+                Collecting.retain(new TreeSet<>(THREE_STRINGS), A, null, 5, C)
         );
     }
 
@@ -234,7 +221,7 @@ public class UtilTest {
         final TreeSet<String> subject = new TreeSet<>(THREE_STRINGS);
         assertEquals(
                 new TreeSet<>(THREE_STRINGS),
-                Util.remove(subject, null)
+                Collecting.remove(subject, NULL)
         );
     }
 
@@ -244,7 +231,7 @@ public class UtilTest {
         //noinspection AssertEqualsBetweenInconvertibleTypes
         assertEquals(
                 singletonList(null),
-                Util.removeAll(subject, new TreeSet<>(THREE_STRINGS))
+                Collecting.removeAll(subject, new TreeSet<>(THREE_STRINGS))
         );
     }
 
@@ -254,7 +241,7 @@ public class UtilTest {
         //noinspection AssertEqualsBetweenInconvertibleTypes
         assertEquals(
                 asList(A, C),
-                Util.retainAll(subject, new TreeSet<>(THREE_STRINGS))
+                Collecting.retainAll(subject, new TreeSet<>(THREE_STRINGS))
         );
     }
 
@@ -264,7 +251,7 @@ public class UtilTest {
         //noinspection AssertEqualsBetweenInconvertibleTypes
         assertEquals(
                 singletonList(5),
-                Util.removeAll(subject, new TreeSet<>(THREE_STRINGS))
+                Collecting.removeAll(subject, new TreeSet<>(THREE_STRINGS))
         );
     }
 
@@ -274,7 +261,7 @@ public class UtilTest {
         //noinspection AssertEqualsBetweenInconvertibleTypes
         assertEquals(
                 asList(A, C),
-                Util.retainAll(subject, new TreeSet<>(THREE_STRINGS))
+                Collecting.retainAll(subject, new TreeSet<>(THREE_STRINGS))
         );
     }
 
@@ -290,23 +277,23 @@ public class UtilTest {
     public final void testContains_null_indirect() {
         final Collection<String> subject = new TreeSet<>(THREE_STRINGS);
         assertFalse(
-                Util.contains(subject, null)
+                Collecting.contains(subject, null)
         );
     }
 
     @Test(expected = NullPointerException.class)
     public final void testContainsAll_NULL_NULL() {
-        Util.containsAll(COLLECTION_NULL, COLLECTION_NULL);
+        Collecting.containsAll(COLLECTION_NULL, COLLECTION_NULL);
     }
 
     @Test(expected = NullPointerException.class)
     public final void testContainsAll_NULL_STUFF() {
-        Util.containsAll(COLLECTION_NULL, THREE_STRINGS);
+        Collecting.containsAll(COLLECTION_NULL, THREE_STRINGS);
     }
 
     @Test(expected = NullPointerException.class)
     public final void testContainsAll_STUFF_NULL() {
-        Util.containsAll(THREE_STRINGS, COLLECTION_NULL);
+        Collecting.containsAll(THREE_STRINGS, COLLECTION_NULL);
     }
 
     @Test(expected = NullPointerException.class)
@@ -322,14 +309,14 @@ public class UtilTest {
     @Test
     public final void testContainsAll_STUFF_STUFF_with_Null_indirect() {
         assertFalse(
-                Util.containsAll(new TreeSet<>(THREE_STRINGS), TWO_STRINGS_AND_NULL)
+                Collecting.containsAll(new TreeSet<>(THREE_STRINGS), TWO_STRINGS_AND_NULL)
         );
     }
 
     @Test
     public final void testContainsAll_STUFF_STUFF_with_Other_indirect() {
         assertFalse(
-                Util.containsAll(new TreeSet<>(THREE_STRINGS), TWO_STRINGS_AND_OTHER)
+                Collecting.containsAll(new TreeSet<>(THREE_STRINGS), TWO_STRINGS_AND_OTHER)
         );
     }
 
@@ -337,7 +324,7 @@ public class UtilTest {
     public final void testClear_Collection() {
         assertEquals(
                 new TreeSet<>(NO_STRINGS),
-                Util.clear(new TreeSet<>(THREE_STRINGS))
+                Collecting.clear(new TreeSet<>(THREE_STRINGS))
         );
     }
 
