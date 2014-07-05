@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static net.team33.basics.collections.Package.simpleName;
 
 /**
  * Represents an instrument to initialize a map in a declarative style.
@@ -87,6 +88,11 @@ public class Mapper<K, V, M extends Map<K, V>, R extends Mapper<K, V, M, R>> {
     public final R clear() {
         core.clear();
         return cast(this);
+    }
+
+    @Override
+    public final String toString() {
+        return simpleName(getClass()) + core;
     }
 
     private static class Simple<K, V, M extends Map<K, V>> extends Mapper<K, V, M, Simple<K, V, M>> {

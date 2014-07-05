@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
+import static net.team33.basics.collections.Package.simpleName;
 
 /**
  * Abstracts an instrument to initialize a {@link Collection} in a declarative style.
@@ -236,7 +237,7 @@ public class Collector<E, C extends Collection<E>, R extends Collector<E, C, R>>
 
     @Override
     public final String toString() {
-        return getClass().getSimpleName().concat(core.toString());
+        return simpleName(getClass()) + core;
     }
 
     private static class Simple<E, C extends Collection<E>> extends Collector<E, C, Simple<E, C>> {
