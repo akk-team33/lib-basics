@@ -6,7 +6,7 @@ package net.team33.basics;
  * <p/>
  * Frankly the {@link Builder} may be modified to finally {@linkplain Builder#build() build} a 'modified copy'.
  */
-public interface Rebuildable<E extends Rebuildable<E, B>, B extends Builder<E>> {
+public interface Re_uildable<E extends Re_uildable<E, B>, B extends Builder<E>> {
 
     /**
      * Supplies a specific {@link Builder} that 'inherits' the properties of the this instance and may be modified
