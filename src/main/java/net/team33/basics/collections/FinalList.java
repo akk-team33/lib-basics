@@ -3,27 +3,32 @@ package net.team33.basics.collections;
 import net.team33.basics.Rebuildable;
 
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
 import static java.util.Arrays.asList;
 import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 
 /**
- * Implementation of an immutable {@link List}.
+ * Implementation of an immutable {@link List}. To create an instance you can use ...
  * <ul>
- * <li>To be instantiated as a copy of an original {@link Collection} (eg. via {@link #from(Collection)}).</li>
- * <li>Preserves the iteration order of the original {@link Collection} and makes each element index-accessible.</li>
- * <li>Fast-fails on any attempt of modification throwing an {@link UnsupportedOperationException}</li>
+ * <li>{@link #from(Object[])}</li>
+ * <li>{@link #from(Collection)}</li>
+ * <li>{@link #builder(Object[])}.[...].{@link Builder#build() build()}</li>
+ * <li>{@link #builder(Collection)}.[...].{@link Builder#build() build()}</li>
  * </ul>
  */
 @SuppressWarnings("ClassWithTooManyMethods")
 public class FinalList<E> extends AbstractList<E>
         implements RandomAccess, Rebuildable<FinalList<E>, FinalList.Builder<E>> {
+
+    private static final String ILLEGAL_ORIGIN
+            = "inconsistent iterator (%s) and size (%d)";
 
     private final Object[] elements;
 
@@ -32,10 +37,15 @@ public class FinalList<E> extends AbstractList<E>
     }
 
     private FinalList(final Iterator<? extends E> iterator, final int size) {
-        elements = new Object[size];
-        //noinspection ForLoopThatDoesntUseLoopVariable
-        for (int index = 0; iterator.hasNext(); ++index) {
-            elements[index] = iterator.next();
+        try {
+            elements = new Object[size];
+            for (int index = 0; (index < size) || iterator.hasNext(); ++index) {
+                elements[index] = iterator.next();
+            }
+        } catch (ArrayIndexOutOfBoundsException | NoSuchElementException caught) {
+            throw new IllegalArgumentException(
+                    String.format(ILLEGAL_ORIGIN, iterator, size),
+                    caught);
         }
     }
 
@@ -67,9 +77,9 @@ public class FinalList<E> extends AbstractList<E>
     }
 
     /**
-     * Supplies a new instance of {@link FinalList} as a copy of an original {@link Collection}.
+     * Supplies a {@link FinalList} as a copy of an original {@link Collection}.
      * If the original already is a {@link FinalList} than the original itself will be returned
-     * (no need for a further copy).
+     * (no need for a copy).
      */
     public static <E> FinalList<E> from(final Collection<? extends E> origin) {
         //noinspection unchecked
@@ -206,11 +216,11 @@ public class FinalList<E> extends AbstractList<E>
 
     @SuppressWarnings({"PublicInnerClass", "ClassNameSameAsAncestorName"})
     public static class Builder<E>
-            extends Lister<E, LinkedList<E>, Builder<E>>
+            extends Lister<E, ArrayList<E>, Builder<E>>
             implements net.team33.basics.Builder<FinalList<E>> {
 
         private Builder(final Collection<? extends E> origin) {
-            super(new LinkedList<>(origin));
+            super(new ArrayList<>(origin));
         }
 
         @Override

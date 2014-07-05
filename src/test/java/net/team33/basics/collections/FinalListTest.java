@@ -2,8 +2,13 @@ package net.team33.basics.collections;
 
 import org.junit.Test;
 
+import java.util.AbstractSet;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
@@ -12,11 +17,30 @@ import static org.junit.Assert.fail;
 @SuppressWarnings({"JUnitTestMethodWithNoAssertions", "ClassWithTooManyMethods"})
 public class FinalListTest {
 
-    private static final String SHOULD_FAIL_BUT_RETURNS = "Should fail but returns <%s>";
+    private static final String SHOULD_FAIL_BUT_RETURNS
+            = "Should fail but returns <%s>";
     private static final Collection<? extends CharSequence> ORIGIN_01
             = asList("these", "are", "some", "strings");
-    private static final String ANOTHER_STRING = "another string";
-    private static final int NEGATIVE_INDEX = -278;
+    private static final String ANOTHER_STRING
+            = "another string";
+    private static final int NEGATIVE_INDEX
+            = -278;
+
+    @Test(expected = IllegalArgumentException.class)
+    public final void testWrongOrigin_sizeTooSmall() {
+        fail(format(
+                SHOULD_FAIL_BUT_RETURNS,
+                FinalList.from(new WrongSet<>(ORIGIN_01.size() / 2, ORIGIN_01))
+        ));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public final void testWrongOrigin_sizeTooBig() {
+        fail(format(
+                SHOULD_FAIL_BUT_RETURNS,
+                FinalList.from(new WrongSet<>(ORIGIN_01.size() * 2, ORIGIN_01))
+        ));
+    }
 
     @Test
     public final void testBuilder__empty() {
@@ -67,7 +91,7 @@ public class FinalListTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testAdd_E__00() {
-        fail(String.format(
+        fail(format(
                 SHOULD_FAIL_BUT_RETURNS,
                 FinalList.from(ORIGIN_01).add(null)
         ));
@@ -75,7 +99,7 @@ public class FinalListTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testAdd_E__01() {
-        fail(String.format(
+        fail(format(
                 SHOULD_FAIL_BUT_RETURNS,
                 FinalList.from(ORIGIN_01).add(ANOTHER_STRING)
         ));
@@ -83,7 +107,7 @@ public class FinalListTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testSet_int_E__00() {
-        fail(String.format(
+        fail(format(
                 SHOULD_FAIL_BUT_RETURNS,
                 FinalList.from(ORIGIN_01).set(0, null)
         ));
@@ -91,7 +115,7 @@ public class FinalListTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testSet_int_E__10() {
-        fail(String.format(
+        fail(format(
                 SHOULD_FAIL_BUT_RETURNS,
                 FinalList.from(ORIGIN_01).set(NEGATIVE_INDEX, null)
         ));
@@ -99,7 +123,7 @@ public class FinalListTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testSet_int_E__01() {
-        fail(String.format(
+        fail(format(
                 SHOULD_FAIL_BUT_RETURNS,
                 FinalList.from(ORIGIN_01).set(0, ANOTHER_STRING)
         ));
@@ -107,7 +131,7 @@ public class FinalListTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testSet_int_E__11() {
-        fail(String.format(
+        fail(format(
                 SHOULD_FAIL_BUT_RETURNS,
                 FinalList.from(ORIGIN_01).set(NEGATIVE_INDEX, ANOTHER_STRING)
         ));
@@ -116,14 +140,14 @@ public class FinalListTest {
     @Test(expected = UnsupportedOperationException.class)
     public final void testAdd1() {
         FinalList.from(ORIGIN_01).add(0, ANOTHER_STRING);
-        fail(String.format(
+        fail(format(
                 SHOULD_FAIL_BUT_RETURNS, ANOTHER_STRING
         ));
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testRemove__byIndex() {
-        fail(String.format(
+        fail(format(
                 SHOULD_FAIL_BUT_RETURNS,
                 FinalList.from(ORIGIN_01).remove(NEGATIVE_INDEX)
         ));
@@ -131,9 +155,29 @@ public class FinalListTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testRemove__byElement() {
-        fail(String.format(
+        fail(format(
                 SHOULD_FAIL_BUT_RETURNS,
                 FinalList.from(ORIGIN_01).remove(ANOTHER_STRING)
         ));
+    }
+
+    private static class WrongSet<E> extends AbstractSet<E> {
+        private final Set<E> backing;
+        private final int wrongSize;
+
+        private WrongSet(final int wrongSize, final Collection<? extends E> origin) {
+            this.backing = new HashSet<>(origin);
+            this.wrongSize = wrongSize;
+        }
+
+        @Override
+        public final Iterator<E> iterator() {
+            return backing.iterator();
+        }
+
+        @Override
+        public final int size() {
+            return wrongSize;
+        }
     }
 }
