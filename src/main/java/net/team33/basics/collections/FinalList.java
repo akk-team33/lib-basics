@@ -1,6 +1,6 @@
 package net.team33.basics.collections;
 
-import net.team33.basics.Re_uildable;
+import net.team33.basics.Rebuildable;
 
 import java.util.AbstractList;
 import java.util.Collection;
@@ -23,7 +23,7 @@ import static net.team33.basics.collections.Package.NOT_SUPPORTED;
  */
 @SuppressWarnings("ClassWithTooManyMethods")
 public class FinalList<E> extends AbstractList<E>
-        implements RandomAccess, Re_uildable<FinalList<E>, FinalList.Builder<E>> {
+        implements RandomAccess, Rebuildable<FinalList<E>, FinalList.Builder<E>> {
 
     private final Object[] elements;
 
