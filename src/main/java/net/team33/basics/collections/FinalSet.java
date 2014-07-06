@@ -1,12 +1,13 @@
 package net.team33.basics.collections;
 
-import com.google.common.base.Supplier;
-import net.team33.basics.lazy.Initial;
-
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -14,10 +15,6 @@ import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 
 /**
  * Implementation of an immutable {@link Set}.
- * <ul>
- * <li>To be instantiated as a copy of an original {@link Collection} (eg. via {@link #from(Collection)}).</li>
- * <li>Preserves the iteration order of the original {@link Collection} (as far as compatible with a {@link Set}).</li>
- * </ul>
  * <p/>
  * NOTE (from documentation of {@link Set}):
  * Great care must be exercised if mutable objects are used as set elements. The behavior of a set is not specified if
@@ -27,33 +24,38 @@ import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 @SuppressWarnings("EqualsAndHashcode")
 public class FinalSet<E> extends AbstractSet<E> {
 
-    private final FinalList<E> elements;
-
-    private transient Supplier<Integer> hashSupplier = new HashCode();
-    private transient Supplier<String> stringSupplier = new ToString();
+    private static final Comparator<Entry> ORDER = new Order();
+    private final List<E> elements;
+    private final List<Entry> entries;
 
     @SuppressWarnings("TypeMayBeWeakened")
     private FinalSet(final Set<? extends E> origin) {
         elements = FinalList.from(origin);
+        entries = FinalList.from(newEntries(elements));
+    }
+
+    private static Collection<Entry> newEntries(final List<?> elements) {
+        final List<Entry> result = new ArrayList<>(elements.size());
+        for (int index = 0; index < elements.size(); ++index) {
+            result.add(new Entry(Objects.hashCode(elements.get(index)), index));
+        }
+        Collections.sort(result, ORDER);
+        return result;
     }
 
     public static <E> FinalSet<E> from(final Collection<? extends E> origin) {
-        //noinspection unchecked
-        return (origin instanceof Set) ? from((Set<? extends E>) origin) : from(new LinkedHashSet<>(origin));
-    }
+        //noinspection ChainOfInstanceofChecks
+        if (origin instanceof FinalSet) {
+            //noinspection unchecked
+            return (FinalSet<E>) origin;
 
-    public static <E> FinalSet<E> from(final Set<? extends E> origin) {
-        //noinspection unchecked
-        return (origin instanceof FinalSet) ? (FinalSet<E>) origin : new FinalSet<>(origin);
-    }
+        } else if (origin instanceof Set) {
+            //noinspection unchecked
+            return new FinalSet<>((Set<? extends E>) origin);
 
-    /**
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final boolean removeAll(final Collection<?> c) {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
+        } else {
+            return new FinalSet<>(new LinkedHashSet<>(origin));
+        }
     }
 
     /**
@@ -62,6 +64,15 @@ public class FinalSet<E> extends AbstractSet<E> {
     @SuppressWarnings("RefusedBequest")
     @Override
     public final boolean add(final E e) {
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
+    }
+
+    /**
+     * @throws UnsupportedOperationException on any attempt.
+     */
+    @SuppressWarnings("RefusedBequest")
+    @Override
+    public final boolean addAll(final Collection<? extends E> c) {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
@@ -79,7 +90,7 @@ public class FinalSet<E> extends AbstractSet<E> {
      */
     @SuppressWarnings("RefusedBequest")
     @Override
-    public final boolean addAll(final Collection<? extends E> c) {
+    public final boolean removeAll(final Collection<?> c) {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
@@ -101,22 +112,34 @@ public class FinalSet<E> extends AbstractSet<E> {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
-    @SuppressWarnings("RefusedBequest")
+    @SuppressWarnings({"RefusedBequest", "AccessingNonPublicFieldOfAnotherObject"})
     @Override
-    public final boolean contains(final Object o) {
-        // TODO? final int otherCode = Objects.hashCode(o);
-        // noinspection ForLoopReplaceableByForEach
-        for (int index = 0, limit = elements.size(); index < limit; ++index) {
-            if (/* TODO? (otherCode == hashCodes[index]) && */ Objects.equals(o, elements.get(index))) {
-                return true;
+    public final boolean contains(final Object other) {
+        final int otherHash = Objects.hashCode(other);
+        int lower = 0;
+        int higher = entries.size();
+        while (lower < higher) {
+            final int index0 = (lower + higher) / 2;
+            if (otherHash < entries.get(index0).hash) {
+                higher = (higher == index0) ? index0 - 1 : index0;
+            } else if (otherHash > entries.get(index0).hash) {
+                lower = (lower == index0) ? index0 + 1 : index0;
+            } else {
+                int index = index0;
+                while ((lower < index) && (otherHash == entries.get(index - 1).hash)) {
+                    index -= 1;
+                }
+                while ((index < higher) && (otherHash == entries.get(index).hash)) {
+                    if (Objects.equals(other, elements.get(entries.get(index).index))) {
+                        return true;
+                    } else {
+                        index += 1;
+                    }
+                }
+                lower = higher;
             }
         }
         return false;
-    }
-
-    @Override
-    public final String toString() {
-        return stringSupplier.get();
     }
 
     @Override
@@ -129,45 +152,22 @@ public class FinalSet<E> extends AbstractSet<E> {
         return elements.size();
     }
 
-    @Override
-    public final int hashCode() {
-        //noinspection NonFinalFieldReferencedInHashCode
-        return hashSupplier.get();
-    }
+    private static class Entry {
+        private final int hash;
+        private final int index;
 
-    @SuppressWarnings("NonStaticInnerClassInSecureContext")
-    private class HashCode extends Initial<Integer> {
-        @Override
-        protected final Integer getFinal() {
-            return FinalSet.super.hashCode();
-        }
-
-        @Override
-        protected final Supplier<Integer> getAnchor() {
-            return hashSupplier;
-        }
-
-        @Override
-        protected final void setAnchor(final Supplier<Integer> supplier) {
-            hashSupplier = supplier;
+        private Entry(final int hash, final int index) {
+            this.hash = hash;
+            this.index = index;
         }
     }
 
-    @SuppressWarnings("NonStaticInnerClassInSecureContext")
-    private class ToString extends Initial<String> {
+    @SuppressWarnings({"AccessingNonPublicFieldOfAnotherObject", "ComparatorNotSerializable"})
+    private static class Order implements Comparator<Entry> {
         @Override
-        protected final String getFinal() {
-            return FinalSet.super.toString();
-        }
-
-        @Override
-        protected final Supplier<String> getAnchor() {
-            return stringSupplier;
-        }
-
-        @Override
-        protected final void setAnchor(final Supplier<String> supplier) {
-            stringSupplier = supplier;
+        public final int compare(final Entry o1, final Entry o2) {
+            final int result = Integer.compare(o1.hash, o2.hash);
+            return (0 == result) ? Integer.compare(o1.index, o2.index) : result;
         }
     }
 }
