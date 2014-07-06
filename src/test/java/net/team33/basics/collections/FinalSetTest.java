@@ -13,15 +13,19 @@ import java.util.Random;
 import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class FinalSetTest {
 
-    private static final List<String> ELEMENTS = newList(40000);
+    private static final int SIZE = 100000;
+    private static final List<String> ELEMENTS = newList(SIZE);
     private static final List<Object> SAMPLES = FinalList.from(
-            0, -1, 94, -519, 5783, -15783, 784512,
-            ELEMENTS.get(0).hashCode(), ELEMENTS.get(33).hashCode(), ELEMENTS.get(555).hashCode(),
-            ELEMENTS.get(1), ELEMENTS.get(22), ELEMENTS.get(333), ELEMENTS.get(4444),
+            0, -1, 94, -519, 5783, -15783, 784512, Integer.MAX_VALUE, Integer.MIN_VALUE,
+            ELEMENTS.get(0).hashCode(), ELEMENTS.get(23).hashCode(), ELEMENTS.get(358).hashCode(),
+            ELEMENTS.get(4352).hashCode(), ELEMENTS.get(54758).hashCode(), ELEMENTS.get(SIZE - 1).hashCode(),
+            ELEMENTS.get(1), ELEMENTS.get(22), ELEMENTS.get(333), ELEMENTS.get(4444), ELEMENTS.get(55555),
             "a string", new Object(), new Date(), null);
 
     private static List<String> newList(final int size) {
@@ -53,15 +57,35 @@ public class FinalSetTest {
     }
 
     @Test
+    public final void testContains_specials() {
+        assertFalse("Empty set should not contain 5", FinalSet.from().contains(5));
+        assertFalse("Empty set should not contain <null>", FinalSet.from().contains(null));
+        assertFalse("Set of 3 should not contain 5", FinalSet.from(3).contains(5));
+        assertFalse("Set of 0 should not contain <null>", FinalSet.from(0).contains(null));
+        assertTrue("Set of 5 should contain 5", FinalSet.from(5).contains(5));
+        assertFalse("Set of 5 should contain \"5\"", FinalSet.from(5).contains("5"));
+        assertTrue("Set of <null> should contain <null>", FinalSet.from((Integer) null).contains(null));
+        assertFalse("Set of <null> should not contain 0", FinalSet.from((Integer) null).contains(0));
+    }
+
+    @Test
     public final void testContains() {
-        final HashSet<String> hashSet = new HashSet<>(ELEMENTS);
-        final FinalSet<String> finalSet = FinalSet.from(ELEMENTS);
+        final Collection<String> hashSet = new HashSet<>(ELEMENTS);
+        final Collection<Object> hashSetContains = new HashSet<>(0);
+        final Collection<String> finalSet = FinalSet.from(ELEMENTS);
+        final Collection<Object> finalSetContains = new HashSet<>(0);
         for (final Object sample : SAMPLES) {
-            assertEquals(
-                    hashSet.contains(sample),
-                    finalSet.contains(sample)
-            );
+            if (hashSet.contains(sample)) {
+                hashSetContains.add(sample);
+            }
+            if (finalSet.contains(sample)) {
+                finalSetContains.add(sample);
+            }
         }
+        assertEquals(
+                hashSetContains,
+                finalSetContains
+        );
     }
 
     @Test

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 
 /**
@@ -26,12 +27,12 @@ public class FinalSet<E> extends AbstractSet<E> {
 
     private static final Comparator<Entry> ORDER = new Order();
     private final List<E> elements;
-    private final List<Entry> entries;
+    private final Entry[] entries;
 
     @SuppressWarnings("TypeMayBeWeakened")
     private FinalSet(final Set<? extends E> origin) {
         elements = FinalList.from(origin);
-        entries = FinalList.from(newEntries(elements));
+        entries = newEntries(elements).toArray(new Entry[elements.size()]);
     }
 
     private static Collection<Entry> newEntries(final List<?> elements) {
@@ -41,6 +42,12 @@ public class FinalSet<E> extends AbstractSet<E> {
         }
         Collections.sort(result, ORDER);
         return result;
+    }
+
+    @SuppressWarnings("OverloadedVarargsMethod")
+    @SafeVarargs
+    public static <E> FinalSet<E> from(final E... elements) {
+        return from(asList(elements));
     }
 
     public static <E> FinalSet<E> from(final Collection<? extends E> origin) {
@@ -115,28 +122,48 @@ public class FinalSet<E> extends AbstractSet<E> {
     @SuppressWarnings({"RefusedBequest", "AccessingNonPublicFieldOfAnotherObject"})
     @Override
     public final boolean contains(final Object other) {
+        if (elements.isEmpty()) {
+            return false;
+        } // else ...
+
+        if (1 == elements.size()) {
+            return Objects.equals(elements.get(0), other);
+        } // else ...
+
         final int otherHash = Objects.hashCode(other);
         int lower = 0;
-        int higher = entries.size();
-        while (lower < higher) {
-            final int index0 = (lower + higher) / 2;
-            if (otherHash < entries.get(index0).hash) {
-                higher = (higher == index0) ? index0 - 1 : index0;
-            } else if (otherHash > entries.get(index0).hash) {
-                lower = (lower == index0) ? index0 + 1 : index0;
-            } else {
-                int index = index0;
-                while ((lower < index) && (otherHash == entries.get(index - 1).hash)) {
-                    index -= 1;
-                }
-                while ((index < higher) && (otherHash == entries.get(index).hash)) {
-                    if (Objects.equals(other, elements.get(entries.get(index).index))) {
-                        return true;
-                    } else {
-                        index += 1;
-                    }
-                }
+        int lowerHash = entries[lower].hash;
+        if (lowerHash > otherHash) {
+            return false;
+        } // else ...
+
+        int higher = entries.length - 1;
+        int higherHash = entries[higher].hash;
+        if (higherHash < otherHash) {
+            return false;
+        } // else ...
+
+        while (lowerHash < otherHash) {
+            final int index = (lower + higher) / 2;
+            if (lower == index) {
                 lower = higher;
+                lowerHash = higherHash;
+
+            } else {
+                final int nextHash = entries[index].hash;
+                if (otherHash > nextHash) {
+                    lower = index;
+                    lowerHash = nextHash;
+                } else {
+                    higher = index;
+                    higherHash = nextHash;
+                }
+            }
+        }
+
+        for (int index = lower, hash = lowerHash; otherHash == hash; hash = entries[++index].hash) {
+            if (Objects.equals(other, elements.get(entries[index].index))) {
+                return true;
             }
         }
         return false;
