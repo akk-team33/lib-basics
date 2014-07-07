@@ -133,18 +133,19 @@ public class FinalSet<E> extends AbstractSet<E> {
         final int otherHash = Objects.hashCode(other);
         int lower = 0;
         int lowerHash = entries[lower].hash;
-        if (lowerHash > otherHash) {
-            return false;
-        } // else ...
+//        if (lowerHash > otherHash) {
+//            return false;
+//        } // else ...
 
         int higher = entries.length - 1;
         int higherHash = entries[higher].hash;
-        if (higherHash < otherHash) {
-            return false;
-        } // else ...
+//        if (higherHash < otherHash) {
+//            return false;
+//        } // else ...
 
-        while (lowerHash < otherHash) {
-            final int index = (lower + higher) / 2;
+        while ((lowerHash < otherHash) && (otherHash <= higherHash)) {
+            //noinspection NumericCastThatLosesPrecision,UnnecessaryExplicitNumericCast
+            final int index = (int) (((long) lower + (long) higher) / 2L);
             if (lower == index) {
                 lower = higher;
                 lowerHash = higherHash;
@@ -161,9 +162,12 @@ public class FinalSet<E> extends AbstractSet<E> {
             }
         }
 
-        for (int index = lower, hash = lowerHash; otherHash == hash; hash = entries[++index].hash) {
-            if (Objects.equals(other, elements.get(entries[index].index))) {
+        while (lowerHash == otherHash) {
+            if (Objects.equals(other, elements.get(entries[lower].index))) {
                 return true;
+            } else {
+                lower += 1;
+                lowerHash = entries[lower].hash;
             }
         }
         return false;
