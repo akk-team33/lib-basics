@@ -413,7 +413,6 @@
     </inspection_tool>
     <inspection_tool class="FieldMayBeFinal" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="FieldMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="FinalClass" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="Finalize" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="ignoreTrivialFinalizers" value="true"/>
     </inspection_tool>
@@ -598,7 +597,7 @@
     <inspection_tool class="InstanceGuardedByStatic" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="InstanceMethodNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="m_regex" value="[a-z][A-Za-z\d]*"/>
-        <option name="m_minLength" value="4"/>
+        <option name="m_minLength" value="3"/>
         <option name="m_maxLength" value="32"/>
     </inspection_tool>
     <inspection_tool class="InstanceVariableInitialization" enabled="true" level="WARNING" enabled_by_default="true">
@@ -883,8 +882,6 @@
     <inspection_tool class="NonStaticFinalLogger" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="loggerClassName" value=""/>
     </inspection_tool>
-    <inspection_tool class="NonStaticInnerClassInSecureContext" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
     <inspection_tool class="NonSynchronizedMethodOverridesSynchronizedMethod" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="NonThreadSafeLazyInitialization" enabled="true" level="WARNING" enabled_by_default="true"/>
@@ -971,7 +968,7 @@
         <option name="m_ignoreStaticMethodParametersHidingInstanceFields" value="true"/>
         <option name="m_ignoreForConstructors" value="true"/>
         <option name="m_ignoreForPropertySetters" value="true"/>
-        <option name="m_ignoreForAbstractMethods" value="false"/>
+        <option name="m_ignoreForAbstractMethods" value="true"/>
     </inspection_tool>
     <inspection_tool class="ParameterNameDiffersFromOverriddenParameter" enabled="true" level="WARNING"
                      enabled_by_default="true">
@@ -1384,7 +1381,6 @@
         <option name="ignoreReferences" value="true"/>
         <option name="ignoreComplexLiterals" value="false"/>
     </inspection_tool>
-    <inspection_tool class="UnqualifiedMethodAccess" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="UnsecureRandomNumberGeneration" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="UnusedCatchParameter" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="m_ignoreCatchBlocksWithComments" value="false"/>
@@ -1407,11 +1403,6 @@
     <inspection_tool class="UseOfProcessBuilder" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="UseOfPropertiesAsHashtable" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="UseOfSunClasses" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="UtilityClass" enabled="true" level="WARNING" enabled_by_default="true">
-        <option name="ignorableAnnotations">
-            <value/>
-        </option>
-    </inspection_tool>
     <inspection_tool class="UtilityClassWithPublicConstructor" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="UtilityClassWithoutPrivateConstructor" enabled="true" level="WARNING"

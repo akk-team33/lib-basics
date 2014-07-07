@@ -25,12 +25,12 @@ public class FinalSet<E> extends AbstractSet<E> {
 
     private static final Comparator<Entry> ORDER = new Order();
     private final Object[] elements;
-    private final Entry[] index;
+    private final Entry[] entries;
 
     @SuppressWarnings("TypeMayBeWeakened")
     private FinalSet(final Set<? extends E> origin) {
         elements = origin.toArray();
-        index = newIndex(elements);
+        entries = newIndex(elements);
     }
 
     private static Entry[] newIndex(final Object[] elements) {
@@ -131,13 +131,13 @@ public class FinalSet<E> extends AbstractSet<E> {
 
         final int otherHash = Objects.hashCode(other);
         int lower = 0;
-        int lowerHash = index[lower].hash;
+        int lowerHash = entries[lower].hash;
 //        if (lowerHash > otherHash) {
 //            return false;
 //        } // else ...
 
-        int higher = index.length - 1;
-        int higherHash = index[higher].hash;
+        int higher = entries.length - 1;
+        int higherHash = entries[higher].hash;
 //        if (higherHash < otherHash) {
 //            return false;
 //        } // else ...
@@ -150,7 +150,7 @@ public class FinalSet<E> extends AbstractSet<E> {
                 lowerHash = higherHash;
 
             } else {
-                final int middleHash = index[middle].hash;
+                final int middleHash = entries[middle].hash;
                 if (middleHash < otherHash) {
                     lower = middle;
                     lowerHash = middleHash;
@@ -162,11 +162,11 @@ public class FinalSet<E> extends AbstractSet<E> {
         }
 
         while (lowerHash == otherHash) {
-            if (Objects.equals(other, elements[index[lower].index])) {
+            if (Objects.equals(other, elements[entries[lower].index])) {
                 return true;
             } else {
                 lower += 1;
-                lowerHash = index[lower].hash;
+                lowerHash = entries[lower].hash;
             }
         }
         return false;
@@ -174,8 +174,7 @@ public class FinalSet<E> extends AbstractSet<E> {
 
     @Override
     public final Iterator<E> iterator() {
-        //noinspection unchecked
-        return (Iterator<E>) asList(elements).iterator();
+        return new ITERATOR();
     }
 
     @Override
@@ -199,6 +198,23 @@ public class FinalSet<E> extends AbstractSet<E> {
         public final int compare(final Entry o1, final Entry o2) {
             final int result = Integer.compare(o1.hash, o2.hash);
             return (0 == result) ? Integer.compare(o1.index, o2.index) : result;
+        }
+    }
+
+    private class ITERATOR extends ImmutableIndexIterator<E> {
+        ITERATOR() {
+            super(0);
+        }
+
+        @Override
+        protected final int size() {
+            return elements.length;
+        }
+
+        @Override
+        protected final E get(final int index) {
+            //noinspection unchecked
+            return (E) elements[index];
         }
     }
 }
