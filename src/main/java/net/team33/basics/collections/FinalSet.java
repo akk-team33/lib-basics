@@ -1,13 +1,11 @@
 package net.team33.basics.collections;
 
 import java.util.AbstractSet;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -26,21 +24,22 @@ import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 public class FinalSet<E> extends AbstractSet<E> {
 
     private static final Comparator<Entry> ORDER = new Order();
-    private final List<E> elements;
-    private final Entry[] entries;
+    private final Object[] elements;
+    private final Entry[] index;
 
     @SuppressWarnings("TypeMayBeWeakened")
     private FinalSet(final Set<? extends E> origin) {
-        elements = FinalList.from(origin);
-        entries = newEntries(elements).toArray(new Entry[elements.size()]);
+        elements = origin.toArray();
+        index = newIndex(elements);
     }
 
-    private static Collection<Entry> newEntries(final List<?> elements) {
-        final List<Entry> result = new ArrayList<>(elements.size());
-        for (int index = 0; index < elements.size(); ++index) {
-            result.add(new Entry(Objects.hashCode(elements.get(index)), index));
+    private static Entry[] newIndex(final Object[] elements) {
+        final int size = elements.length;
+        final Entry[] result = new Entry[size];
+        for (int index = 0; index < size; ++index) {
+            result[index] = new Entry(Objects.hashCode(elements[index]), index);
         }
-        Collections.sort(result, ORDER);
+        Arrays.sort(result, ORDER);
         return result;
     }
 
@@ -122,52 +121,52 @@ public class FinalSet<E> extends AbstractSet<E> {
     @SuppressWarnings({"RefusedBequest", "AccessingNonPublicFieldOfAnotherObject"})
     @Override
     public final boolean contains(final Object other) {
-        if (elements.isEmpty()) {
+        if (0 == elements.length) {
             return false;
         } // else ...
 
-        if (1 == elements.size()) {
-            return Objects.equals(elements.get(0), other);
+        if (1 == elements.length) {
+            return Objects.equals(elements[0], other);
         } // else ...
 
         final int otherHash = Objects.hashCode(other);
         int lower = 0;
-        int lowerHash = entries[lower].hash;
+        int lowerHash = index[lower].hash;
 //        if (lowerHash > otherHash) {
 //            return false;
 //        } // else ...
 
-        int higher = entries.length - 1;
-        int higherHash = entries[higher].hash;
+        int higher = index.length - 1;
+        int higherHash = index[higher].hash;
 //        if (higherHash < otherHash) {
 //            return false;
 //        } // else ...
 
         while ((lowerHash < otherHash) && (otherHash <= higherHash)) {
             //noinspection NumericCastThatLosesPrecision,UnnecessaryExplicitNumericCast
-            final int index = (int) (((long) lower + (long) higher) / 2L);
-            if (lower == index) {
+            final int middle = (int) (((long) lower + (long) higher) / 2L);
+            if (lower == middle) {
                 lower = higher;
                 lowerHash = higherHash;
 
             } else {
-                final int nextHash = entries[index].hash;
-                if (otherHash > nextHash) {
-                    lower = index;
-                    lowerHash = nextHash;
+                final int middleHash = index[middle].hash;
+                if (middleHash < otherHash) {
+                    lower = middle;
+                    lowerHash = middleHash;
                 } else {
-                    higher = index;
-                    higherHash = nextHash;
+                    higher = middle;
+                    higherHash = middleHash;
                 }
             }
         }
 
         while (lowerHash == otherHash) {
-            if (Objects.equals(other, elements.get(entries[lower].index))) {
+            if (Objects.equals(other, elements[index[lower].index])) {
                 return true;
             } else {
                 lower += 1;
-                lowerHash = entries[lower].hash;
+                lowerHash = index[lower].hash;
             }
         }
         return false;
@@ -175,12 +174,13 @@ public class FinalSet<E> extends AbstractSet<E> {
 
     @Override
     public final Iterator<E> iterator() {
-        return elements.iterator();
+        //noinspection unchecked
+        return (Iterator<E>) asList(elements).iterator();
     }
 
     @Override
     public final int size() {
-        return elements.size();
+        return elements.length;
     }
 
     private static class Entry {
