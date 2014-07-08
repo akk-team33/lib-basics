@@ -2,11 +2,7 @@ package net.team33.basics.collections;
 
 import org.junit.Test;
 
-import java.util.AbstractSet;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -25,22 +21,6 @@ public class FinalListTest {
             = "another string";
     private static final int NEGATIVE_INDEX
             = -278;
-
-    @Test(expected = IllegalArgumentException.class)
-    public final void testWrongOrigin_sizeTooSmall() {
-        fail(format(
-                SHOULD_FAIL_BUT_RETURNS,
-                FinalList.from(new WrongSet<>(ORIGIN_01.size() / 2, ORIGIN_01))
-        ));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public final void testWrongOrigin_sizeTooBig() {
-        fail(format(
-                SHOULD_FAIL_BUT_RETURNS,
-                FinalList.from(new WrongSet<>(ORIGIN_01.size() * 2, ORIGIN_01))
-        ));
-    }
 
     @Test
     public final void testBuilder__empty() {
@@ -159,25 +139,5 @@ public class FinalListTest {
                 SHOULD_FAIL_BUT_RETURNS,
                 FinalList.from(ORIGIN_01).remove(ANOTHER_STRING)
         ));
-    }
-
-    private static class WrongSet<E> extends AbstractSet<E> {
-        private final Set<E> backing;
-        private final int wrongSize;
-
-        private WrongSet(final int wrongSize, final Collection<? extends E> origin) {
-            this.backing = new HashSet<>(origin);
-            this.wrongSize = wrongSize;
-        }
-
-        @Override
-        public final Iterator<E> iterator() {
-            return backing.iterator();
-        }
-
-        @Override
-        public final int size() {
-            return wrongSize;
-        }
     }
 }
