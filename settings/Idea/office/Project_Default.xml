@@ -630,7 +630,7 @@
                      enabled_by_default="true"/>
     <inspection_tool class="InterfaceNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="m_regex" value="[A-Z][A-Za-z\d]*"/>
-        <option name="m_minLength" value="8"/>
+        <option name="m_minLength" value="3"/>
         <option name="m_maxLength" value="64"/>
     </inspection_tool>
     <inspection_tool class="InterfaceNeverImplemented" enabled="true" level="WARNING" enabled_by_default="true">
@@ -1014,12 +1014,7 @@
     <inspection_tool class="ProblematicVarargsMethodOverride" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ProblematicWhitespace" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ProtectedField" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="ProtectedInnerClass" enabled="true" level="WARNING" enabled_by_default="true">
-        <option name="ignoreEnums" value="false"/>
-        <option name="ignoreInterfaces" value="false"/>
-    </inspection_tool>
     <inspection_tool class="ProtectedMemberInFinalClass" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="PublicConstructor" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="PublicConstructorInNonPublicClass" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="PublicField" enabled="true" level="WARNING" enabled_by_default="true">
@@ -1030,10 +1025,6 @@
     </inspection_tool>
     <inspection_tool class="PublicFieldAccessedInSynchronizedContext" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
-    <inspection_tool class="PublicInnerClass" enabled="true" level="WARNING" enabled_by_default="true">
-        <option name="ignoreEnums" value="false"/>
-        <option name="ignoreInterfaces" value="false"/>
-    </inspection_tool>
     <inspection_tool class="PublicMethodNotExposedInInterface" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="ignorableAnnotations">
             <value/>
@@ -1066,7 +1057,6 @@
     <inspection_tool class="ReadResolveAndWriteReplaceProtected" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="RecordStoreResource" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="RedundantFieldInitialization" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="RedundantImplements" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="ignoreSerializable" value="false"/>
         <option name="ignoreCloneable" value="false"/>
@@ -1298,7 +1288,6 @@
     <inspection_tool class="ThrownExceptionsPerMethod" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="m_limit" value="3"/>
     </inspection_tool>
-    <inspection_tool class="ThrowsRuntimeException" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="TimeToString" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="TodoComment" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="TooBroadCatch" enabled="true" level="WARNING" enabled_by_default="true"/>

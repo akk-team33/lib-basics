@@ -185,17 +185,17 @@ public class FinalList<E> extends AbstractList<E>
 
     @Override
     public final Iterator<E> iterator() {
-        return FinalIterator.from(super.iterator());
+        return FinalIterator.proxy(super.iterator());
     }
 
     @Override
     public final ListIterator<E> listIterator() {
-        return FinalListIterator.from(super.listIterator());
+        return FinalListIterator.proxy(super.listIterator());
     }
 
     @Override
     public final ListIterator<E> listIterator(final int index) {
-        return FinalListIterator.from(super.listIterator(index));
+        return FinalListIterator.proxy(super.listIterator(index));
     }
 
     @SuppressWarnings("RefusedBequest")

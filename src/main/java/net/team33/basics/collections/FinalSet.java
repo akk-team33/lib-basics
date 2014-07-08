@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 
@@ -174,7 +175,7 @@ public class FinalSet<E> extends AbstractSet<E> {
 
     @Override
     public final Iterator<E> iterator() {
-        return new ITERATOR();
+        return new FinalIterator<>(new IteratorCore());
     }
 
     @Override
@@ -201,20 +202,18 @@ public class FinalSet<E> extends AbstractSet<E> {
         }
     }
 
-    private class ITERATOR extends ImmutableIndexIterator<E> {
-        ITERATOR() {
-            super(0);
+    private class IteratorCore implements FinalIterator.Core<E> {
+        private int index = 0;
+
+        @Override
+        public final boolean hasNext() {
+            return index < elements.length;
         }
 
         @Override
-        protected final int size() {
-            return elements.length;
-        }
-
-        @Override
-        protected final E get(final int index) {
-            //noinspection unchecked
-            return (E) elements[index];
+        public final E next() throws NoSuchElementException {
+            //noinspection unchecked,ValueOfIncrementOrDecrementUsed
+            return (E) elements[index++];
         }
     }
 }

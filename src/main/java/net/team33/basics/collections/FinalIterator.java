@@ -1,28 +1,26 @@
 package net.team33.basics.collections;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import static java.util.Objects.requireNonNull;
 import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 
 /**
- * Implementation of an immutable {@link Iterator} covering a common one.
+ * Generic implementation of an immutable {@link Iterator}.
+ * Fails fast on any attempt to {@link #remove()}.
  */
-public class FinalIterator<E, I extends Iterator<E>> implements Iterator<E> {
+public class FinalIterator<E, C extends FinalIterator.Core<E>> implements Iterator<E> {
 
     @SuppressWarnings("ProtectedField")
-    protected final I core;
+    protected final C core;
 
-    /**
-     * Intended to support derivation.
-     * Use {@link #from(Iterator)} to create a straight new Instance.
-     */
-    protected FinalIterator(final I core) {
+    public FinalIterator(final C core) {
         this.core = requireNonNull(core);
     }
 
-    public static <E> FinalIterator<E, ?> from(final Iterator<E> core) {
-        return new FinalIterator<>(core);
+    public static <E> FinalIterator<E, ?> proxy(final Iterator<E> original) {
+        return new FinalIterator<>(new Proxy<>(original));
     }
 
     @Override
@@ -41,5 +39,32 @@ public class FinalIterator<E, I extends Iterator<E>> implements Iterator<E> {
     @Override
     public final void remove() {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
+    }
+
+    public interface Core<E> {
+
+        boolean hasNext();
+
+        E next() throws NoSuchElementException;
+    }
+
+    protected static class Proxy<E, I extends Iterator<E>> implements Core<E> {
+
+        @SuppressWarnings("ProtectedField")
+        protected final I original;
+
+        protected Proxy(final I original) {
+            this.original = original;
+        }
+
+        @Override
+        public final boolean hasNext() {
+            return original.hasNext();
+        }
+
+        @Override
+        public final E next() throws NoSuchElementException {
+            return original.next();
+        }
     }
 }

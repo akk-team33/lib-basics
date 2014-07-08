@@ -1,24 +1,29 @@
 package net.team33.basics.collections;
 
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 
 /**
- * Implementation of an immutable {@link ListIterator} covering a common one.
+ * Generic implementation of an immutable {@link ListIterator}.
+ * Fails fast on any attempt to ...
+ * <ul>
+ *     <li>{@link #remove()}</li>
+ *     <li>{@link #add(Object)}</li>
+ *     <li>{@link #set(Object)}</li>
+ * </ul>
  */
-public class FinalListIterator<E, I extends ListIterator<E>> extends FinalIterator<E, I> implements ListIterator<E> {
+public class FinalListIterator<E, C extends FinalListIterator.Core<E>>
+        extends FinalIterator<E, C>
+        implements ListIterator<E> {
 
-    /**
-     * Intended to support derivation.
-     * Use {@link #from(ListIterator)} to directly create a new Instance.
-     */
-    protected FinalListIterator(final I core) {
+    public FinalListIterator(final C core) {
         super(core);
     }
 
-    public static <E> FinalListIterator<E, ?> from(final ListIterator<E> core) {
-        return new FinalListIterator<>(core);
+    public static <E> FinalListIterator<E, ?> proxy(final ListIterator<E> original) {
+        return new FinalListIterator<>(new Proxy<>(original));
     }
 
     @Override
@@ -55,5 +60,45 @@ public class FinalListIterator<E, I extends ListIterator<E>> extends FinalIterat
     @Override
     public final void add(final E e) {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
+    }
+
+    @SuppressWarnings({"ClassNameSameAsAncestorName", "InterfaceWithOnlyOneDirectInheritor"})
+    public interface Core<E> extends FinalIterator.Core<E> {
+
+        boolean hasPrevious();
+
+        int previousIndex();
+
+        E previous() throws NoSuchElementException;
+
+        int nextIndex();
+    }
+
+    @SuppressWarnings("ClassNameSameAsAncestorName")
+    protected static class Proxy<E, I extends ListIterator<E>> extends FinalIterator.Proxy<E, I> implements Core<E> {
+
+        protected Proxy(final I original) {
+            super(original);
+        }
+
+        @Override
+        public final boolean hasPrevious() {
+            return original.hasPrevious();
+        }
+
+        @Override
+        public final int previousIndex() {
+            return original.previousIndex();
+        }
+
+        @Override
+        public final E previous() throws NoSuchElementException {
+            return original.previous();
+        }
+
+        @Override
+        public final int nextIndex() {
+            return 0;
+        }
     }
 }
