@@ -10,7 +10,7 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 
 /**
- * Convenience methods to deal with Collections in addition to {@link Collections}.
+ * {@linkplain Collections Additional} convenience methods to deal with Collections.
  */
 @SuppressWarnings({"ProhibitedExceptionCaught", "StaticMethodOnlyUsedInOneClass"})
 public final class Collecting {
@@ -21,11 +21,11 @@ public final class Collecting {
      * Adds some {@code elements} to a given {@code subject}.
      *
      * @return The {@code subject}.
-     * @throws UnsupportedOperationException if {@link Collection#addAll(Collection)} or {@link Collection#add(Object)}
+     * @throws UnsupportedOperationException if {@link Collection#add(Object)} or {@link Collection#addAll(Collection)}
      *                                       is not supported by the {@code subject}.
-     * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
-     *                                       if the class of the specified {@code elements} prevents them from being
-     *                                       added to the {@code subject}.
+     * @throws ClassCastException            if the class of the specified {@code elements} prevents them from being
+     *                                       added to the {@code subject}
+     *                                       (may occur only if used raw or forced in a mismatched class context).
      * @throws NullPointerException          <ul>
      *                                       <li>if {@code subject} or the {@code array} of {@code elements}
      *                                       is {@code null}</li>
@@ -134,8 +134,8 @@ public final class Collecting {
     }
 
     /**
-     * Removes an {@code element} from a given {@code subject}.
-     * Respectively ensures the {@code subject} not to contain the {@code element}.
+     * Removes a specified {@code element} from a given {@code subject}.
+     * Respectively ensures the {@code subject} not to contain the {@code element} (any more).
      * <p/>
      * If {@code subject} contains the {@code element} several times, each occurrence will be removed!
      * <p/>
@@ -143,9 +143,9 @@ public final class Collecting {
      * {@link Collection#remove(Object)} when the {@code subject} does not support the requested {@code element}.
      *
      * @return The {@code subject}.
+     * @throws NullPointerException          if {@code subject} is {@code null}.
      * @throws UnsupportedOperationException if {@link Collection#remove(Object)} is not supported by the
      *                                       {@code subject}.
-     * @throws NullPointerException          if {@code subject} is {@code null}.
      * @see Collection#remove(Object)
      */
     public static <E, C extends Collection<E>> C remove(final C subject, final Object element) {
@@ -166,36 +166,14 @@ public final class Collecting {
     }
 
     /**
-     * Removes some {@code elements} from a given {@code subject}.
-     * Respectively ensures the {@code subject} not to contain any of the specified {@code elements}.
-     * <p/>
-     * If {@code subject} contains some of the {@code elements} several times, each occurrence will be removed!
-     * <p/>
-     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
-     * {@link Collection#removeAll(Collection)} when the {@code subject} does not support some of the requested
-     * {@code elements}.
-     *
-     * @return The {@code subject}.
-     * @throws UnsupportedOperationException if {@link Collection#removeAll(Collection)} is not supported by the
-     *                                       {@code subject}.
-     * @throws NullPointerException          if {@code subject} or the {@link Collection} of {@code elements}
-     *                                       is {@code null}.
-     * @see Collection#remove(Object)
-     * @see Collection#removeAll(Collection)
-     */
-    public static <E, C extends Collection<E>> C removeAlt(final C subject, final Object... elements) {
-        return (1 == elements.length) ? remove(subject, elements[0]) : removeAll(subject, asList(elements));
-    }
-
-    /**
      * Removes an entry by a specific {@code key} from a given {@code subject}.
      * <p/>
      * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
      * {@link Map#remove(Object)} when the {@code subject} does not support the requested {@code key}.
      *
      * @return The {@code subject}.
-     * @throws UnsupportedOperationException if {@link Map#remove(Object)} is not supported by the {@code subject}.
      * @throws NullPointerException          if {@code subject} is {@code null}.
+     * @throws UnsupportedOperationException if {@link Map#remove(Object)} is not supported by the {@code subject}.
      * @see Map#remove(Object)
      */
     public static <K, V, M extends Map<K, V>> M remove(final M subject, final Object key) {
@@ -219,15 +197,38 @@ public final class Collecting {
      * Removes some {@code elements} from a given {@code subject}.
      * Respectively ensures the {@code subject} not to contain any of the specified {@code elements}.
      * <p/>
+     * If {@code subject} contains some of the {@code elements} several times, each occurrence will be removed!
+     * <p/>
+     * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
+     * {@link Collection#remove(Object)} or {@link Collection#removeAll(Collection)} when the {@code subject} does not
+     * support some of the requested {@code elements}.
+     *
+     * @return The {@code subject}.
+     * @throws NullPointerException          if {@code subject} or the {@code array} of {@code elements} is
+     *                                       {@code null}.
+     * @throws UnsupportedOperationException if {@link Collection#remove(Object)} or
+     *                                       {@link Collection#removeAll(Collection)} is not supported by the
+     *                                       {@code subject}.
+     * @see Collection#remove(Object)
+     * @see Collection#removeAll(Collection)
+     */
+    public static <E, C extends Collection<E>> C removeAlt(final C subject, final Object... elements) {
+        return (1 == elements.length) ? remove(subject, elements[0]) : removeAll(subject, asList(elements));
+    }
+
+    /**
+     * Removes some {@code elements} from a given {@code subject}.
+     * Respectively ensures the {@code subject} not to contain any of the specified {@code elements}.
+     * <p/>
      * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
      * {@link Collection#removeAll(Collection)} when the {@code subject} does not support some of the requested
      * {@code elements}.
      *
      * @return The {@code subject}.
-     * @throws UnsupportedOperationException if {@link Collection#removeAll(Collection)} is not supported by the
-     *                                       {@code subject}.
      * @throws NullPointerException          if {@code subject} or the {@link Collection} of {@code elements}
      *                                       is {@code null}.
+     * @throws UnsupportedOperationException if {@link Collection#removeAll(Collection)} is not supported by the
+     *                                       {@code subject}.
      * @see Collection#removeAll(Collection)
      */
     public static <E, C extends Collection<E>> C removeAll(final C subject, final Collection<?> elements) {
@@ -257,10 +258,10 @@ public final class Collecting {
      * {@code elements}.
      *
      * @return The {@code subject}.
+     * @throws NullPointerException          if {@code subject} or the {@code array} of {@code elements} is
+     *                                       {@code null}.
      * @throws UnsupportedOperationException if {@link Collection#retainAll(Collection)} is not supported by the
      *                                       {@code subject}.
-     * @throws NullPointerException          if {@code subject} or the {@link Collection} of {@code elements}
-     *                                       is {@code null}.
      */
     public static <E, C extends Collection<E>> C retainAlt(final C subject, final Object... elements) {
         return retainAll(subject, asList(elements));
@@ -395,8 +396,7 @@ public final class Collecting {
      * {@link Collection#containsAll(Collection)} when the {@code subject} does not support some of the requested
      * {@code elements}.
      *
-     * @throws NullPointerException if {@code subject} or the {@link Collection} of {@code elements}
-     *                              is {@code null}.
+     * @throws NullPointerException if {@code subject} or the {@link Collection} of {@code elements} is {@code null}.
      * @see Collection#containsAll(Collection)
      */
     public static boolean containsAll(final Collection<?> subject, final Collection<?> elements) {
@@ -419,7 +419,7 @@ public final class Collecting {
      * Retrieves the value for a specific {@code key} from a given {@code subject}.
      * <p/>
      * Avoids an unnecessary {@link ClassCastException} or {@link NullPointerException} which might be caused by
-     * {@link Map#containsKey(Object)} when the {@code subject} does not support the requested {@code key}.
+     * {@link Map#get(Object)} when the {@code subject} does not support the requested {@code key}.
      *
      * @return The value or {@code null} if the {@code subject} doesn't contain (an entry for) the {@code key}.
      * @throws NullPointerException if {@code subject} is {@code null}.

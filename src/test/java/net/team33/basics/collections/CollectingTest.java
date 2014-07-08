@@ -25,7 +25,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-@SuppressWarnings({"ClassWithTooManyMethods", "ProhibitedExceptionCaught", "ConstantNamingConvention", "AssertEqualsBetweenInconvertibleTypes"})
+@SuppressWarnings({"ClassWithTooManyMethods", "ConstantNamingConvention", "ProhibitedExceptionCaught"})
 public class CollectingTest {
 
     private static final String A = "a";
