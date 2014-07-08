@@ -24,7 +24,7 @@ public class ListerTest {
                 Lister.apply(new ArrayList<>(asList(INT_277, INT_280)))
                         .add(1, INT_279)
                         .add(1, INT_278)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -35,7 +35,7 @@ public class ListerTest {
                 Lister.apply(new LinkedList<>(asList(INT_277, INT_280)))
                         .addAll(1, asList(INT_278, INT_279))
                         .addAll(4, asList(INT_278, INT_279))
-                        .getCore()
+                        .subject
         );
     }
 
@@ -45,7 +45,7 @@ public class ListerTest {
                 asList(INT_277, INT_279, INT_280),
                 Lister.apply(new LinkedList<>(asList(INT_277, INT_278, INT_279, INT_280)))
                         .remove(1)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -56,7 +56,7 @@ public class ListerTest {
                 Lister.apply(new ArrayList<>(asList(INT_278, INT_278, INT_280)))
                         .set(0, INT_277)
                         .set(1, INT_279)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -66,7 +66,7 @@ public class ListerTest {
                 singletonList(INT_280),
                 Lister.apply(new LinkedList<>(asList(INT_278, INT_279, INT_280)))
                         .removeAlt(INT_278, INT_279)
-                        .getCore()
+                        .subject
         );
     }
 }

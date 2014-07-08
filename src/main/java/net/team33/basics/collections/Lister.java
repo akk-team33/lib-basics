@@ -29,83 +29,83 @@ public class Lister<E, L extends List<E>, R extends Lister<E, L, R>> extends Col
     }
 
     /**
-     * Substitutes {@link List#add(int, Object)} for the underlying {@link #getCore() subject}.
+     * Substitutes {@link List#add(int, Object)} for the underlying {@link #subject}.
      *
      * @return The related {@code Lister} itself in its 'final' representation. Of course not {@code null}.
      * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
      *                                       if {@link List#add(int, Object)} is not supported by the underlying
-     *                                       {@link #getCore() subject}.
+     *                                       {@link #subject}.
      * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
      *                                       if the class of the specified {@code element} prevents it from being added
-     *                                       to the underlying {@link #getCore() subject}.
+     *                                       to the underlying {@link #subject}.
      * @throws NullPointerException          if the specified {@code element} is {@code null} and the underlying
-     *                                       {@link #getCore() subject} does not permit {@code null} elements.
+     *                                       {@link #subject} does not permit {@code null} elements.
      * @throws IllegalArgumentException      if some property of the specified {@code element} prevents it from being
-     *                                       added to the underlying {@link #getCore() subject}.
+     *                                       added to the underlying {@link #subject}.
      * @throws IndexOutOfBoundsException     if the {@code index} is out of range: <tt>0 &lt;= index &lt;= size()</tt>
      */
     public final R add(final int index, final E element) {
-        getCore().add(index, element);
+        subject.add(index, element);
         return cast(this);
     }
 
     /**
-     * Substitutes {@link List#addAll(int, Collection)} for the underlying {@link #getCore() subject}.
+     * Substitutes {@link List#addAll(int, Collection)} for the underlying {@link #subject}.
      *
      * @return The related {@code Lister} itself in its 'final' representation. Of course not {@code null}.
      * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
      *                                       if {@link List#addAll(int, Collection)} is not supported by the
-     *                                       underlying {@link #getCore() subject}.
+     *                                       underlying {@link #subject}.
      * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
      *                                       if the class of the specified {@code elements} prevents them from being
      *                                       added to the {@code subject}.
      * @throws NullPointerException          <ul>
      *                                       <li>if the {@link Collection} of {@code elements} is {@code null}</li>
      *                                       <li>if some of the specified {@code elements} are {@code null} and the
-     *                                       underlying {@link #getCore() subject} does not permit {@code null}
+     *                                       underlying {@link #subject} does not permit {@code null}
      *                                       elements.</li>
      *                                       </ul>
      * @throws IllegalArgumentException      if some property of some {@code elements} prevents them from being
-     *                                       added to the underlying {@link #getCore() subject}.
+     *                                       added to the underlying {@link #subject}.
      * @throws IndexOutOfBoundsException     if the {@code index} is out of range: <tt>0 &lt;= index &lt;= size()</tt>
      */
     public final R addAll(final int index, final Collection<? extends E> elements) {
-        getCore().addAll(index, elements);
+        subject.addAll(index, elements);
         return cast(this);
     }
 
     /**
-     * Substitutes {@link List#remove(int)} for the underlying {@link #getCore() subject}.
+     * Substitutes {@link List#remove(int)} for the underlying {@link #subject}.
      *
      * @return The related {@code Lister} itself in its 'final' representation. Of course not {@code null}.
      * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
      *                                       if {@link List#remove(int)} is not supported by the underlying
-     *                                       {@link #getCore() subject}.
+     *                                       {@link #subject}.
      * @throws IndexOutOfBoundsException     if the {@code index} is out of range: <tt>0 &lt;= index &lt; size()</tt>
      */
     public final R remove(final int index) {
-        getCore().remove(index);
+        subject.remove(index);
         return cast(this);
     }
 
     /**
-     * Substitutes {@link List#set(int, Object)} for the underlying {@link #getCore() subject}.
+     * Substitutes {@link List#set(int, Object)} for the underlying {@link #subject}.
      *
      * @return The related {@code Lister} itself in its 'final' representation. Of course not {@code null}.
      * @throws UnsupportedOperationException (may occur only if used with an improper type of {@code subject})
      *                                       if {@link List#set(int, Object)} is not supported by the underlying
-     *                                       {@link #getCore() subject}.
+     *                                       {@link #subject}.
      * @throws ClassCastException            (may occur only if used raw or forced in a mismatched class context)
      *                                       if the class of the specified {@code element} prevents it from being added
-     *                                       to the underlying {@link #getCore() subject}.
+     *                                       to the underlying {@link #subject}.
      * @throws NullPointerException          if the specified {@code element} is {@code null} and the underlying
-     *                                       {@link #getCore() subject} does not permit {@code null} elements.
+     *                                       {@link #subject} does not permit {@code null} elements.
      * @throws IllegalArgumentException      if some property of the specified {@code element} prevents it from being
-     *                                       added to the underlying {@link #getCore() subject}.
+     *                                       added to the underlying {@link #subject}.
      * @throws IndexOutOfBoundsException     if the {@code index} is out of range: <tt>0 &lt;= index &lt; size()</tt>
      */
     public final R set(final int index, final E element) {
-        getCore().set(index, element);
+        subject.set(index, element);
         return cast(this);
     }
 

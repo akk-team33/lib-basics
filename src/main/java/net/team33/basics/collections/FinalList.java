@@ -36,6 +36,7 @@ public class FinalList<E> extends AbstractList<E>
         this(origin.iterator(), origin.size());
     }
 
+    @SuppressWarnings("ProhibitedExceptionCaught")
     private FinalList(final Iterator<? extends E> iterator, final int size) {
         try {
             elements = new Object[size];
@@ -225,7 +226,7 @@ public class FinalList<E> extends AbstractList<E>
 
         @Override
         public final FinalList<E> build() {
-            return from(getCore());
+            return from(subject);
         }
     }
 }

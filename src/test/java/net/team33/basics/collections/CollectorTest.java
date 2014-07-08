@@ -39,7 +39,7 @@ public class CollectorTest {
                 singleton(INT_278),
                 Collector.apply(new HashSet<>(0))
                         .add(INT_278)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -49,7 +49,7 @@ public class CollectorTest {
                 new HashSet<>(asList(INT_278, INT_279, INT_280)),
                 Collector.apply(new LinkedHashSet<>(0))
                         .addAll(asList(INT_278, INT_279, INT_280))
-                        .getCore()
+                        .subject
         );
     }
 
@@ -59,7 +59,7 @@ public class CollectorTest {
                 new HashSet<>(asList(AnEnum.ABC.name(), AnEnum.DEF.name(), AnEnum.GHI.name())),
                 Collector.apply(new LinkedHashSet<>(0))
                         .addAll(FUNCTION, asList(AnEnum.ABC, AnEnum.DEF, AnEnum.GHI))
-                        .getCore()
+                        .subject
         );
     }
 
@@ -69,7 +69,7 @@ public class CollectorTest {
                 new HashSet<>(asList(INT_277, INT_278, INT_279, INT_280)),
                 Collector.apply(new TreeSet<>(singletonList(INT_277)))
                         .addAlt(INT_278, INT_279, INT_280)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -79,7 +79,7 @@ public class CollectorTest {
                 singleton(AnEnum.DEF),
                 Collector.apply(EnumSet.of(AnEnum.DEF, AnEnum.JKL))
                         .remove(AnEnum.JKL)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -89,7 +89,7 @@ public class CollectorTest {
                 singletonList(INT_280),
                 Collector.apply(new LinkedList<>(asList(INT_278, INT_279, INT_280)))
                         .removeAll(asList(INT_278, INT_279))
-                        .getCore()
+                        .subject
         );
     }
 
@@ -99,7 +99,7 @@ public class CollectorTest {
                 singletonList(INT_280),
                 Collector.apply(new LinkedList<>(asList(INT_278, INT_279, INT_280)))
                         .removeAlt(INT_278, INT_279)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -109,7 +109,7 @@ public class CollectorTest {
                 new HashSet<>(asList(INT_278, INT_279)),
                 Collector.apply(new HashSet<>(asList(INT_278, INT_279, INT_280)))
                         .retainAll(asList(INT_278, INT_279))
-                        .getCore()
+                        .subject
         );
     }
 
@@ -120,7 +120,7 @@ public class CollectorTest {
                 Collector.apply(new TreeSet<>((Comparator<Integer>) null))
                         .addAlt(INT_278, INT_279, INT_280)
                         .retainAlt(INT_278, INT_279)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -130,10 +130,12 @@ public class CollectorTest {
                 emptySet(),
                 Collector.apply(EnumSet.allOf(AnEnum.class))
                         .clear()
-                        .getCore()
+                        .subject
         );
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    private enum AnEnum {ABC, DEF, GHI, JKL}
+    private enum AnEnum {
+        ABC, DEF, GHI, JKL
+    }
 }
