@@ -9,9 +9,9 @@ import static net.team33.basics.collections.Package.NOT_SUPPORTED;
  * Generic implementation of an immutable {@link ListIterator}.
  * Fails fast on any attempt to ...
  * <ul>
- *     <li>{@link #remove()}</li>
- *     <li>{@link #add(Object)}</li>
- *     <li>{@link #set(Object)}</li>
+ * <li>{@link #remove()}</li>
+ * <li>{@link #add(Object)}</li>
+ * <li>{@link #set(Object)}</li>
  * </ul>
  */
 public class FinalListIterator<E, C extends FinalListIterator.Core<E>>
@@ -37,7 +37,7 @@ public class FinalListIterator<E, C extends FinalListIterator.Core<E>>
     }
 
     @Override
-    public final E previous() {
+    public final E previous() throws NoSuchElementException {
         return core.previous();
     }
 
@@ -47,37 +47,59 @@ public class FinalListIterator<E, C extends FinalListIterator.Core<E>>
     }
 
     /**
+     * Not supported.
+     *
      * @throws UnsupportedOperationException on any attempt.
      */
     @Override
-    public final void set(final E e) {
+    public final void set(final E e) throws UnsupportedOperationException {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     /**
+     * Not supported.
+     *
      * @throws UnsupportedOperationException on any attempt.
      */
     @Override
-    public final void add(final E e) {
+    public final void add(final E e) throws UnsupportedOperationException {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
+    /**
+     * Abstracts the core functionality of an immutable {@link ListIterator}.
+     */
     @SuppressWarnings({"ClassNameSameAsAncestorName", "InterfaceWithOnlyOneDirectInheritor"})
     public interface Core<E> extends FinalIterator.Core<E> {
 
+        /**
+         * @see ListIterator#hasPrevious()
+         */
         boolean hasPrevious();
 
+        /**
+         * @see ListIterator#previousIndex()
+         */
         int previousIndex();
 
+        /**
+         * @see ListIterator#previous()
+         */
         E previous() throws NoSuchElementException;
 
+        /**
+         * @see ListIterator#nextIndex()
+         */
         int nextIndex();
     }
 
+    /**
+     * Implements the core functionality proxying an immutable {@link ListIterator}.
+     */
     @SuppressWarnings("ClassNameSameAsAncestorName")
-    protected static class Proxy<E, I extends ListIterator<E>> extends FinalIterator.Proxy<E, I> implements Core<E> {
+    static class Proxy<E, I extends ListIterator<E>> extends FinalIterator.Proxy<E, I> implements Core<E> {
 
-        protected Proxy(final I original) {
+        Proxy(final I original) {
             super(original);
         }
 

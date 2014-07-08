@@ -29,32 +29,46 @@ public class FinalIterator<E, C extends FinalIterator.Core<E>> implements Iterat
     }
 
     @Override
-    public final E next() {
+    public final E next() throws NoSuchElementException {
         return core.next();
     }
 
     /**
+     * Not supported.
+     *
      * @throws UnsupportedOperationException on any attempt.
      */
     @Override
-    public final void remove() {
+    public final void remove() throws UnsupportedOperationException {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
+    /**
+     * Abstracts the core functionality of an immutable {@link Iterator}.
+     */
     public interface Core<E> {
 
+        /**
+         * @see Iterator#hasNext()
+         */
         boolean hasNext();
 
+        /**
+         * @see Iterator#next()
+         */
         E next() throws NoSuchElementException;
     }
 
-    protected static class Proxy<E, I extends Iterator<E>> implements Core<E> {
+    /**
+     * Implements the core functionality proxying an immutable {@link Iterator}.
+     */
+    static class Proxy<E, I extends Iterator<E>> implements Core<E> {
 
-        @SuppressWarnings("ProtectedField")
-        protected final I original;
+        @SuppressWarnings("PackageVisibleField")
+        final I original;
 
-        protected Proxy(final I original) {
-            this.original = original;
+        Proxy(final I original) {
+            this.original = requireNonNull(original);
         }
 
         @Override
