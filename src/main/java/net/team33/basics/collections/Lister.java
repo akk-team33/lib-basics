@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Abstracts an instrument to initialize a {@link List} in a declarative style.
+ * Implements an instrument to initialize a {@link List} in a declarative style.
  *
  * @param <E> The element type of the {@link Collection} to be initialized.
  * @param <L> The type of the {@link List} to be initialized.

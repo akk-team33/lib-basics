@@ -3,7 +3,6 @@ package net.team33.basics.collections;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -27,7 +26,6 @@ public class MapperTest {
     private static final Map<Key, String> ORIGIN_B = new TreeMap<>();
     private static final Map<Key, String> ORIGIN_C = new LinkedHashMap<>(0);
     private static final List<Map.Entry<Key, String>> ENTRIES_A = new LinkedList<>();
-    private static final Comparator<Key> NATURAL_ORDER = null;
 
     static {
         ORIGIN_A.put(Key.KEY_01, VALUE_01);
@@ -52,7 +50,7 @@ public class MapperTest {
                         .put(Key.KEY_01, VALUE_01)
                         .put(Key.KEY_02, VALUE_02)
                         .put(Key.KEY_03, VALUE_03)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -64,7 +62,7 @@ public class MapperTest {
                         .put(ENTRIES_A.get(0))
                         .put(ENTRIES_A.get(1))
                         .put(ENTRIES_A.get(2))
-                        .getCore()
+                        .subject
         );
     }
 
@@ -74,7 +72,7 @@ public class MapperTest {
                 ORIGIN_A,
                 Mapper.apply(new TreeMap<Key, String>())
                         .putAll(ORIGIN_A)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -86,7 +84,7 @@ public class MapperTest {
                         .remove(Key.KEY_01)
                         .remove(Key.KEY_02)
                         .remove(Key.KEY_03)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -97,7 +95,7 @@ public class MapperTest {
                 Mapper.apply(new EnumMap<>(Key.class))
                         .putAll(ORIGIN_C)
                         .removeAll(ORIGIN_A.keySet())
-                        .getCore()
+                        .subject
         );
     }
 
@@ -108,7 +106,7 @@ public class MapperTest {
                 Mapper.apply(new HashMap<>(0))
                         .putAll(ORIGIN_C)
                         .removeAlt(Key.KEY_01, Key.KEY_02, Key.KEY_03)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -118,7 +116,7 @@ public class MapperTest {
                 ORIGIN_A,
                 Mapper.apply(new HashMap<>(ORIGIN_C))
                         .retainAll(ORIGIN_A.keySet())
-                        .getCore()
+                        .subject
         );
     }
 
@@ -128,7 +126,7 @@ public class MapperTest {
                 ORIGIN_A,
                 Mapper.apply(new HashMap<>(ORIGIN_C))
                         .retainAlt(Key.KEY_01, Key.KEY_02, Key.KEY_03)
-                        .getCore()
+                        .subject
         );
     }
 
@@ -139,7 +137,7 @@ public class MapperTest {
                 Mapper.apply(new LinkedHashMap<>(0))
                         .putAll(ORIGIN_A)
                         .clear()
-                        .getCore()
+                        .subject
         );
     }
 

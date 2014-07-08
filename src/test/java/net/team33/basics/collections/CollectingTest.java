@@ -42,7 +42,7 @@ public class CollectingTest {
                     .put(A, B)
                     .put(B, C)
                     .put(C, A)
-                    .getCore()
+                    .subject
     );
     private static final String NULL = null;
 

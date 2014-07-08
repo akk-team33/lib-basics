@@ -9,7 +9,7 @@ import static java.util.Objects.requireNonNull;
 import static net.team33.basics.collections.Package.simpleName;
 
 /**
- * Abstracts an instrument to initialize/modify a {@link Collection} in a declarative style.
+ * Implements an instrument to initialize/modify a {@link Collection} in a declarative style.
  *
  * @param <E> The element type of the {@link Collection} to be initialized.
  * @param <C> The type of the {@link Collection} to be initialized.
