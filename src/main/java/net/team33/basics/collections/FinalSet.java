@@ -4,14 +4,12 @@ import java.util.AbstractSet;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 
 /**
  * Implementation of an immutable {@link Set}.
@@ -22,26 +20,13 @@ import static net.team33.basics.collections.Package.NOT_SUPPORTED;
  * object is an element in the set.
  */
 @SuppressWarnings("EqualsAndHashcode")
-public class FinalSet<E> extends AbstractSet<E> {
+public class FinalSet<E> extends FinalCollection<E, FinalSet.Core<E>> implements Set<E> {
 
     private static final Comparator<Entry> ORDER = new Order();
-    private final Object[] elements;
-    private final Entry[] entries;
 
     @SuppressWarnings("TypeMayBeWeakened")
     private FinalSet(final Set<? extends E> origin) {
-        elements = origin.toArray();
-        entries = newIndex(elements);
-    }
-
-    private static Entry[] newIndex(final Object[] elements) {
-        final int size = elements.length;
-        final Entry[] result = new Entry[size];
-        for (int index = 0; index < size; ++index) {
-            result[index] = new Entry(Objects.hashCode(elements[index]), index);
-        }
-        Arrays.sort(result, ORDER);
-        return result;
+        super(new Core<>(origin));
     }
 
     @SuppressWarnings("OverloadedVarargsMethod")
@@ -65,122 +50,105 @@ public class FinalSet<E> extends AbstractSet<E> {
         }
     }
 
-    /**
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final boolean add(final E e) {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+    @SuppressWarnings("ClassNameSameAsAncestorName")
+    static class Core<E> extends AbstractSet<E> implements FinalCollection.Core<E> {
+        private final Object[] elements;
+        private final Entry[] entries;
 
-    /**
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final boolean addAll(final Collection<? extends E> c) {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+        @SuppressWarnings("TypeMayBeWeakened")
+        private Core(final Set<? extends E> origin) {
+            elements = origin.toArray();
+            entries = newIndex(elements);
+        }
 
-    /**
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final boolean remove(final Object o) {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+        private static Entry[] newIndex(final Object[] elements) {
+            final int size = elements.length;
+            final Entry[] result = new Entry[size];
+            for (int index = 0; index < size; ++index) {
+                result[index] = new Entry(Objects.hashCode(elements[index]), index);
+            }
+            Arrays.sort(result, ORDER);
+            return result;
+        }
 
-    /**
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final boolean removeAll(final Collection<?> c) {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+        @SuppressWarnings({"RefusedBequest", "AccessingNonPublicFieldOfAnotherObject"})
+        @Override
+        public final boolean contains(final Object other) {
+            if (0 == elements.length) {
+                return false;
+            } // else ...
 
-    /**
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final boolean retainAll(final Collection<?> c) {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+            if (1 == elements.length) {
+                return Objects.equals(elements[0], other);
+            } // else ...
 
-    /**
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final void clear() {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
-
-    @SuppressWarnings({"RefusedBequest", "AccessingNonPublicFieldOfAnotherObject"})
-    @Override
-    public final boolean contains(final Object other) {
-        if (0 == elements.length) {
-            return false;
-        } // else ...
-
-        if (1 == elements.length) {
-            return Objects.equals(elements[0], other);
-        } // else ...
-
-        final int otherHash = Objects.hashCode(other);
-        int lower = 0;
-        int lowerHash = entries[lower].hash;
+            final int otherHash = Objects.hashCode(other);
+            int lower = 0;
+            int lowerHash = entries[lower].hash;
 //        if (lowerHash > otherHash) {
 //            return false;
 //        } // else ...
 
-        int higher = entries.length - 1;
-        int higherHash = entries[higher].hash;
+            int higher = entries.length - 1;
+            int higherHash = entries[higher].hash;
 //        if (higherHash < otherHash) {
 //            return false;
 //        } // else ...
 
-        while ((lowerHash < otherHash) && (otherHash <= higherHash)) {
-            //noinspection NumericCastThatLosesPrecision,UnnecessaryExplicitNumericCast
-            final int middle = (int) (((long) lower + (long) higher) / 2L);
-            if (lower == middle) {
-                lower = higher;
-                lowerHash = higherHash;
+            while ((lowerHash < otherHash) && (otherHash <= higherHash)) {
+                //noinspection NumericCastThatLosesPrecision,UnnecessaryExplicitNumericCast
+                final int middle = (int) (((long) lower + (long) higher) / 2L);
+                if (lower == middle) {
+                    lower = higher;
+                    lowerHash = higherHash;
 
-            } else {
-                final int middleHash = entries[middle].hash;
-                if (middleHash < otherHash) {
-                    lower = middle;
-                    lowerHash = middleHash;
                 } else {
-                    higher = middle;
-                    higherHash = middleHash;
+                    final int middleHash = entries[middle].hash;
+                    if (middleHash < otherHash) {
+                        lower = middle;
+                        lowerHash = middleHash;
+                    } else {
+                        higher = middle;
+                        higherHash = middleHash;
+                    }
                 }
             }
+
+            while (lowerHash == otherHash) {
+                if (Objects.equals(other, elements[entries[lower].index])) {
+                    return true;
+                } else {
+                    lower += 1;
+                    lowerHash = entries[lower].hash;
+                }
+            }
+            return false;
         }
 
-        while (lowerHash == otherHash) {
-            if (Objects.equals(other, elements[entries[lower].index])) {
-                return true;
-            } else {
-                lower += 1;
-                lowerHash = entries[lower].hash;
+        @Override
+        public final FinalIterator<E, ?> iterator() {
+            return new FinalIterator<>(new IteratorCore());
+        }
+
+        @Override
+        public final int size() {
+            return elements.length;
+        }
+
+        private class IteratorCore implements FinalIterator.Core<E> {
+            private int index = 0;
+
+            @Override
+            public final boolean hasNext() {
+                return index < elements.length;
+            }
+
+            @Override
+            public final E next() throws NoSuchElementException {
+                //noinspection unchecked,ValueOfIncrementOrDecrementUsed
+                return (E) elements[index++];
             }
         }
-        return false;
-    }
-
-    @Override
-    public final Iterator<E> iterator() {
-        return new FinalIterator<>(new IteratorCore());
-    }
-
-    @Override
-    public final int size() {
-        return elements.length;
     }
 
     private static class Entry {
@@ -199,21 +167,6 @@ public class FinalSet<E> extends AbstractSet<E> {
         public final int compare(final Entry o1, final Entry o2) {
             final int result = Integer.compare(o1.hash, o2.hash);
             return (0 == result) ? Integer.compare(o1.index, o2.index) : result;
-        }
-    }
-
-    private class IteratorCore implements FinalIterator.Core<E> {
-        private int index = 0;
-
-        @Override
-        public final boolean hasNext() {
-            return index < elements.length;
-        }
-
-        @Override
-        public final E next() throws NoSuchElementException {
-            //noinspection unchecked,ValueOfIncrementOrDecrementUsed
-            return (E) elements[index++];
         }
     }
 }

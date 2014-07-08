@@ -40,9 +40,6 @@ import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 public class FinalList<E> extends AbstractList<E>
         implements RandomAccess, Rebuildable<FinalList<E>, FinalList.Builder<E>> {
 
-    private static final String ILLEGAL_ORIGIN
-            = "inconsistent iterator (%s) and size (%d)";
-
     private final Object[] elements;
 
     private FinalList(final Collection<? extends E> origin) {
