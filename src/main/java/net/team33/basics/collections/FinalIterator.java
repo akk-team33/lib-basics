@@ -19,8 +19,18 @@ public class FinalIterator<E, C extends FinalIterator.Core<E>> implements Iterat
         this.core = requireNonNull(core);
     }
 
+    /**
+     * Supplies a {@link FinalIterator} as a proxy for an original {@link Iterator}.
+     * <p/>
+     * If the original already is a {@link FinalIterator} than the original itself will be returned
+     * (no need for a proxy).
+     */
     public static <E> FinalIterator<E, ?> proxy(final Iterator<E> original) {
-        return new FinalIterator<>(new Proxy<>(original));
+        if (original instanceof FinalIterator) {
+            return (FinalIterator<E, ?>) original;
+        } else {
+            return new FinalIterator<>(new Proxy<>(original));
+        }
     }
 
     @Override

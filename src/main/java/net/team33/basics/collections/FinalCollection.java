@@ -1,14 +1,12 @@
 package net.team33.basics.collections;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import static java.util.Objects.requireNonNull;
 import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 
 /**
- * Implementation of an immutable {@link java.util.List}.
- * Fails fast on any attempt to ...
+ * Generic implementation of an immutable {@link Collection} that fails fast on any attempt to ...
  * <ul>
  * <li>{@link #add(Object)}</li>
  * <li>{@link #addAll(Collection)}</li>
@@ -17,7 +15,7 @@ import static net.team33.basics.collections.Package.NOT_SUPPORTED;
  * <li>{@link #retainAll(Collection)}</li>
  * <li>{@link #clear()}</li>
  * </ul>
- * To create an instance you can use ... TODO
+ * To create an instance you can use ... TODO ...
  * <ul>
  * <li>{@code #from(Object[])}</li>
  * <li>{@code #from(Collection)}</li>
@@ -26,11 +24,14 @@ import static net.team33.basics.collections.Package.NOT_SUPPORTED;
  * </ul>
  */
 @SuppressWarnings("ClassWithTooManyMethods")
-public class FinalCollection<E, C extends FinalCollection.Core<E>> implements Collection<E> {
+public class FinalCollection<E, C extends Collection<E>> implements Collection<E> {
 
     @SuppressWarnings("ProtectedField")
     protected final C core;
 
+    /**
+     * Mentioned to support derivation. TODO: how to directly create an instance if possible?
+     */
     protected FinalCollection(final C core) {
         this.core = requireNonNull(core);
     }
@@ -55,11 +56,6 @@ public class FinalCollection<E, C extends FinalCollection.Core<E>> implements Co
     @Override
     public final boolean remove(final Object o) throws UnsupportedOperationException {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
-
-    @Override
-    public final boolean containsAll(final Collection<?> c) {
-        return core.containsAll(c);
     }
 
     /**
@@ -106,21 +102,25 @@ public class FinalCollection<E, C extends FinalCollection.Core<E>> implements Co
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
+    /**
+     * @see Collection#contains(Object)
+     */
     @Override
-    public final Iterator<E> iterator() {
-        return core.iterator();
+    public final boolean contains(final Object o) {
+        return core.contains(o);
     }
 
+    /**
+     * @see Collection#containsAll(Collection)
+     */
     @Override
-    public final Object[] toArray() {
-        return core.toArray();
+    public final boolean containsAll(final Collection<?> c) {
+        return core.containsAll(c);
     }
 
-    @Override
-    public final <T> T[] toArray(final T[] a) {
-        return core.toArray(a);
-    }
-
+    /**
+     * @see Collection#size()
+     */
     @Override
     public final int size() {
         return core.size();
@@ -128,44 +128,35 @@ public class FinalCollection<E, C extends FinalCollection.Core<E>> implements Co
 
     @Override
     public final boolean isEmpty() {
-        return 0 == core.size();
+        return core.isEmpty();
     }
 
     @Override
-    public final boolean contains(final Object o) {
-        return core.contains(o);
+    public final FinalIterator<E, ?> iterator() {
+        return FinalIterator.proxy(core.iterator());
     }
 
-    public interface Core<E> {
+    /**
+     * @see Collection#toArray()
+     */
+    @Override
+    public final Object[] toArray() {
+        return core.toArray();
+    }
 
-        /**
-         * @see Collection#contains(Object)
-         */
-        boolean contains(Object o);
+    /**
+     * @see Collection#toArray(Object[])
+     */
+    @Override
+    public final <T> T[] toArray(final T[] a) {
+        return core.toArray(a);
+    }
 
-        /**
-         * @see Collection#containsAll(Collection)
-         */
-        boolean containsAll(Collection<?> c);
-
-        /**
-         * @see Collection#iterator()
-         */
-        FinalIterator<E, ?> iterator();
-
-        /**
-         * @see Collection#size()
-         */
-        int size();
-
-        /**
-         * @see Collection#toArray()
-         */
-        Object[] toArray();
-
-        /**
-         * @see Collection#toArray(Object[])
-         */
-        <T> T[] toArray(T[] a);
+    /**
+     * @see java.util.AbstractCollection#toString()
+     */
+    @Override
+    public final String toString() {
+        return core.toString();
     }
 }

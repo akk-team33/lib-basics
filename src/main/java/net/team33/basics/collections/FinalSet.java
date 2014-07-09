@@ -12,7 +12,22 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 
 /**
- * Implementation of an immutable {@link Set}.
+ * Implementation of an immutable {@link Set} that fails fast on any attempt to ...
+ * <ul>
+ * <li>{@link #add(Object)}</li>
+ * <li>{@link #addAll(Collection)}</li>
+ * <li>{@link #remove(Object)}</li>
+ * <li>{@link #removeAll(Collection)}</li>
+ * <li>{@link #retainAll(Collection)}</li>
+ * <li>{@link #clear()}</li>
+ * </ul>
+ * To create an instance you can use ... TODO ...
+ * <ul>
+ * <li>{@link #from(Object[])}</li>
+ * <li>{@link #from(Collection)}</li>
+ * <li>{@code #builder(Object[])}.[...].  {@code Builder#build() build()}</li>
+ * <li>{@code #builder(Collection)}.[...].{@code Builder#build() build()}</li>
+ * </ul>
  * <p/>
  * NOTE (from documentation of {@link Set}):
  * Great care must be exercised if mutable objects are used as set elements. The behavior of a set is not specified if
@@ -20,21 +35,30 @@ import static java.util.Arrays.asList;
  * object is an element in the set.
  */
 @SuppressWarnings("EqualsAndHashcode")
-public class FinalSet<E> extends FinalCollection<E, FinalSet.Core<E>> implements Set<E> {
+public class FinalSet<E> extends FinalCollection<E, Set<E>> implements Set<E> {
 
     private static final Comparator<Entry> ORDER = new Order();
 
     @SuppressWarnings("TypeMayBeWeakened")
     private FinalSet(final Set<? extends E> origin) {
-        super(new Core<>(origin));
+        super(new InnerSet<>(origin));
     }
 
+    /**
+     * Supplies a new instance of {@link FinalSet} by given {@code elements}.
+     */
     @SuppressWarnings("OverloadedVarargsMethod")
     @SafeVarargs
     public static <E> FinalSet<E> from(final E... elements) {
         return from(asList(elements));
     }
 
+    /**
+     * Supplies a {@link FinalSet} as a copy of an original {@link Collection}.
+     * <p/>
+     * If the original already is a {@link FinalSet} than the original itself will be returned
+     * (no need for a copy).
+     */
     public static <E> FinalSet<E> from(final Collection<? extends E> origin) {
         //noinspection ChainOfInstanceofChecks
         if (origin instanceof FinalSet) {
@@ -50,13 +74,23 @@ public class FinalSet<E> extends FinalCollection<E, FinalSet.Core<E>> implements
         }
     }
 
+    @Override
+    public final boolean equals(final Object obj) {
+        return core.equals(obj);
+    }
+
+    @Override
+    public final int hashCode() {
+        return core.hashCode();
+    }
+
     @SuppressWarnings("ClassNameSameAsAncestorName")
-    static class Core<E> extends AbstractSet<E> implements FinalCollection.Core<E> {
+    private static class InnerSet<E> extends AbstractSet<E> {
         private final Object[] elements;
         private final Entry[] entries;
 
         @SuppressWarnings("TypeMayBeWeakened")
-        private Core(final Set<? extends E> origin) {
+        private InnerSet(final Set<? extends E> origin) {
             elements = origin.toArray();
             entries = newIndex(elements);
         }
@@ -83,17 +117,14 @@ public class FinalSet<E> extends FinalCollection<E, FinalSet.Core<E>> implements
             } // else ...
 
             final int otherHash = Objects.hashCode(other);
+
             int lower = 0;
             int lowerHash = entries[lower].hash;
-//        if (lowerHash > otherHash) {
-//            return false;
-//        } // else ...
+            if (otherHash < lowerHash) return false;
 
             int higher = entries.length - 1;
             int higherHash = entries[higher].hash;
-//        if (higherHash < otherHash) {
-//            return false;
-//        } // else ...
+            if (higherHash < otherHash) return false;
 
             while ((lowerHash < otherHash) && (otherHash <= higherHash)) {
                 //noinspection NumericCastThatLosesPrecision,UnnecessaryExplicitNumericCast
@@ -127,7 +158,7 @@ public class FinalSet<E> extends FinalCollection<E, FinalSet.Core<E>> implements
 
         @Override
         public final FinalIterator<E, ?> iterator() {
-            return new FinalIterator<>(new IteratorCore());
+            return new FinalIterator<>(new Iterator());
         }
 
         @Override
@@ -135,7 +166,7 @@ public class FinalSet<E> extends FinalCollection<E, FinalSet.Core<E>> implements
             return elements.length;
         }
 
-        private class IteratorCore implements FinalIterator.Core<E> {
+        private class Iterator implements FinalIterator.Core<E> {
             private int index = 0;
 
             @Override
