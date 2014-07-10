@@ -253,8 +253,8 @@
     <inspection_tool class="ConstantNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="onlyCheckImmutables" value="false"/>
         <option name="m_regex" value="[A-Z][A-Z_\d]*"/>
-        <option name="m_minLength" value="5"/>
-        <option name="m_maxLength" value="32"/>
+        <option name="m_minLength" value="3"/>
+        <option name="m_maxLength" value="64"/>
     </inspection_tool>
     <inspection_tool class="ConstantOnLHSOfComparisonJS" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ConstantOnRHSOfComparison" enabled="true" level="WARNING" enabled_by_default="true"/>
@@ -298,8 +298,6 @@
     </inspection_tool>
     <inspection_tool class="DefaultNotLastCaseInSwitch" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="DefaultNotLastCaseInSwitchJS" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="DeserializableClassInSecureContext" enabled="true" level="WARNING"
-                     enabled_by_default="true"/>
     <inspection_tool class="DesignForExtension" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="DisjointPackage" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="DivideByZero" enabled="true" level="WARNING" enabled_by_default="true"/>
@@ -552,7 +550,7 @@
     <inspection_tool class="IgnoredJUnitTest" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ImplicitDefaultCharsetUsage" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="ImplicitNumericConversion" enabled="true" level="WARNING" enabled_by_default="true">
-        <option name="ignoreWideningConversions" value="false"/>
+        <option name="ignoreWideningConversions" value="true"/>
         <option name="ignoreCharConversions" value="false"/>
         <option name="ignoreConstantConversions" value="false"/>
     </inspection_tool>
@@ -675,7 +673,7 @@
         <option name="m_ignoreCatchParameters" value="false"/>
         <option name="m_regex" value="[a-z][A-Za-z\d]*"/>
         <option name="m_minLength" value="1"/>
-        <option name="m_maxLength" value="20"/>
+        <option name="m_maxLength" value="64"/>
     </inspection_tool>
     <inspection_tool class="LocalVariableNamingConventionJS" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="m_regex" value="[a-z][A-Za-z]*"/>
@@ -699,7 +697,9 @@
                      enabled_by_default="true"/>
     <inspection_tool class="LossyEncoding" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="MagicCharacter" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="MagicNumber" enabled="true" level="WARNING" enabled_by_default="true"/>
+    <inspection_tool class="MagicNumber" enabled="true" level="WARNING" enabled_by_default="true">
+        <scope name="Tests" level="WARNING" enabled="false"/>
+    </inspection_tool>
     <inspection_tool class="MagicNumberJS" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="MapReplaceableByEnumMap" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="MarkerInterface" enabled="true" level="WARNING" enabled_by_default="true"/>
@@ -907,7 +907,7 @@
     </inspection_tool>
     <inspection_tool class="OverlyLargePrimitiveArrayInitializer" enabled="true" level="WARNING"
                      enabled_by_default="true">
-        <option name="m_limit" value="64"/>
+        <option name="m_limit" value="256"/>
     </inspection_tool>
     <inspection_tool class="OverlyStrongTypeCast" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="ignoreInMatchingInstanceof" value="false"/>
@@ -1061,7 +1061,6 @@
     <inspection_tool class="SerialPersistentFieldsWithWrongSignature" enabled="true" level="WARNING"
                      enabled_by_default="true"/>
     <inspection_tool class="SerialVersionUIDNotStaticFinal" enabled="true" level="WARNING" enabled_by_default="true"/>
-    <inspection_tool class="SerializableClassInSecureContext" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="SerializableHasSerialVersionUIDField" enabled="true" level="WARNING"
                      enabled_by_default="true">
         <option name="ignoreAnonymousInnerClasses" value="false"/>
@@ -1338,7 +1337,6 @@
         <option name="ignoreReferences" value="true"/>
         <option name="ignoreComplexLiterals" value="false"/>
     </inspection_tool>
-    <inspection_tool class="UnsecureRandomNumberGeneration" enabled="true" level="WARNING" enabled_by_default="true"/>
     <inspection_tool class="UnusedCatchParameter" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="m_ignoreCatchBlocksWithComments" value="false"/>
         <option name="m_ignoreTestCases" value="false"/>
