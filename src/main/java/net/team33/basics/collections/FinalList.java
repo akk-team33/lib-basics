@@ -1,9 +1,6 @@
 package net.team33.basics.collections;
 
-import net.team33.basics.Rebuildable;
-
 import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -32,34 +29,19 @@ import static net.team33.basics.collections.Package.NOT_SUPPORTED;
  * <ul>
  * <li>{@link #from(Object[])}</li>
  * <li>{@link #from(Collection)}</li>
- * <li>{@link #builder(Object[])}.[...].{@link Builder#build() build()}</li>
- * <li>{@link #builder(Collection)}.[...].{@link Builder#build() build()}</li>
  * </ul>
  */
 @SuppressWarnings("ClassWithTooManyMethods")
-public class FinalList<E> extends AbstractList<E>
-        implements RandomAccess, Rebuildable<FinalList<E>, FinalList.Builder<E>> {
+public class FinalList<E> extends AbstractList<E> implements RandomAccess {
 
     private final Object[] elements;
 
-    private FinalList(final Collection<? extends E> origin) {
+    /**
+     * Mentioned to support derivation.
+     * Use {@link #from(Object[])} or {@link #from(Collection)} to directly retrieve an instance.
+     */
+    protected FinalList(final Collection<? extends E> origin) {
         elements = origin.toArray();
-    }
-
-    /**
-     * Supplies a new {@link Builder}, pre-initialized by given {@code elements}.
-     */
-    @SuppressWarnings("OverloadedVarargsMethod")
-    @SafeVarargs
-    public static <E> Builder<E> builder(final E... elements) {
-        return builder(asList(elements));
-    }
-
-    /**
-     * Supplies a new {@link Builder}, pre-initialized by an original {@link Collection}.
-     */
-    public static <E> Builder<E> builder(final Collection<? extends E> origin) {
-        return new Builder<>(origin);
     }
 
     /**
@@ -228,25 +210,5 @@ public class FinalList<E> extends AbstractList<E>
     @Override
     public final int size() {
         return elements.length;
-    }
-
-    @Override
-    public final Builder<E> rebuilder() {
-        return new Builder<>(this);
-    }
-
-    @SuppressWarnings({"PublicInnerClass", "ClassNameSameAsAncestorName"})
-    public static class Builder<E>
-            extends Lister<E, ArrayList<E>, Builder<E>>
-            implements net.team33.basics.Builder<FinalList<E>> {
-
-        private Builder(final Collection<? extends E> origin) {
-            super(new ArrayList<>(origin));
-        }
-
-        @Override
-        public final FinalList<E> build() {
-            return from(subject);
-        }
     }
 }
