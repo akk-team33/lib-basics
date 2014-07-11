@@ -2,10 +2,14 @@ package net.team33.basics.collections;
 
 import com.google.common.base.Function;
 
+import java.util.AbstractCollection;
+import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 
@@ -441,5 +445,56 @@ public final class Collecting {
                 return null;
             }
         }
+    }
+
+    public static Object[] toArray(final Collection<?> subject) {
+        return proxy(subject).toArray();
+    }
+
+    public static <T> T[] toArray(final Collection<?> subject, final T[] array) {
+        //noinspection SuspiciousToArrayCall
+        return proxy(subject).toArray(array);
+    }
+
+    public static String toString(final Collection<?> subject) {
+        return proxy(subject).toString();
+    }
+
+    public static boolean equals(final Set<?> subject, final Object other) {
+        return proxy(subject).equals(other);
+    }
+
+    public static int hashCode(final Set<?> subject) {
+        return proxy(subject).hashCode();
+    }
+
+    @SuppressWarnings({"AnonymousInnerClassWithTooManyMethods", "AnonymousInnerClass"})
+    private static <E> Collection<E> proxy(final Collection<E> subject) {
+        return new AbstractCollection<E>() {
+            @Override
+            public Iterator<E> iterator() {
+                return subject.iterator();
+            }
+
+            @Override
+            public int size() {
+                return subject.size();
+            }
+        };
+    }
+
+    @SuppressWarnings({"AnonymousInnerClassWithTooManyMethods", "AnonymousInnerClass"})
+    private static <E> Set<E> proxy(final Set<E> subject) {
+        return new AbstractSet<E>() {
+            @Override
+            public Iterator<E> iterator() {
+                return subject.iterator();
+            }
+
+            @Override
+            public int size() {
+                return subject.size();
+            }
+        };
     }
 }
