@@ -132,8 +132,8 @@ public class FinalCollection<E, C extends Collection<E>> implements Collection<E
     }
 
     @Override
-    public final FinalIterator<E, ?> iterator() {
-        return FinalIterator.proxy(core.iterator());
+    public final PureIterator<E> iterator() {
+        return PureIterator.proxy(core.iterator());
     }
 
     /**

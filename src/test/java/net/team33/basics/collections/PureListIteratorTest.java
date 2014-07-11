@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-import static net.team33.basics.collections.FinalIteratorTest.ORIGINAL;
-import static net.team33.basics.collections.FinalIteratorTest.forwardCopy;
+import static net.team33.basics.collections.PureIteratorTest.ORIGINAL;
+import static net.team33.basics.collections.PureIteratorTest.forwardCopy;
 
 @SuppressWarnings("ClassWithTooManyMethods")
-public class FinalListIteratorTest {
+public class PureListIteratorTest {
 
     private static final String AN_ELEMENT = "an element";
 
-    private static FinalListIterator<Object, ?> backwardProxy() {
-        return FinalListIterator.proxy(ORIGINAL.listIterator(ORIGINAL.size()));
+    private static PureListIterator<Object> backwardProxy() {
+        return PureListIterator.proxy(ORIGINAL.listIterator(ORIGINAL.size()));
     }
 
     private static List<?> backwardCopy(final ListIterator<?> iterator) {
@@ -28,8 +28,8 @@ public class FinalListIteratorTest {
         return result;
     }
 
-    private static FinalListIterator<Object, ?> forwardProxy() {
-        return FinalListIterator.proxy(ORIGINAL.listIterator());
+    private static PureListIterator<Object> forwardProxy() {
+        return PureListIterator.proxy(ORIGINAL.listIterator());
     }
 
     @Test
@@ -50,7 +50,7 @@ public class FinalListIteratorTest {
 
     @Test(expected = NoSuchElementException.class)
     public final void testPrevious_fail() {
-        final FinalListIterator<?, ?> subject = forwardProxy();
+        final PureListIterator<?> subject = forwardProxy();
         while (subject.hasPrevious()) {
             subject.previous();
         }
@@ -78,7 +78,7 @@ public class FinalListIteratorTest {
 
     @Test(expected = NoSuchElementException.class)
     public final void testNext_fail() {
-        final FinalListIterator<?, ?> subject = forwardProxy();
+        final PureListIterator<?> subject = forwardProxy();
         while (subject.hasNext()) {
             subject.next();
         }
@@ -100,28 +100,28 @@ public class FinalListIteratorTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testRemove_afterHashNext() {
-        final FinalListIterator<?, ?> subject = forwardProxy();
+        final PureListIterator<?> subject = forwardProxy();
         subject.hasNext();
         subject.remove();
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testRemove_afterHashPrev() {
-        final FinalListIterator<?, ?> subject = backwardProxy();
+        final PureListIterator<?> subject = backwardProxy();
         subject.hasNext();
         subject.remove();
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testRemove_afterNext() {
-        final FinalListIterator<?, ?> subject = forwardProxy();
+        final PureListIterator<?> subject = forwardProxy();
         subject.next();
         subject.remove();
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testRemove_afterPrev() {
-        final FinalListIterator<?, ?> subject = backwardProxy();
+        final PureListIterator<?> subject = backwardProxy();
         subject.previous();
         subject.remove();
     }
@@ -138,28 +138,28 @@ public class FinalListIteratorTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testAdd_afterHasNext() {
-        final FinalListIterator<Object, ?> subject = forwardProxy();
+        final PureListIterator<Object> subject = forwardProxy();
         subject.hasNext();
         subject.add(AN_ELEMENT);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testAdd_afterHasPrev() {
-        final FinalListIterator<Object, ?> subject = backwardProxy();
+        final PureListIterator<Object> subject = backwardProxy();
         subject.hasPrevious();
         subject.add(AN_ELEMENT);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testAdd_afterNext() {
-        final FinalListIterator<Object, ?> subject = forwardProxy();
+        final PureListIterator<Object> subject = forwardProxy();
         subject.next();
         subject.add(AN_ELEMENT);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testAdd_afterPrev() {
-        final FinalListIterator<Object, ?> subject = backwardProxy();
+        final PureListIterator<Object> subject = backwardProxy();
         subject.previous();
         subject.add(AN_ELEMENT);
     }
@@ -176,28 +176,28 @@ public class FinalListIteratorTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testSet_afterHasNext() {
-        final FinalListIterator<Object, ?> subject = forwardProxy();
+        final PureListIterator<Object> subject = forwardProxy();
         subject.hasNext();
         subject.set(AN_ELEMENT);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testSet_afterHasPrev() {
-        final FinalListIterator<Object, ?> subject = backwardProxy();
+        final PureListIterator<Object> subject = backwardProxy();
         subject.hasPrevious();
         subject.set(AN_ELEMENT);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testSet_afterNext() {
-        final FinalListIterator<Object, ?> subject = forwardProxy();
+        final PureListIterator<Object> subject = forwardProxy();
         subject.next();
         subject.set(AN_ELEMENT);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public final void testSet_afterPrev() {
-        final FinalListIterator<Object, ?> subject = backwardProxy();
+        final PureListIterator<Object> subject = backwardProxy();
         subject.previous();
         subject.set(AN_ELEMENT);
     }

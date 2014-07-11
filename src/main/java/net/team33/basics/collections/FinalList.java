@@ -183,17 +183,17 @@ public class FinalList<E> extends AbstractList<E> implements RandomAccess {
 
     @Override
     public final Iterator<E> iterator() {
-        return FinalIterator.proxy(super.iterator());
+        return PureIterator.proxy(super.iterator());
     }
 
     @Override
     public final ListIterator<E> listIterator() {
-        return FinalListIterator.proxy(super.listIterator());
+        return PureListIterator.proxy(super.listIterator());
     }
 
     @Override
     public final ListIterator<E> listIterator(final int index) {
-        return FinalListIterator.proxy(super.listIterator(index));
+        return PureListIterator.proxy(super.listIterator(index));
     }
 
     /**

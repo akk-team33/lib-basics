@@ -157,8 +157,8 @@ public class FinalSet<E> extends FinalCollection<E, Set<E>> implements Set<E> {
         }
 
         @Override
-        public final FinalIterator<E, ?> iterator() {
-            return new FinalIterator<>(new Iterator());
+        public final PureIterator<E> iterator() {
+            return new Iterator();
         }
 
         @Override
@@ -166,7 +166,7 @@ public class FinalSet<E> extends FinalCollection<E, Set<E>> implements Set<E> {
             return elements.length;
         }
 
-        private class Iterator implements FinalIterator.Core<E> {
+        private class Iterator extends PureIterator<E> {
             private int index = 0;
 
             @Override
