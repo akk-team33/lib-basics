@@ -4,31 +4,46 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
- * Represents an index, that provides relatively fast locating of elements within an associated {@link List}.
+ * Represents an index, that provides accelerated locating of elements within an associated {@link List}.
  * <p/>
- * Requires the {@link List} and its content not to be modified while being associated to the index
- * or otherwise that the index will be renewed.
+ * Requires the {@link List} and its content to remain unmodified while being associated to the index.
+ * In other words, when the {@link List} or its content is modified, an associated index is required to be renewed.
  */
 @SuppressWarnings({"AccessingNonPublicFieldOfAnotherObject", "UnusedDeclaration"})
-public class Index<E> {
+public class Index {
 
     private static final Comparator<Entry> ORDER = new Order();
 
-    private final List<E> subject;
-    private final Entry[] entries;
+    private final List<?> subject;
+    private final int[] indexes;
+    private final int[] hashes;
 
     /**
      * Initiates a new instance for a specific {@link List subject} that must not be modified
      * while the new instance is in use.
      */
-    public Index(final List<E> subject) {
+    public Index(final List<?> subject) {
+        final Entries entries1 = new Entries(subject.iterator(), subject.size());
+        indexes = entries1.indexes;
+        hashes = entries1.hashes;
+
         // For efficiency purpose ...
         // noinspection AssignmentToCollectionOrArrayFieldFromParameter
         this.subject = subject;
-        this.entries = newIndex(subject.iterator(), subject.size());
+    }
+
+    private static Entry[] newIndex_(final Iterator<?> origin, final int size) {
+        final Set<Entry> result = new TreeSet<>(ORDER);
+        for (int index = 0; (index < size) || origin.hasNext(); ++index) {
+            result.add(new Entry(Objects.hashCode(origin.next()), index));
+        }
+        return result.toArray(new Entry[result.size()]);
     }
 
     private static Entry[] newIndex(final Iterator<?> origin, final int size) {
@@ -41,47 +56,40 @@ public class Index<E> {
     }
 
     @SuppressWarnings({"ReturnOfNull", "MethodWithMultipleLoops"})
-    private Entry entry(final Direction direction, final Object other) {
-        if (0 < entries.length) {
+    private int entry(final Direction direction, final Object other) {
+        final int size = hashes.length;
+        if (0 < size) {
             final int otherHash = Objects.hashCode(other);
 
-            int lower = direction.lower(entries.length);
-            int lowerHash = entries[lower].hash;
-            if (direction.isLess(lowerHash, otherHash)) {
+            int left = direction.maxLeft(size);
+            if (direction.isLeft(hashes[left], otherHash)) {
 
-                int higher = direction.higher(entries.length);
-                int higherHash = entries[higher].hash;
-                while (direction.isLess(lowerHash, otherHash) && direction.isLessOrEquals(otherHash, higherHash)) {
-                    //noinspection NumericCastThatLosesPrecision,UnnecessaryExplicitNumericCast
-                    final int middle = (int) (((long) lower + (long) higher) / 2L);
-                    if (Math.min(lower, higher) == middle) {
-                        lower = higher;
-                        lowerHash = higherHash;
+                int right = direction.maxRight(size);
+                while (direction.isLeft(hashes[left], otherHash) && direction.isNotRight(otherHash, hashes[right])) {
+                    if (1 == Math.abs(left - right)) {
+                        left = right;
 
                     } else {
-                        final int middleHash = entries[middle].hash;
-                        if (direction.isLess(middleHash, otherHash)) {
-                            lower = middle;
-                            lowerHash = middleHash;
+                        //noinspection NumericCastThatLosesPrecision,UnnecessaryExplicitNumericCast
+                        final int middle = (int) (((long) left + (long) right) / 2L);
+                        if (direction.isLeft(hashes[middle], otherHash)) {
+                            left = middle;
                         } else {
-                            higher = middle;
-                            higherHash = middleHash;
+                            right = middle;
                         }
                     }
                 }
             }
 
-            while (lowerHash == otherHash) {
-                if (Objects.equals(other, subject.get(entries[lower].index))) {
-                    return entries[lower];
-
+            while ((left < size) && (hashes[left] == otherHash)) {
+                if (Objects.equals(other, subject.get(indexes[left]))) {
+                    return left;
                 } else {
-                    lower = direction.next(lower);
-                    lowerHash = ((0 <= lower) && (lower < entries.length)) ? entries[lower].hash : ~otherHash;
+                    left = direction.nextIndex(left);
                 }
             }
         }
-        return null;
+        return -1;
     }
 
     /**
@@ -99,107 +107,71 @@ public class Index<E> {
      * Returns {@code -1} if the supposed element is not in the list.
      */
     public final int last(final Object o) {
-        return number(Direction.BACKWARD, o);
+        return number(Direction.REVERSE, o);
     }
 
     private int number(final Direction direction, final Object other) {
-        final Entry entry = entry(direction, other);
-        return (null == entry) ? -1 : entry.index;
+        final int entry = entry(direction, other);
+        return (0 > entry) ? -1 : indexes[entry];
     }
 
     public final boolean contains(final Object o) {
-        return null != entry(Direction.FORWARD, o);
+        return 0 <= entry(Direction.FORWARD, o);
     }
 
+    @SuppressWarnings("ParameterHidesMemberVariable")
     private enum Direction {
-        FORWARD {
+        FORWARD(1) {
             @Override
-            final int lower(final int size) {
+            final int maxLeft(final int size) {
                 return 0;
             }
 
             @Override
-            final int higher(final int size) {
+            final int maxRight(final int size) {
                 return size - 1;
             }
 
             @Override
-            final int next(final int lower) {
-                return lower + 1;
-            }
-
-            @Override
-            final boolean isLess(final int left, final int right) {
-                return left < right;
+            final boolean isLeft(final int subject, final int other) {
+                return subject < other;
             }
         },
-        BACKWARD {
+        REVERSE(-1) {
             @Override
-            final int lower(final int size) {
-                return FORWARD.higher(size);
+            final int maxLeft(final int size) {
+                return FORWARD.maxRight(size);
             }
 
             @Override
-            final int higher(final int size) {
-                return FORWARD.lower(size);
+            final int maxRight(final int size) {
+                return FORWARD.maxLeft(size);
             }
 
             @Override
-            final int next(final int lower) {
-                return lower - 1;
-            }
-
-            @Override
-            final boolean isLess(final int left, final int right) {
-                return FORWARD.isLess(right, left);
+            final boolean isLeft(final int subject, final int other) {
+                return FORWARD.isLeft(other, subject);
             }
         };
 
-        abstract int lower(int size);
+        private final int nextStep;
 
-        abstract int higher(int size);
-
-        abstract int next(int lower);
-
-        abstract boolean isLess(int left, int right);
-
-        final boolean isLessOrEquals(final int left, final int right) {
-            return (left == right) || isLess(left, right);
+        Direction(final int nextStep) {
+            this.nextStep = nextStep;
         }
-    }
 
-    private static class Locator {
-        private int lowerIndex;
-        private int lowerHash;
-        private int middleIndex;
-        private int middleHash;
-        private int higherIndex;
-        private int higherHash;
+        abstract int maxLeft(int size);
 
-        @SuppressWarnings({"NestedAssignment", "UnnecessaryParentheses", "NumericCastThatLosesPrecision", "UnnecessaryExplicitNumericCast"})
-        private Locator(final Entry[] entries, final int lower, final int higher, final int otherHash) {
-            lowerIndex = lower;
-            lowerHash = entries[lowerIndex].hash;
-            if (lowerHash > otherHash) {
-                higherIndex = (middleIndex = lowerIndex);
-                higherHash = (middleHash = lowerHash);
+        abstract int maxRight(int size);
 
-            } else {
-                higherIndex = higher;
-                higherHash = entries[higherIndex].hash;
-                if (otherHash > higherHash) {
-                    lowerIndex = (middleIndex = higherIndex);
-                    lowerHash = (middleHash = higherHash);
+        abstract boolean isLeft(int subject, int other);
 
-                } else {
-                    middleIndex = (int) (((long) lower + (long) higher) / 2L);
-                    middleHash = entries[middleIndex].hash;
+        final int nextIndex(final int index) {
+            return index + nextStep;
+        }
 
-                    while ((lowerHash < otherHash) && (otherHash < higherHash)) {
-                        ;
-                    }
-                }
-            }
+        final boolean isNotRight(final int subject, final int other) {
+            return (subject == other) || isLeft(subject, other);
         }
     }
 
@@ -210,6 +182,29 @@ public class Index<E> {
         private Entry(final int hash, final int index) {
             this.hash = hash;
             this.index = index;
+        }
+    }
+
+    private static class Entries {
+        private final int[] hashes;
+        private final int[] indexes;
+
+        @SuppressWarnings("ProhibitedExceptionDeclared")
+        private Entries(final Iterator<?> origin, final int size)
+                throws NoSuchElementException, ArrayIndexOutOfBoundsException {
+
+            final Entry[] entries = new Entry[size];
+            for (int index = 0; (index < size) || origin.hasNext(); ++index) {
+                entries[index] = new Entry(Objects.hashCode(origin.next()), index);
+            }
+            Arrays.sort(entries, ORDER);
+
+            hashes = new int[size];
+            indexes = new int[size];
+            for (int index = 0; index < size; ++index) {
+                indexes[index] = entries[index].index;
+                hashes[index] = entries[index].hash;
+            }
         }
     }
 

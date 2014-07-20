@@ -39,73 +39,73 @@ public class IndexTrial {
     }
 
     @SuppressWarnings("AnonymousInnerClass")
-    private static final Function<Collection<String>, Collection<String>> CREATE_00
-            = new Function<Collection<String>, Collection<String>>() {
+    private static final Function<List<String>, Collection<String>> CREATE_00
+            = new Function<List<String>, Collection<String>>() {
         @Override
-        public Collection<String> apply(final Collection<String> input) {
+        public Collection<String> apply(final List<String> input) {
             return input;
         }
     };
 
     @SuppressWarnings("AnonymousInnerClass")
-    private static final Function<Collection<String>, Collection<String>> CREATE_01
-            = new Function<Collection<String>, Collection<String>>() {
+    private static final Function<List<String>, Collection<String>> CREATE_01
+            = new Function<List<String>, Collection<String>>() {
         @Override
-        public Collection<String> apply(final Collection<String> input) {
+        public Collection<String> apply(final List<String> input) {
             return new ArrayList<>(input);
         }
     };
 
     @SuppressWarnings("AnonymousInnerClass")
-    private static final Function<Collection<String>, Collection<String>> CREATE_02
-            = new Function<Collection<String>, Collection<String>>() {
+    private static final Function<List<String>, Collection<String>> CREATE_02
+            = new Function<List<String>, Collection<String>>() {
         @Override
-        public Collection<String> apply(final Collection<String> input) {
+        public Collection<String> apply(final List<String> input) {
             return new LinkedList<>(input);
         }
     };
 
     @SuppressWarnings("AnonymousInnerClass")
-    private static final Function<Collection<String>, Collection<String>> CREATE_03
-            = new Function<Collection<String>, Collection<String>>() {
+    private static final Function<List<String>, Collection<String>> CREATE_03
+            = new Function<List<String>, Collection<String>>() {
         @Override
-        public Collection<String> apply(final Collection<String> input) {
+        public Collection<String> apply(final List<String> input) {
             return IndexList.from(input);
         }
     };
 
     @SuppressWarnings("AnonymousInnerClass")
-    private static final Function<Collection<String>, Collection<String>> CREATE_04
-            = new Function<Collection<String>, Collection<String>>() {
+    private static final Function<List<String>, Collection<String>> CREATE_04
+            = new Function<List<String>, Collection<String>>() {
         @Override
-        public Collection<String> apply(final Collection<String> input) {
+        public Collection<String> apply(final List<String> input) {
             return IndexSet.from(input);
         }
     };
 
     @SuppressWarnings("AnonymousInnerClass")
-    private static final Function<Collection<String>, Collection<String>> CREATE_05
-            = new Function<Collection<String>, Collection<String>>() {
+    private static final Function<List<String>, Collection<String>> CREATE_05
+            = new Function<List<String>, Collection<String>>() {
         @Override
-        public Collection<String> apply(final Collection<String> input) {
+        public Collection<String> apply(final List<String> input) {
             return new HashSet<>(input);
         }
     };
 
     @SuppressWarnings("AnonymousInnerClass")
-    private static final Function<Collection<String>, Collection<String>> CREATE_06
-            = new Function<Collection<String>, Collection<String>>() {
+    private static final Function<List<String>, Collection<String>> CREATE_06
+            = new Function<List<String>, Collection<String>>() {
         @Override
-        public Collection<String> apply(final Collection<String> input) {
+        public Collection<String> apply(final List<String> input) {
             return new LinkedHashSet<>(input);
         }
     };
 
     @SuppressWarnings("AnonymousInnerClass")
-    private static final Function<Collection<String>, Collection<String>> CREATE_07
-            = new Function<Collection<String>, Collection<String>>() {
+    private static final Function<List<String>, Collection<String>> CREATE_07
+            = new Function<List<String>, Collection<String>>() {
         @Override
-        public Collection<String> apply(final Collection<String> input) {
+        public Collection<String> apply(final List<String> input) {
             return new TreeSet<>(input);
         }
     };
@@ -147,7 +147,7 @@ public class IndexTrial {
 
     private static long timeContains(final Collection<?> subject) {
         //noinspection CallToSystemGC
-        System.gc();
+        //System.gc();
         final long time0 = System.nanoTime();
         for (final Object sample : SAMPLES) {
             Collecting.contains(subject, sample);
@@ -176,9 +176,9 @@ public class IndexTrial {
     }
 
     private static <E> long timeCreate(
-            final Collection<E> elements, final Function<Collection<E>, Collection<E>> create) {
+            final List<E> elements, final Function<List<E>, Collection<E>> create) {
         //noinspection CallToSystemGC
-        System.gc();
+        //System.gc();
         final long time0 = System.nanoTime();
         create.apply(elements);
         final long timeX = System.nanoTime();
@@ -312,21 +312,17 @@ public class IndexTrial {
     static class IndexList<E> extends AbstractList<E> {
 
         private final List<E> backing;
-        private final Index<E> index;
+        private final Index index;
 
         private IndexList(final List<E> backing) {
             this.backing = backing;
-            this.index = new Index<>(backing);
+            this.index = new Index(backing);
         }
 
         @SuppressWarnings("OverloadedVarargsMethod")
         @SafeVarargs
         static <E> IndexList<E> from(final E... values) {
             return from(asList(values));
-        }
-
-        static <E> IndexList<E> from(final Collection<? extends E> origin) {
-            return new IndexList<>(new ArrayList<>(origin));
         }
 
         static <E> IndexList<E> from(final List<E> backing) {
@@ -364,11 +360,11 @@ public class IndexTrial {
     static class IndexSet<E> extends AbstractSet<E> {
 
         private final List<E> backing;
-        private final Index<E> index;
+        private final Index index;
 
         private IndexSet(final Set<E> origin) {
             backing = new ArrayList<>(origin);
-            index = new Index<>(backing);
+            index = new Index(backing);
         }
 
         @SuppressWarnings("OverloadedVarargsMethod")
