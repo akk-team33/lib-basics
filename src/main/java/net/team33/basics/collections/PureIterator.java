@@ -7,7 +7,7 @@ import static java.util.Objects.requireNonNull;
 import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 
 /**
- * Abstracts an {@link Iterator} that is purely mentioned to iterate over an underlying collection
+ * Specifies an {@link Iterator} that is purely mentioned to iterate over an underlying collection
  * and strictly refuses to modify it, so fails fast on any attempt to {@link #remove()}.
  */
 @SuppressWarnings("AbstractClassWithOnlyOneDirectInheritor")
@@ -34,8 +34,6 @@ public abstract class PureIterator<E> implements Iterator<E> {
     }
 
     private static class Proxy<E> extends PureIterator<E> {
-
-        @SuppressWarnings("PackageVisibleField")
         private final Iterator<E> original;
 
         private Proxy(final Iterator<E> original) {

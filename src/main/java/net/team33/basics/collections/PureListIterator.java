@@ -7,7 +7,7 @@ import static java.util.Objects.requireNonNull;
 import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 
 /**
- * Abstracts a {@link ListIterator} that is purely mentioned to iterate over an underlying list
+ * Specifies a {@link ListIterator} that is purely mentioned to iterate over an underlying list
  * and strictly refuses to modify it, so fails fast on any attempt to ...
  * <ul>
  * <li>{@link #remove()}</li>
@@ -48,13 +48,7 @@ public abstract class PureListIterator<E> extends PureIterator<E> implements Lis
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
-    /**
-     * Implements the core functionality proxying an immutable {@link ListIterator}.
-     */
-    @SuppressWarnings("ClassNameSameAsAncestorName")
     private static class Proxy<E> extends PureListIterator<E> {
-
-        @SuppressWarnings("PackageVisibleField")
         private final ListIterator<E> original;
 
         private Proxy(final ListIterator<E> original) {
