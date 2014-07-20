@@ -5,7 +5,7 @@ import java.util.Collection;
 import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 
 /**
- * Abstracts an unmodifiable {@link Collection} that fails fast on any attempt to ...
+ * Specifies an unmodifiable {@link Collection} that (in particular) fails fast on any attempt to ...
  * <ul>
  * <li>{@link #add(Object)}</li>
  * <li>{@link #addAll(Collection)}</li>
@@ -20,6 +20,30 @@ public abstract class UnmodifiableCollection<E> implements Collection<E> {
     /**
      * {@inheritDoc}
      * <p/>
+     * The basic implementation is 'straight forward'.
+     * A derivative may override it to provide a more efficient implementation.
+     */
+    @SuppressWarnings("DesignForExtension")
+    @Override
+    public boolean contains(final Object o) {
+        return Collecting.proxy(this).contains(o);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * The basic implementation is 'straight forward' based on {@link #contains(Object)}.
+     * A derivative may override it to provide a more efficient implementation.
+     */
+    @SuppressWarnings("DesignForExtension")
+    @Override
+    public boolean containsAll(final Collection<?> c) {
+        return Collecting.proxy(this).containsAll(c);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p/>
      * In particular returns {@code false} if {@link #size()} &gt; {@code 0}.
      */
     @Override
@@ -29,18 +53,18 @@ public abstract class UnmodifiableCollection<E> implements Collection<E> {
 
     @Override
     public final Object[] toArray() {
-        return Collecting.toArray(this);
+        return Collecting.proxy(this).toArray();
     }
 
     @Override
     public final <T> T[] toArray(final T[] a) {
         //noinspection SuspiciousToArrayCall
-        return Collecting.toArray(this, a);
+        return Collecting.proxy(this).toArray(a);
     }
 
     @Override
     public final String toString() {
-        return Collecting.toString(this);
+        return Collecting.proxy(this).toString();
     }
 
     /**

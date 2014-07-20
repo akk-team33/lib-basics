@@ -7,6 +7,7 @@ import java.util.Collection;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 @SuppressWarnings({"JUnitTestMethodWithNoAssertions", "ClassWithTooManyMethods"})
@@ -22,18 +23,52 @@ public class FinalListTest {
             = -278;
 
     @Test
+    public final void testBuilder__byArray() {
+        assertEquals(
+                ORIGIN_01,
+                FinalList.builder()
+                        .addAlt(ORIGIN_01.toArray())
+                        .build());
+        assertEquals(
+                ORIGIN_01,
+                FinalList.builder(ORIGIN_01.toArray())
+                        .build());
+    }
+
+    @Test
+    public final void testBuilder__byCollection() {
+        assertEquals(
+                ORIGIN_01,
+                FinalList.builder(ORIGIN_01)
+                        .build());
+    }
+
+    @Test
     public final void testFrom__byArray() {
         assertEquals(
-                asList(1, 2, 3, 4, 5, 6),
-                FinalList.from(1, 2, 3, 4, 5, 6)
-        );
+                asList(ORIGIN_01.toArray()),
+                FinalList.from(ORIGIN_01.toArray()));
+        assertEquals(
+                FinalList.from(ORIGIN_01.toArray()),
+                asList(ORIGIN_01.toArray()));
     }
 
     @Test
     public final void testFrom__byCollection() {
         assertEquals(
                 ORIGIN_01,
-                FinalList.from(ORIGIN_01)
+                FinalList.from(ORIGIN_01));
+        assertEquals(
+                FinalList.from(ORIGIN_01),
+                ORIGIN_01);
+    }
+
+    @Test
+    public final void testFrom__byFinalList() {
+        final FinalList<CharSequence> subject = FinalList.from(ORIGIN_01);
+        assertSame(
+                subject,
+                FinalList.from(subject)
         );
     }
 

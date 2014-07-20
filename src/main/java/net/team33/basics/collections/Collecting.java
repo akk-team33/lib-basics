@@ -3,11 +3,13 @@ package net.team33.basics.collections;
 import com.google.common.base.Function;
 
 import java.util.AbstractCollection;
+import java.util.AbstractList;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -447,29 +449,24 @@ public final class Collecting {
         }
     }
 
-    public static Object[] toArray(final Collection<?> subject) {
-        return proxy(subject).toArray();
-    }
-
-    public static <T> T[] toArray(final Collection<?> subject, final T[] array) {
-        //noinspection SuspiciousToArrayCall
-        return proxy(subject).toArray(array);
-    }
-
-    public static String toString(final Collection<?> subject) {
-        return proxy(subject).toString();
-    }
-
-    public static boolean equals(final Set<?> subject, final Object other) {
-        return proxy(subject).equals(other);
-    }
-
-    public static int hashCode(final Set<?> subject) {
-        return proxy(subject).hashCode();
-    }
-
+    /**
+     * Supplies a proxy for a given {@code subject} that may be used to implement some {@link Collection}-specific
+     * methods, e.g.:
+     * <ul>
+     * <li>{@link Collection#toArray()}</li>
+     * <li>{@link Collection#toArray(Object[])}</li>
+     * <li>{@link Collection#toString()}</li>
+     * <li>...</li>
+     * </ul>
+     *
+     * @param subject A {@link Collection}, that at least provides independently ...
+     *                <ul>
+     *                <li>{@link Collection#iterator()}</li>
+     *                <li>{@link Collection#size()}</li>
+     *                </ul>
+     */
     @SuppressWarnings({"AnonymousInnerClassWithTooManyMethods", "AnonymousInnerClass"})
-    private static <E> Collection<E> proxy(final Collection<E> subject) {
+    public static <E> Collection<E> proxy(final Collection<E> subject) {
         return new AbstractCollection<E>() {
             @Override
             public Iterator<E> iterator() {
@@ -483,8 +480,59 @@ public final class Collecting {
         };
     }
 
+    /**
+     * Supplies a proxy for a given {@code subject} that may be used to implement some {@link List}-specific
+     * methods, e.g.:
+     * <ul>
+     * <li>{@link List#toArray()}</li>
+     * <li>{@link List#toArray(Object[])}</li>
+     * <li>{@link List#toString()}</li>
+     * <li>{@link List#equals(Object)}</li>
+     * <li>{@link List#hashCode()}</li>
+     * <li>...</li>
+     * </ul>
+     *
+     * @param subject A {@link List}, that at least provides independently ...
+     *                <ul>
+     *                <li>{@link List#get(int)}</li>
+     *                <li>{@link List#size()}</li>
+     *                </ul>
+     */
     @SuppressWarnings({"AnonymousInnerClassWithTooManyMethods", "AnonymousInnerClass"})
-    private static <E> Set<E> proxy(final Set<E> subject) {
+    public static <E> List<E> proxy(final List<E> subject) {
+        return new AbstractList<E>() {
+            @Override
+            public E get(final int index) {
+                return subject.get(index);
+            }
+
+            @Override
+            public int size() {
+                return subject.size();
+            }
+        };
+    }
+
+    /**
+     * Supplies a proxy for a given {@code subject} that may be used to implement some {@link Set}-specific
+     * methods, e.g.:
+     * <ul>
+     * <li>{@link Set#toArray()}</li>
+     * <li>{@link Set#toArray(Object[])}</li>
+     * <li>{@link Set#toString()}</li>
+     * <li>{@link Set#equals(Object)}</li>
+     * <li>{@link Set#hashCode()}</li>
+     * <li>...</li>
+     * </ul>
+     *
+     * @param subject A {@link Set}, that at least provides independently ...
+     *                <ul>
+     *                <li>{@link Set#iterator()}</li>
+     *                <li>{@link Set#size()}</li>
+     *                </ul>
+     */
+    @SuppressWarnings({"AnonymousInnerClassWithTooManyMethods", "AnonymousInnerClass"})
+    public static <E> Set<E> proxy(final Set<E> subject) {
         return new AbstractSet<E>() {
             @Override
             public Iterator<E> iterator() {

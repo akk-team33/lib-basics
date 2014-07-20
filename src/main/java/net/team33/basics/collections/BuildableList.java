@@ -27,22 +27,6 @@ public class BuildableList<E> extends FinalList<E> implements Rebuildable<Builda
     }
 
     /**
-     * Supplies a new {@link Builder}, pre-initialized by given {@code elements}.
-     */
-    @SuppressWarnings("OverloadedVarargsMethod")
-    @SafeVarargs
-    public static <E> Builder<E> builder(final E... elements) {
-        return builder(asList(elements));
-    }
-
-    /**
-     * Supplies a new {@link Builder}, pre-initialized by an original {@link java.util.Collection}.
-     */
-    public static <E> Builder<E> builder(final Collection<? extends E> origin) {
-        return new Builder<>(origin);
-    }
-
-    /**
      * Supplies a new instance of {@link BuildableList} by given {@code elements}.
      */
     @SuppressWarnings({"OverloadedVarargsMethod", "MethodOverridesStaticMethodOfSuperclass"})

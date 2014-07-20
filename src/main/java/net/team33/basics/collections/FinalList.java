@@ -1,38 +1,17 @@
 package net.team33.basics.collections;
 
-import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.RandomAccess;
 
 import static java.util.Arrays.asList;
-import static net.team33.basics.collections.Package.NOT_SUPPORTED;
 
 /**
  * Implementation of an immutable {@link List}.
- * Fails fast on any attempt to ...
- * <ul>
- * <li>{@link #add(Object)}</li>
- * <li>{@link #add(int, Object)}</li>
- * <li>{@link #addAll(Collection)}</li>
- * <li>{@link #addAll(int, Collection)}</li>
- * <li>{@link #set(int, Object)}</li>
- * <li>{@link #remove(Object)}</li>
- * <li>{@link #remove(int)}</li>
- * <li>{@link #removeAll(Collection)}</li>
- * <li>{@link #retainAll(Collection)}</li>
- * <li>{@link #clear()}</li>
- * </ul>
- * To create an instance you can use ...
- * <ul>
- * <li>{@link #from(Object[])}</li>
- * <li>{@link #from(Collection)}</li>
- * </ul>
  */
 @SuppressWarnings("ClassWithTooManyMethods")
-public class FinalList<E> extends AbstractList<E> implements RandomAccess {
+public class FinalList<E> extends UnmodifiableList<E> implements RandomAccess {
 
     private final Object[] elements;
 
@@ -64,59 +43,14 @@ public class FinalList<E> extends AbstractList<E> implements RandomAccess {
         return (origin instanceof FinalList) ? (FinalList<E>) origin : new FinalList<>(origin);
     }
 
-    /**
-     * Not supported.
-     *
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final boolean add(final E e) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
+    @SuppressWarnings("OverloadedVarargsMethod")
+    @SafeVarargs
+    public static <E> Builder<E> builder(final E... elements) {
+        return new Builder<>(asList(elements));
     }
 
-    /**
-     * Not supported.
-     *
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final boolean remove(final Object o) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
-
-    /**
-     * Not supported.
-     *
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final boolean addAll(final Collection<? extends E> c) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
-
-    /**
-     * Not supported.
-     *
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final boolean removeAll(final Collection<?> c) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
-
-    /**
-     * Not supported.
-     *
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final boolean retainAll(final Collection<?> c) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
+    public static <E> Builder<E> builder(final Collection<? extends E> elements) {
+        return new Builder<>(elements);
     }
 
     @Override
@@ -126,89 +60,28 @@ public class FinalList<E> extends AbstractList<E> implements RandomAccess {
         return (E) elements[index];
     }
 
-    /**
-     * Not supported.
-     *
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
     @Override
-    public final E set(final int index, final E element) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
-
-    /**
-     * Not supported.
-     *
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final void add(final int index, final E element) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
-
-    /**
-     * Not supported.
-     *
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final E remove(final int index) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
-
-    /**
-     * Not supported.
-     *
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final void clear() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
-
-    /**
-     * Not supported.
-     *
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    public final boolean addAll(final int index, final Collection<? extends E> c) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
-
-    @Override
-    public final Iterator<E> iterator() {
-        return PureIterator.proxy(super.iterator());
-    }
-
-    @Override
-    public final ListIterator<E> listIterator() {
-        return PureListIterator.proxy(super.listIterator());
-    }
-
-    @Override
-    public final ListIterator<E> listIterator(final int index) {
-        return PureListIterator.proxy(super.listIterator(index));
-    }
-
-    /**
-     * Not supported (even this should fail fast).
-     *
-     * @throws UnsupportedOperationException on any attempt.
-     */
-    @SuppressWarnings("RefusedBequest")
-    @Override
-    protected final void removeRange(final int fromIndex, final int toIndex) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
+    public final FinalList<E> subList(final int fromIndex, final int toIndex) {
+        return from(Collecting.proxy(this).subList(fromIndex, toIndex));
     }
 
     @Override
     public final int size() {
         return elements.length;
+    }
+
+    @SuppressWarnings("ClassNameSameAsAncestorName")
+    public static class Builder<E>
+            extends Lister<E, List<E>, Builder<E>>
+            implements net.team33.basics.Builder<FinalList<E>> {
+
+        private Builder(final Collection<? extends E> origin) {
+            super(new ArrayList<>(origin));
+        }
+
+        @Override
+        public final FinalList<E> build() {
+            return from(subject);
+        }
     }
 }
