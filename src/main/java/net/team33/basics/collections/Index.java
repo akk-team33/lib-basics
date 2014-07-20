@@ -56,27 +56,22 @@ public class Index {
     }
 
     @SuppressWarnings({"ReturnOfNull", "MethodWithMultipleLoops"})
-    private int entry(final Direction direction, final Object other) {
+    private int entry(final Direction direction, final Object other, final int otherHash) {
         final int size = hashes.length;
         if (0 < size) {
-            final int otherHash = Objects.hashCode(other);
-
             int left = direction.maxLeft(size);
-            if (direction.isLeft(hashes[left], otherHash)) {
+            int right = direction.maxRight(size);
+            while (direction.isLeft(hashes[left], otherHash) && direction.isNotRight(otherHash, hashes[right])) {
+                if (1 == Math.abs(left - right)) {
+                    left = right;
 
-                int right = direction.maxRight(size);
-                while (direction.isLeft(hashes[left], otherHash) && direction.isNotRight(otherHash, hashes[right])) {
-                    if (1 == Math.abs(left - right)) {
-                        left = right;
-
+                } else {
+                    //noinspection NumericCastThatLosesPrecision,UnnecessaryExplicitNumericCast
+                    final int middle = (int) (((long) left + (long) right) / 2L);
+                    if (direction.isLeft(hashes[middle], otherHash)) {
+                        left = middle;
                     } else {
-                        //noinspection NumericCastThatLosesPrecision,UnnecessaryExplicitNumericCast
-                        final int middle = (int) (((long) left + (long) right) / 2L);
-                        if (direction.isLeft(hashes[middle], otherHash)) {
-                            left = middle;
-                        } else {
-                            right = middle;
-                        }
+                        right = middle;
                     }
                 }
             }
@@ -110,13 +105,17 @@ public class Index {
         return number(Direction.REVERSE, o);
     }
 
-    private int number(final Direction direction, final Object other) {
-        final int entry = entry(direction, other);
-        return (0 > entry) ? -1 : indexes[entry];
+    /**
+     * Indicates weather or not the index contains an entry for a specific object.
+     */
+    public final boolean contains(final Object o) {
+        final int hash = Objects.hashCode(o);
+        return 0 <= entry((0 < hash) ? Direction.REVERSE : Direction.FORWARD, o, hash);
     }
 
-    public final boolean contains(final Object o) {
-        return 0 <= entry(Direction.FORWARD, o);
+    private int number(final Direction direction, final Object other) {
+        final int entry = entry(direction, other, Objects.hashCode(other));
+        return (0 > entry) ? -1 : indexes[entry];
     }
 
     @SuppressWarnings("ParameterHidesMemberVariable")

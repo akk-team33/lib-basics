@@ -22,7 +22,8 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@SuppressWarnings({"SuspiciousMethodCalls", "JUnitTestClassNamingConvention", "OverloadedMethodsWithSameNumberOfParameters"})
+@SuppressWarnings({"SuspiciousMethodCalls", "JUnitTestClassNamingConvention",
+        "OverloadedMethodsWithSameNumberOfParameters", "ClassWithTooManyFields", "ClassWithTooManyMethods"})
 public class IndexTrial {
 
     static final char[] CHARS;
@@ -117,6 +118,7 @@ public class IndexTrial {
         while (size > result.size()) {
             final String element = elements.get(random.nextInt(elements.size()));
             result.add(Objects.hashCode(element));
+            result.add(~Objects.hashCode(element));
             result.add(element);
         }
         return result;
@@ -146,8 +148,6 @@ public class IndexTrial {
     }
 
     private static long timeContains(final Collection<?> subject) {
-        //noinspection CallToSystemGC
-        //System.gc();
         final long time0 = System.nanoTime();
         for (final Object sample : SAMPLES) {
             Collecting.contains(subject, sample);
@@ -177,8 +177,6 @@ public class IndexTrial {
 
     private static <E> long timeCreate(
             final List<E> elements, final Function<List<E>, Collection<E>> create) {
-        //noinspection CallToSystemGC
-        //System.gc();
         final long time0 = System.nanoTime();
         create.apply(elements);
         final long timeX = System.nanoTime();
@@ -188,13 +186,17 @@ public class IndexTrial {
     @SuppressWarnings({"resource", "UseOfSystemOutOrSystemErr"})
     @Test
     public final void statistics() {
+        final StringBuilder lines = new StringBuilder(0);
+        lines.append(String.format(
+                "SAMPLES.size() = %d%n",
+                SAMPLES.size()));
         for (final Object sample : SAMPLES) {
             final int hashCode = Objects.hashCode(sample);
-            System.out.printf(
+            lines.append(String.format(
                     "sample <%s>, hash <%d>, value count <%d>, hash count <%d>%n",
-                    sample, hashCode, count(ELEMENTS, sample), count(ELEMENTS, hashCode));
+                    sample, hashCode, count(ELEMENTS, sample), count(ELEMENTS, hashCode)));
         }
-        fail(SAMPLES.toString());
+        fail(lines.toString());
     }
 
     @Test
@@ -290,7 +292,7 @@ public class IndexTrial {
 
     @Test
     public final void testContains_06_byLinkedHashSet() {
-        final LinkedHashSet<String> subject = new LinkedHashSet<>(ELEMENTS);
+        final HashSet<String> subject = new LinkedHashSet<>(ELEMENTS);
         assertEquals("subject.size() == " + subject.size(), 0, timeContains(subject));
     }
 
@@ -365,12 +367,6 @@ public class IndexTrial {
         private IndexSet(final Set<E> origin) {
             backing = new ArrayList<>(origin);
             index = new Index(backing);
-        }
-
-        @SuppressWarnings("OverloadedVarargsMethod")
-        @SafeVarargs
-        static <E> IndexSet<E> from(final E... values) {
-            return from(asList(values));
         }
 
         static <E> IndexSet<E> from(final Collection<? extends E> origin) {
