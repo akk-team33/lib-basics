@@ -9,6 +9,7 @@ import java.util.List;
 
 import static net.team33.basics.collections.IndexTrial.ELEMENTS;
 import static net.team33.basics.collections.IndexTrial.IndexList;
+import static net.team33.basics.collections.IndexTrial.IndexSet;
 import static net.team33.basics.collections.IndexTrial.SAMPLES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -55,21 +56,41 @@ public class IndexTest {
     }
 
     @Test
-    public final void testContains() {
+    public final void testContainsWithSet() {
         final Collection<String> hashSet = new HashSet<>(ELEMENTS);
         final Collection<Object> hashSetContains = new HashSet<>(0);
-        final Collection<String> indexList = IndexList.from(ELEMENTS);
-        final Collection<Object> indexListContains = new HashSet<>(0);
+        final Collection<String> indexSet = IndexSet.from(ELEMENTS);
+        final Collection<Object> indexSetContains = new HashSet<>(0);
         for (final Object sample : SAMPLES) {
             if (hashSet.contains(sample)) {
                 hashSetContains.add(sample);
+            }
+            if (indexSet.contains(sample)) {
+                indexSetContains.add(sample);
+            }
+        }
+        assertEquals(
+                hashSetContains,
+                indexSetContains
+        );
+    }
+
+    @Test
+    public final void testContainsWithList() {
+        final Collection<String> arrayList = new ArrayList<>(ELEMENTS);
+        final Collection<Object> arrayListContains = new HashSet<>(0);
+        final Collection<String> indexList = IndexList.from(ELEMENTS);
+        final Collection<Object> indexListContains = new HashSet<>(0);
+        for (final Object sample : SAMPLES) {
+            if (arrayList.contains(sample)) {
+                arrayListContains.add(sample);
             }
             if (indexList.contains(sample)) {
                 indexListContains.add(sample);
             }
         }
         assertEquals(
-                hashSetContains,
+                arrayListContains,
                 indexListContains
         );
     }

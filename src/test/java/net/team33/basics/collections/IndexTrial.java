@@ -1,58 +1,134 @@
 package net.team33.basics.collections;
 
+import com.google.common.base.Function;
 import org.junit.Test;
 
 import java.util.AbstractList;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-@SuppressWarnings({"SuspiciousMethodCalls", "JUnitTestClassNamingConvention"})
+@SuppressWarnings({"SuspiciousMethodCalls", "JUnitTestClassNamingConvention", "OverloadedMethodsWithSameNumberOfParameters"})
 public class IndexTrial {
 
-    static final int SIZE;
-    static final List<String> ELEMENTS;
     static final char[] CHARS;
-    static final List<Object> SAMPLES;
+    static final List<String> ELEMENTS;
+    static final Set<Object> SAMPLES;
 
     static {
-        SIZE = 100000;
+        //noinspection SpellCheckingInspection
         CHARS = "123456789 -@*. abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-        ELEMENTS = newList(SIZE);
-        //noinspection PointlessArithmeticExpression
-        SAMPLES = asList(
-                0, Integer.MAX_VALUE, Integer.MIN_VALUE,
 
-                ELEMENTS.get(0).hashCode(),
-                ELEMENTS.get((SIZE * 1) / 7).hashCode(), ELEMENTS.get((SIZE * 2) / 7).hashCode(),
-                ELEMENTS.get((SIZE * 3) / 7).hashCode(), ELEMENTS.get((SIZE * 4) / 7).hashCode(),
-                ELEMENTS.get((SIZE * 5) / 7).hashCode(), ELEMENTS.get((SIZE * 6) / 7).hashCode(),
-                ELEMENTS.get(SIZE - 1).hashCode(),
-
-                ELEMENTS.get(0),
-                ELEMENTS.get((SIZE * 1) / 9), ELEMENTS.get((SIZE * 2) / 9), ELEMENTS.get((SIZE * 3) / 9),
-                ELEMENTS.get((SIZE * 4) / 9), ELEMENTS.get((SIZE * 5) / 9), ELEMENTS.get((SIZE * 6) / 9),
-                ELEMENTS.get((SIZE * 7) / 9), ELEMENTS.get((SIZE * 8) / 9), ELEMENTS.get(SIZE - 1),
-
-                "another string", new Object(), new Date(), null);
+        final Random random = new Random();
+        ELEMENTS = newElements(random, 200000);
+        SAMPLES = newSamples(random, ELEMENTS, 200);
     }
 
-    private static List<String> newList(final int size) {
-        final Random random = new Random();
+    @SuppressWarnings("AnonymousInnerClass")
+    private static final Function<Collection<String>, Collection<String>> CREATE_00
+            = new Function<Collection<String>, Collection<String>>() {
+        @Override
+        public Collection<String> apply(final Collection<String> input) {
+            return input;
+        }
+    };
+
+    @SuppressWarnings("AnonymousInnerClass")
+    private static final Function<Collection<String>, Collection<String>> CREATE_01
+            = new Function<Collection<String>, Collection<String>>() {
+        @Override
+        public Collection<String> apply(final Collection<String> input) {
+            return new ArrayList<>(input);
+        }
+    };
+
+    @SuppressWarnings("AnonymousInnerClass")
+    private static final Function<Collection<String>, Collection<String>> CREATE_02
+            = new Function<Collection<String>, Collection<String>>() {
+        @Override
+        public Collection<String> apply(final Collection<String> input) {
+            return new LinkedList<>(input);
+        }
+    };
+
+    @SuppressWarnings("AnonymousInnerClass")
+    private static final Function<Collection<String>, Collection<String>> CREATE_03
+            = new Function<Collection<String>, Collection<String>>() {
+        @Override
+        public Collection<String> apply(final Collection<String> input) {
+            return IndexList.from(input);
+        }
+    };
+
+    @SuppressWarnings("AnonymousInnerClass")
+    private static final Function<Collection<String>, Collection<String>> CREATE_04
+            = new Function<Collection<String>, Collection<String>>() {
+        @Override
+        public Collection<String> apply(final Collection<String> input) {
+            return IndexSet.from(input);
+        }
+    };
+
+    @SuppressWarnings("AnonymousInnerClass")
+    private static final Function<Collection<String>, Collection<String>> CREATE_05
+            = new Function<Collection<String>, Collection<String>>() {
+        @Override
+        public Collection<String> apply(final Collection<String> input) {
+            return new HashSet<>(input);
+        }
+    };
+
+    @SuppressWarnings("AnonymousInnerClass")
+    private static final Function<Collection<String>, Collection<String>> CREATE_06
+            = new Function<Collection<String>, Collection<String>>() {
+        @Override
+        public Collection<String> apply(final Collection<String> input) {
+            return new LinkedHashSet<>(input);
+        }
+    };
+
+    @SuppressWarnings("AnonymousInnerClass")
+    private static final Function<Collection<String>, Collection<String>> CREATE_07
+            = new Function<Collection<String>, Collection<String>>() {
+        @Override
+        public Collection<String> apply(final Collection<String> input) {
+            return new TreeSet<>(input);
+        }
+    };
+
+    private static Set<Object> newSamples(final Random random, final List<String> elements, final int size) {
+        final Set<Object> result = new HashSet<>(size);
+        result.addAll(asList(0, -1, Integer.MAX_VALUE, Integer.MIN_VALUE));
+        result.addAll(asList("another string", new Object(), new Date(), null));
+        while (size > result.size()) {
+            final String element = elements.get(random.nextInt(elements.size()));
+            result.add(Objects.hashCode(element));
+            result.add(element);
+        }
+        return result;
+    }
+
+    private static List<String> newElements(final Random random, final int size) {
         final List<String> result = new ArrayList<>(size);
         result.add("");
-        for (int len = 1, num = 5; num < size; ++len, num *= 5) {
-            while (num > result.size()) {
-                result.add(newString(random, len + random.nextInt(len)));
+        final int halfSize = size / 2;
+        while (halfSize > result.size()) {
+            for (int len = 1; 100 > len; ++len) {
+                result.add(newString(random, 1 + random.nextInt(len)));
             }
         }
         while (size > result.size()) {
@@ -80,44 +156,155 @@ public class IndexTrial {
         return timeX - time0;
     }
 
+    private static int count(final List<String> elements, final Object sample) {
+        final int index = elements.indexOf(sample);
+        if (0 > index) {
+            return 0;
+        } else {
+            return 1 + count(elements.subList(index + 1, elements.size()), sample);
+        }
+    }
+
+    private static int count(final Iterable<String> elements, final int hashCode) {
+        int result = 0;
+        for (final String element : elements) {
+            if (hashCode == Objects.hashCode(element)) {
+                result += 1;
+            }
+        }
+        return result;
+    }
+
+    private static <E> long timeCreate(
+            final Collection<E> elements, final Function<Collection<E>, Collection<E>> create) {
+        //noinspection CallToSystemGC
+        System.gc();
+        final long time0 = System.nanoTime();
+        create.apply(elements);
+        final long timeX = System.nanoTime();
+        return timeX - time0;
+    }
+
+    @SuppressWarnings({"resource", "UseOfSystemOutOrSystemErr"})
     @Test
-    public final void testPerformance_00_byElements() {
+    public final void statistics() {
+        for (final Object sample : SAMPLES) {
+            final int hashCode = Objects.hashCode(sample);
+            System.out.printf(
+                    "sample <%s>, hash <%d>, value count <%d>, hash count <%d>%n",
+                    sample, hashCode, count(ELEMENTS, sample), count(ELEMENTS, hashCode));
+        }
+        fail(SAMPLES.toString());
+    }
+
+    @Test
+    public final void testCreate_00_byElements() {
+        assertEquals(
+                "subject.size() == " + ELEMENTS.size(),
+                0L, timeCreate(ELEMENTS, CREATE_00)
+        );
+    }
+
+    @Test
+    public final void testContains_00_byElements() {
         assertEquals("subject.size() == " + ELEMENTS.size(), 0, timeContains(ELEMENTS));
     }
 
     @Test
-    public final void testPerformance_01_byArrayList() {
+    public final void testCreate_01_byArrayList() {
+        assertEquals(
+                "subject.size() == " + ELEMENTS.size(),
+                0L, timeCreate(ELEMENTS, CREATE_01)
+        );
+    }
+
+    @Test
+    public final void testContains_01_byArrayList() {
         final ArrayList<String> subject = new ArrayList<>(ELEMENTS);
         assertEquals("subject.size() == " + subject.size(), 0, timeContains(subject));
     }
 
     @Test
-    public final void testPerformance_02_byLinkedList() {
+    public final void testCreate_02_byLinkedList() {
+        assertEquals(
+                "subject.size() == " + ELEMENTS.size(),
+                0L, timeCreate(ELEMENTS, CREATE_02)
+        );
+    }
+
+    @Test
+    public final void testContains_02_byLinkedList() {
         final LinkedList<String> subject = new LinkedList<>(ELEMENTS);
         assertEquals("subject.size() == " + subject.size(), 0, timeContains(subject));
     }
 
     @Test
-    public final void testPerformance_03_byHashSet() {
+    public final void testCreate_03_byIndexList() {
+        assertEquals(
+                "subject.size() == " + ELEMENTS.size(),
+                0L, timeCreate(ELEMENTS, CREATE_03)
+        );
+    }
+
+    @Test
+    public final void testContains_03_byIndexList() {
+        final IndexList<String> subject = IndexList.from(ELEMENTS);
+        assertEquals("subject.size() == " + subject.size(), 0, timeContains(subject));
+    }
+
+    @Test
+    public final void testCreate_04_byIndexSet() {
+        assertEquals(
+                "subject.size() == " + ELEMENTS.size(),
+                0L, timeCreate(ELEMENTS, CREATE_04)
+        );
+    }
+
+    @Test
+    public final void testContains_04_byIndexSet() {
+        final IndexSet<String> subject = IndexSet.from(ELEMENTS);
+        assertEquals("subject.size() == " + subject.size(), 0, timeContains(subject));
+    }
+
+    @Test
+    public final void testCreate_05_byHashSet() {
+        assertEquals(
+                "subject.size() == " + ELEMENTS.size(),
+                0L, timeCreate(ELEMENTS, CREATE_05)
+        );
+    }
+
+    @Test
+    public final void testContains_05_byHashSet() {
         final HashSet<String> subject = new HashSet<>(ELEMENTS);
         assertEquals("subject.size() == " + subject.size(), 0, timeContains(subject));
     }
 
     @Test
-    public final void testPerformance_04_byLinkedHashSet() {
+    public final void testCreate_06_byLinkedHashSet() {
+        assertEquals(
+                "subject.size() == " + ELEMENTS.size(),
+                0L, timeCreate(ELEMENTS, CREATE_06)
+        );
+    }
+
+    @Test
+    public final void testContains_06_byLinkedHashSet() {
         final LinkedHashSet<String> subject = new LinkedHashSet<>(ELEMENTS);
         assertEquals("subject.size() == " + subject.size(), 0, timeContains(subject));
     }
 
     @Test
-    public final void testPerformance_05_byTreeSet() {
-        final TreeSet<String> subject = new TreeSet<>(ELEMENTS);
-        assertEquals("subject.size() == " + subject.size(), 0, timeContains(subject));
+    public final void testCreate_07_byTreeSet() {
+        assertEquals(
+                "subject.size() == " + ELEMENTS.size(),
+                0L, timeCreate(ELEMENTS, CREATE_07)
+        );
     }
 
     @Test
-    public final void testPerformance_06_byIndexList() {
-        final IndexList<String> subject = IndexList.from(ELEMENTS);
+    public final void testContains_07_byTreeSet() {
+        final TreeSet<String> subject = new TreeSet<>(ELEMENTS);
         assertEquals("subject.size() == " + subject.size(), 0, timeContains(subject));
     }
 
@@ -127,7 +314,7 @@ public class IndexTrial {
         private final List<E> backing;
         private final Index<E> index;
 
-        IndexList(final List<E> backing) {
+        private IndexList(final List<E> backing) {
             this.backing = backing;
             this.index = new Index<>(backing);
         }
@@ -136,6 +323,10 @@ public class IndexTrial {
         @SafeVarargs
         static <E> IndexList<E> from(final E... values) {
             return from(asList(values));
+        }
+
+        static <E> IndexList<E> from(final Collection<? extends E> origin) {
+            return new IndexList<>(new ArrayList<>(origin));
         }
 
         static <E> IndexList<E> from(final List<E> backing) {
@@ -161,6 +352,43 @@ public class IndexTrial {
         @Override
         public final boolean contains(final Object o) {
             return index.contains(o);
+        }
+
+        @Override
+        public final int size() {
+            return backing.size();
+        }
+    }
+
+    @SuppressWarnings({"AssignmentToCollectionOrArrayFieldFromParameter", "RefusedBequest"})
+    static class IndexSet<E> extends AbstractSet<E> {
+
+        private final List<E> backing;
+        private final Index<E> index;
+
+        private IndexSet(final Set<E> origin) {
+            backing = new ArrayList<>(origin);
+            index = new Index<>(backing);
+        }
+
+        @SuppressWarnings("OverloadedVarargsMethod")
+        @SafeVarargs
+        static <E> IndexSet<E> from(final E... values) {
+            return from(asList(values));
+        }
+
+        static <E> IndexSet<E> from(final Collection<? extends E> origin) {
+            return new IndexSet<>(new LinkedHashSet<>(origin));
+        }
+
+        @Override
+        public final boolean contains(final Object o) {
+            return index.contains(o);
+        }
+
+        @Override
+        public final Iterator<E> iterator() {
+            return backing.iterator();
         }
 
         @Override
