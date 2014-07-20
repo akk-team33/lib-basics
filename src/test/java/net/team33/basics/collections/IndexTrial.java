@@ -35,8 +35,8 @@ public class IndexTrial {
         CHARS = "123456789 -@*. abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
         final Random random = new Random();
-        ELEMENTS = newElements(random, 200000);
-        SAMPLES = newSamples(random, ELEMENTS, 200);
+        ELEMENTS = newElements(random, 100000);
+        SAMPLES = newSamples(random, ELEMENTS, 100);
     }
 
     @SuppressWarnings("AnonymousInnerClass")
@@ -364,13 +364,18 @@ public class IndexTrial {
         private final List<E> backing;
         private final Index index;
 
-        private IndexSet(final Set<E> origin) {
+        private IndexSet(final Set<? extends E> origin) {
             backing = new ArrayList<>(origin);
             index = new Index(backing);
         }
 
         static <E> IndexSet<E> from(final Collection<? extends E> origin) {
-            return new IndexSet<>(new LinkedHashSet<>(origin));
+            if (origin instanceof Set) {
+                //noinspection unchecked
+                return new IndexSet<>((Set<? extends E>) origin);
+            } else {
+                return new IndexSet<>(new HashSet<>(origin));
+            }
         }
 
         @Override

@@ -1,13 +1,12 @@
 package net.team33.basics.collections;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+
+import static java.lang.String.format;
 
 /**
  * Represents an index, that provides accelerated locating of elements within an associated {@link List}.
@@ -15,52 +14,40 @@ import java.util.TreeSet;
  * Requires the {@link List} and its content to remain unmodified while being associated to the index.
  * In other words, when the {@link List} or its content is modified, an associated index is required to be renewed.
  */
-@SuppressWarnings({"AccessingNonPublicFieldOfAnotherObject", "UnusedDeclaration"})
 public class Index {
 
-    private static final Comparator<Entry> ORDER = new Order();
+    private static final String ILLEGAL_SUBJECT = "Illegal <subject> of type <%s> with inconsistent size() and iterator()";
 
     private final List<?> subject;
     private final int[] indexes;
     private final int[] hashes;
 
     /**
-     * Initiates a new instance for a specific {@link List subject} that must not be modified
+     * Initiates a new instance for a specific {@link List subject} that must not be modified (nor its content)
      * while the new instance is in use.
      */
+    @SuppressWarnings({"AccessingNonPublicFieldOfAnotherObject", "ProhibitedExceptionCaught"})
     public Index(final List<?> subject) {
-        final Entries entries1 = new Entries(subject.iterator(), subject.size());
-        indexes = entries1.indexes;
-        hashes = entries1.hashes;
+        try {
+            final Entries entries = new Entries(subject.iterator(), subject.size());
+            indexes = entries.indexes;
+            hashes = entries.hashes;
 
-        // For efficiency purpose ...
-        // noinspection AssignmentToCollectionOrArrayFieldFromParameter
-        this.subject = subject;
-    }
+            // Intended to associate the underlying list itself (and not to instantiate anything new) ...
+            // noinspection AssignmentToCollectionOrArrayFieldFromParameter
+            this.subject = subject;
 
-    private static Entry[] newIndex_(final Iterator<?> origin, final int size) {
-        final Set<Entry> result = new TreeSet<>(ORDER);
-        for (int index = 0; (index < size) || origin.hasNext(); ++index) {
-            result.add(new Entry(Objects.hashCode(origin.next()), index));
+        } catch (final NoSuchElementException | ArrayIndexOutOfBoundsException caught) {
+            throw new IllegalArgumentException(format(ILLEGAL_SUBJECT, subject.getClass().getName()), caught);
         }
-        return result.toArray(new Entry[result.size()]);
-    }
-
-    private static Entry[] newIndex(final Iterator<?> origin, final int size) {
-        final Entry[] result = new Entry[size];
-        for (int index = 0; (index < size) || origin.hasNext(); ++index) {
-            result[index] = new Entry(Objects.hashCode(origin.next()), index);
-        }
-        Arrays.sort(result, ORDER);
-        return result;
     }
 
     @SuppressWarnings({"ReturnOfNull", "MethodWithMultipleLoops"})
     private int entry(final Direction direction, final Object other, final int otherHash) {
         final int size = hashes.length;
         if (0 < size) {
-            int left = direction.maxLeft(size);
-            int right = direction.maxRight(size);
+            int left = direction.leftmost(size);
+            int right = direction.rightmost(size);
             while (direction.isLeft(hashes[left], otherHash) && direction.isNotRight(otherHash, hashes[right])) {
                 if (1 == Math.abs(left - right)) {
                     left = right;
@@ -80,7 +67,7 @@ public class Index {
                 if (Objects.equals(other, subject.get(indexes[left]))) {
                     return left;
                 } else {
-                    left = direction.nextIndex(left);
+                    left = direction.next(left);
                 }
             }
         }
@@ -122,12 +109,12 @@ public class Index {
     private enum Direction {
         FORWARD(1) {
             @Override
-            final int maxLeft(final int size) {
+            final int leftmost(final int size) {
                 return 0;
             }
 
             @Override
-            final int maxRight(final int size) {
+            final int rightmost(final int size) {
                 return size - 1;
             }
 
@@ -138,13 +125,13 @@ public class Index {
         },
         REVERSE(-1) {
             @Override
-            final int maxLeft(final int size) {
-                return FORWARD.maxRight(size);
+            final int leftmost(final int size) {
+                return FORWARD.rightmost(size);
             }
 
             @Override
-            final int maxRight(final int size) {
-                return FORWARD.maxLeft(size);
+            final int rightmost(final int size) {
+                return FORWARD.leftmost(size);
             }
 
             @Override
@@ -153,34 +140,24 @@ public class Index {
             }
         };
 
-        private final int nextStep;
+        private final int deltaNext;
 
-        Direction(final int nextStep) {
-            this.nextStep = nextStep;
+        Direction(final int deltaNext) {
+            this.deltaNext = deltaNext;
         }
 
-        abstract int maxLeft(int size);
+        abstract int leftmost(int size);
 
-        abstract int maxRight(int size);
+        abstract int rightmost(int size);
 
         abstract boolean isLeft(int subject, int other);
 
-        final int nextIndex(final int index) {
-            return index + nextStep;
+        final int next(final int index) {
+            return index + deltaNext;
         }
 
         final boolean isNotRight(final int subject, final int other) {
             return (subject == other) || isLeft(subject, other);
-        }
-    }
-
-    private static class Entry {
-        private final int hash;
-        private final int index;
-
-        private Entry(final int hash, final int index) {
-            this.hash = hash;
-            this.index = index;
         }
     }
 
@@ -192,27 +169,36 @@ public class Index {
         private Entries(final Iterator<?> origin, final int size)
                 throws NoSuchElementException, ArrayIndexOutOfBoundsException {
 
-            final Entry[] entries = new Entry[size];
-            for (int index = 0; (index < size) || origin.hasNext(); ++index) {
-                entries[index] = new Entry(Objects.hashCode(origin.next()), index);
-            }
-            Arrays.sort(entries, ORDER);
-
+            final long[] entries = newEntries(origin, size);
             hashes = new int[size];
             indexes = new int[size];
             for (int index = 0; index < size; ++index) {
-                indexes[index] = entries[index].index;
-                hashes[index] = entries[index].hash;
+                indexes[index] = toIndex(entries[index]);
+                hashes[index] = toHash(entries[index]);
             }
         }
-    }
 
-    @SuppressWarnings({"AccessingNonPublicFieldOfAnotherObject", "ComparatorNotSerializable"})
-    private static class Order implements Comparator<Entry> {
-        @Override
-        public final int compare(final Entry o1, final Entry o2) {
-            final int result = Integer.compare(o1.hash, o2.hash);
-            return (0 == result) ? Integer.compare(o1.index, o2.index) : result;
+        private static long[] newEntries(final Iterator<?> origin, final int size) {
+            final long[] entries = new long[size];
+            for (int index = 0; (index < size) || origin.hasNext(); ++index) {
+                entries[index] = toLong(Objects.hashCode(origin.next()), index);
+            }
+            Arrays.sort(entries);
+            return entries;
+        }
+
+        private static int toHash(final long entry) {
+            //noinspection NumericCastThatLosesPrecision
+            return (int) (entry >> Integer.SIZE);
+        }
+
+        private static int toIndex(final long entry) {
+            //noinspection NumericCastThatLosesPrecision
+            return (int) entry;
+        }
+
+        private static long toLong(final int hashCode, final int index) {
+            return ((long) hashCode << Integer.SIZE) | index;
         }
     }
 }

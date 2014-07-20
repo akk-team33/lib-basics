@@ -32,13 +32,12 @@ public class IndexTest {
 
     @Test
     public final void testIndexOf() {
-        final List<String> arrayList = new ArrayList<>(ELEMENTS);
-        final IndexList<String> indexList = IndexList.from(ELEMENTS);
+        final Index index = new Index(ELEMENTS);
         for (final Object sample : SAMPLES) {
             assertEquals(
                     String.format("for sample <%s>", sample),
-                    arrayList.indexOf(sample),
-                    indexList.indexOf(sample)
+                    ELEMENTS.indexOf(sample),
+                    index.first(sample)
             );
         }
     }
@@ -48,7 +47,7 @@ public class IndexTest {
         final List<String> arrayList = new ArrayList<>(ELEMENTS);
         final IndexList<String> indexList = IndexList.from(ELEMENTS);
         for (final Object sample : SAMPLES) {
-            final int expected = arrayList.lastIndexOf(sample);
+            final int expected = ELEMENTS.lastIndexOf(sample);
             final String message = String.format("for sample <%s> -> <%d>", sample, expected);
             //System.out.println(message);
             assertEquals(message, expected, indexList.lastIndexOf(sample));
