@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 
 import java.util.AbstractCollection;
 import java.util.AbstractList;
+import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,7 +19,7 @@ import static java.util.Arrays.asList;
 /**
  * {@linkplain Collections Additional} convenience methods to deal with Collections.
  */
-@SuppressWarnings({"ProhibitedExceptionCaught", "StaticMethodOnlyUsedInOneClass"})
+@SuppressWarnings({"ProhibitedExceptionCaught", "StaticMethodOnlyUsedInOneClass", "ClassWithTooManyMethods"})
 public final class Collecting {
     private Collecting() {
     }
@@ -411,7 +412,8 @@ public final class Collecting {
 
         } catch (final NullPointerException | ClassCastException caught) {
             if ((null == subject) || (null == elements)) {
-                throw caught; // expected to be a NullPointerException
+                // <caught> is expected to be a NullPointerException ...
+                throw caught;
 
             } else {
                 // --> <subject> can not contain all <elements>
@@ -481,7 +483,7 @@ public final class Collecting {
     }
 
     /**
-     * Supplies a proxy for a given {@code subject} that may be used to implement some {@link List}-specific
+     * Supplies a proxy for a given {@link List subject} that may be used to implement some {@link List}-specific
      * methods, e.g.:
      * <ul>
      * <li>{@link List#toArray()}</li>
@@ -514,7 +516,7 @@ public final class Collecting {
     }
 
     /**
-     * Supplies a proxy for a given {@code subject} that may be used to implement some {@link Set}-specific
+     * Supplies a proxy for a given {@link Set subject} that may be used to implement some {@link Set}-specific
      * methods, e.g.:
      * <ul>
      * <li>{@link Set#toArray()}</li>
@@ -531,7 +533,7 @@ public final class Collecting {
      *                <li>{@link Set#size()}</li>
      *                </ul>
      */
-    @SuppressWarnings({"AnonymousInnerClassWithTooManyMethods", "AnonymousInnerClass"})
+    @SuppressWarnings({"AnonymousInnerClassWithTooManyMethods", "AnonymousInnerClass", "TypeMayBeWeakened"})
     public static <E> Set<E> proxy(final Set<E> subject) {
         return new AbstractSet<E>() {
             @Override
@@ -542,6 +544,31 @@ public final class Collecting {
             @Override
             public int size() {
                 return subject.size();
+            }
+        };
+    }
+
+    /**
+     * Supplies a proxy for a given {@link Map subject} that may be used to implement some {@link Map}-specific
+     * methods, e.g.:
+     * <ul>
+     * <li>{@link Map#toString()}</li>
+     * <li>{@link Map#equals(Object)}</li>
+     * <li>{@link Map#hashCode()}</li>
+     * <li>...</li>
+     * </ul>
+     *
+     * @param subject A {@link Map}, that at least provides independently ...
+     *                <ul>
+     *                <li>{@link Map#entrySet()}</li>
+     *                </ul>
+     */
+    @SuppressWarnings("AnonymousInnerClass")
+    public static <K, V> Map<K, V> proxy(final Map<K, V> subject) {
+        return new AbstractMap<K, V>() {
+            @Override
+            public final Set<Entry<K, V>> entrySet() {
+                return subject.entrySet();
             }
         };
     }
