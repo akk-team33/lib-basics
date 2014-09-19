@@ -25,17 +25,42 @@ public final class Collecting {
     }
 
     /**
-     * Adds some {@code elements} to a given {@code subject}.
+     * Just like {@link Collection#add(Object)} for a given {@code subject}.
      *
      * @return The {@code subject}.
-     * @throws UnsupportedOperationException if {@link Collection#add(Object)} or {@link Collection#addAll(Collection)}
-     *                                       is not supported by the {@code subject}.
+     * @throws UnsupportedOperationException if {@link Collection#add(Object)} is not supported by the {@code subject}.
+     * @throws ClassCastException            if the class of the specified {@code element} prevents it from being
+     *                                       added to the {@code subject}
+     *                                       (may occur only if used raw or forced in a mismatched class context).
+     * @throws NullPointerException          <ul>
+     *                                       <li>if {@code subject} is {@code null}.</li>
+     *                                       <li>if the specified {@code element} is {@code null}
+     *                                       and the {@code subject} does not permit {@code null} elements.</li>
+     *                                       </ul>
+     * @throws IllegalArgumentException      if some property of the {@code element} prevents it from being added to
+     *                                       the {@code subject}.
+     * @throws IllegalStateException         if the {@code element} cannot be added at this time due to
+     *                                       the {@code subject}'s insertion restrictions (if any).
+     */
+    @SuppressWarnings("OverloadedVarargsMethod")
+    public static <E, C extends Collection<E>> C add(final C subject, final E element) {
+        subject.add(element);
+        return subject;
+    }
+
+    /**
+     * Similar to {@link Collection#add(Object)} for a given {@code subject}.
+     * Allows to add a variable number of elements.
+     *
+     * @return The {@code subject}.
+     * @throws UnsupportedOperationException if {@link Collection#addAll(Collection)} is not supported by the
+     *                                       {@code subject}.
      * @throws ClassCastException            if the class of the specified {@code elements} prevents them from being
      *                                       added to the {@code subject}
      *                                       (may occur only if used raw or forced in a mismatched class context).
      * @throws NullPointerException          <ul>
-     *                                       <li>if {@code subject} or the {@code array} of {@code elements}
-     *                                       is {@code null}</li>
+     *                                       <li>if {@code subject} or the {@code array} of {@code elements} is
+     *                                       {@code null}.</li>
      *                                       <li>if some of the specified {@code elements} are {@code null}
      *                                       and the {@code subject} does not permit {@code null} elements.</li>
      *                                       </ul>
@@ -47,33 +72,30 @@ public final class Collecting {
     @SuppressWarnings("OverloadedVarargsMethod")
     @SafeVarargs
     public static <E, C extends Collection<E>> C add(final C subject, final E... elements) {
-        if (1 == elements.length) {
-            subject.add(elements[0]);
-        } else if (1 < elements.length) {
-            subject.addAll(asList(elements));
-        }
-        return subject;
+        return addAll(subject, asList(elements));
     }
 
     /**
-     * Adds some {@code elements} after {@code conversion} to a given {@code subject}.
+     * Similar to {@link Collection#add(Object)} for a given {@code subject}.
+     * Allows to add a variable number of elements and applies a {@code conversion} on each.
      *
      * @return The {@code subject}.
-     * @throws UnsupportedOperationException if {@link Collection#add(Object)} is not supported by the {@code subject}.
-     * @throws ClassCastException            if the class of the results of {@link Function} prevents them from being
+     * @throws UnsupportedOperationException if {@link Collection#addAll(Collection)} is not supported by the
+     *                                       {@code subject}.
+     * @throws ClassCastException            if the class of the results of {@code conversion} prevents them from being
      *                                       added to the {@code subject}
      *                                       (may occur only if used raw or forced in a mismatched class context).
      * @throws NullPointerException          <ul>
-     *                                       <li>if {@code subject}, the {@link Function} or the {@code array} of
+     *                                       <li>if {@code subject}, the {@code conversion} or the {@code array} of
      *                                       {@code elements} is {@code null}</li>
      *                                       <li>if some of the specified {@code elements} are {@code null}
-     *                                       and the {@link Function} does not permit {@code null} arguments.</li>
-     *                                       <li>if some results of {@link Function} are {@code null}
+     *                                       and the {@code conversion} does not permit {@code null} arguments.</li>
+     *                                       <li>if some results of {@code conversion} are {@code null}
      *                                       and the {@code subject} does not permit {@code null} elements.</li>
      *                                       </ul>
-     * @throws IllegalArgumentException      if some property of some results of {@link Function} prevents them from
+     * @throws IllegalArgumentException      if some property of some results of {@code conversion} prevents them from
      *                                       being added to the {@code subject}.
-     * @throws IllegalStateException         if the results of {@link Function} cannot be added at this time due to
+     * @throws IllegalStateException         if the results of {@code conversion} cannot be added at this time due to
      *                                       the {@code subject}'s insertion restrictions (if any).
      */
     @SuppressWarnings("OverloadedVarargsMethod")
@@ -85,24 +107,51 @@ public final class Collecting {
     }
 
     /**
+     * Just like {@link Collection#addAll(Collection)} for a given {@code subject}.
+     *
+     * @return The {@code subject}.
+     * @throws UnsupportedOperationException if {@link Collection#addAll(Collection)} is not supported by the
+     *                                       {@code subject}.
+     * @throws ClassCastException            if the class of the {@code elements} prevents them from being added to the
+     *                                       {@code subject}
+     *                                       (may occur only if used raw or forced in a mismatched class context).
+     * @throws NullPointerException          <ul>
+     *                                       <li>if {@code subject} or the {@link Collection} of {@code elements} is
+     *                                       {@code null}</li>
+     *                                       <li>if some of the specified {@code elements} are {@code null}
+     *                                       and the {@code subject} does not permit {@code null} arguments.</li>
+     *                                       <li>if some {@code elements} are {@code null} and the {@code subject}
+     *                                       does not permit {@code null} elements.</li>
+     *                                       </ul>
+     * @throws IllegalArgumentException      if some property of some {@code elements} prevents them from being added
+     *                                       to the {@code subject}.
+     * @throws IllegalStateException         if the {@code elements} cannot be added at this time due to the
+     *                                       {@code subject}'s insertion restrictions (if any).
+     */
+    public static <E, C extends Collection<E>> C addAll(final C subject, final Collection<? extends E> elements) {
+        subject.addAll(elements);
+        return subject;
+    }
+
+    /**
      * Adds some {@code elements} after {@code conversion} to a given {@code subject}.
      *
      * @return The {@code subject}.
      * @throws UnsupportedOperationException if {@link Collection#add(Object)} is not supported by the {@code subject}.
-     * @throws ClassCastException            if the class of the results of {@link Function} prevents them from being
+     * @throws ClassCastException            if the class of the results of {@code conversion} prevents them from being
      *                                       added to the {@code subject}
      *                                       (may occur only if used raw or forced in a mismatched class context).
      * @throws NullPointerException          <ul>
-     *                                       <li>if {@code subject}, the {@link Function} or the {@link Collection} of
-     *                                       {@code elements} is {@code null}</li>
+     *                                       <li>if {@code subject}, the {@code conversion} or the {@link Collection}
+     *                                       of {@code elements} is {@code null}</li>
      *                                       <li>if some of the specified {@code elements} are {@code null}
-     *                                       and the {@link Function} does not permit {@code null} arguments.</li>
-     *                                       <li>if some results of {@link Function} are {@code null}
+     *                                       and the {@code conversion} does not permit {@code null} arguments.</li>
+     *                                       <li>if some results of {@code conversion} are {@code null}
      *                                       and the {@code subject} does not permit {@code null} elements.</li>
      *                                       </ul>
-     * @throws IllegalArgumentException      if some property of some results of {@link Function} prevents them from
+     * @throws IllegalArgumentException      if some property of some results of {@code conversion} prevents them from
      *                                       being added to the {@code subject}.
-     * @throws IllegalStateException         if the results of {@link Function} cannot be added at this time due to
+     * @throws IllegalStateException         if the results of {@code conversion} cannot be added at this time due to
      *                                       the {@code subject}'s insertion restrictions (if any).
      */
     public static <I, E, C extends Collection<E>> C addAll(
